@@ -2,7 +2,11 @@ import "./App.css";
 import Variable from "./blocks/Variable";
 
 const App = () => {
-  return <Variable />;
+  return (
+    <div id="main">
+      <Variable />
+    </div>
+  );
 };
 
 export default App;
