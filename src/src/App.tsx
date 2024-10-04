@@ -1,7 +1,8 @@
 import "./App.css";
+import Variable from "./blocks/Variable";
 
 const App = () => {
-  return "Hello World!";
+  return <Variable />;
 };
 
 export default App;
