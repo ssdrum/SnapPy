@@ -3,6 +3,7 @@ import React from "react";
 enum BlockTypes {
   VARIABLE = "variable",
   IF = "if",
+  FOR = "for",
 }
 
 // Define types for the blocks
@@ -18,7 +19,16 @@ type IfBlockType = {
   body: BlockType[];
 };
 
-type BlockType = VariableBlockType | IfBlockType;
+type ForBlockType = {
+  type: BlockTypes.FOR;
+  variable: string;
+  iterable: string;
+  body: BlockType[];
+};
+
+type BlockType = VariableBlockType | IfBlockType | ForBlockType;
+
+const INDENT: number = 4;
 
 // Variable Block Component
 const VariableBlock: React.FC<{ block: VariableBlockType }> = ({ block }) => {
@@ -51,6 +61,22 @@ const IfBlock: React.FC<{ block: IfBlockType }> = ({ block }) => {
   );
 };
 
+// For Block Component
+const ForBlock: React.FC<{ block: ForBlockType }> = ({ block }) => {
+  return (
+    <div
+      style={{ marginLeft: "20px", border: "1px solid green", padding: "10px" }}
+    >
+      <strong>For Block:</strong> {block.variable} in {block.iterable}
+      <div>
+        {block.body.map((b, index) => (
+          <Block key={index} block={b} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // General Block Component
 const Block: React.FC<{ block: BlockType }> = ({ block }) => {
   switch (block.type) {
@@ -58,6 +84,8 @@ const Block: React.FC<{ block: BlockType }> = ({ block }) => {
       return <VariableBlock block={block} />;
     case BlockTypes.IF:
       return <IfBlock block={block} />;
+    case BlockTypes.FOR:
+      return <ForBlock block={block} />;
     default:
       return null;
   }
@@ -74,20 +102,31 @@ const blocksToJson = (blocks: BlockType[]) => {
 // Function to convert JSON to Python code
 const jsonToPython = (
   json: { type: string; body: BlockType[] },
-  indent: number = 0,
+  spaces: number = 0,
 ): string => {
   let code = "";
 
-  const indentSpaces = " ".repeat(indent);
+  const indentSpaces = " ".repeat(spaces);
+  console.log(json);
 
   json.body.forEach((block) => {
     switch (block.type) {
-      case "variable":
+      case BlockTypes.VARIABLE:
         code += `${indentSpaces}${block.name} = ${block.value}\n`;
         break;
-      case "if":
+      case BlockTypes.IF:
         code += `${indentSpaces}if ${block.condition}:\n`;
-        code += jsonToPython({ type: "program", body: block.body }, indent + 4);
+        code += jsonToPython(
+          { type: "program", body: block.body },
+          spaces + INDENT,
+        );
+        break;
+      case BlockTypes.FOR:
+        code += `${indentSpaces}for ${block.variable} in ${block.iterable}:\n`;
+        code += jsonToPython(
+          { type: "program", body: block.body },
+          spaces + INDENT,
+        );
         break;
       default:
         break;
@@ -108,40 +147,36 @@ const App: React.FC = () => {
         value: "1",
       },
       {
-        type: BlockTypes.VARIABLE,
-        name: "y",
-        value: "2",
-      },
-      {
-        type: BlockTypes.VARIABLE,
-        name: "z",
-        value: "3",
-      },
-      {
         type: BlockTypes.IF,
         condition: "x > 4",
         body: [
           {
-            type: BlockTypes.IF,
-            condition: "y < 5",
+            type: BlockTypes.FOR,
+            variable: "i",
+            iterable: "range(5)",
             body: [
               {
+                type: BlockTypes.VARIABLE,
+                name: "z",
+                value: "3",
+              },
+              {
                 type: BlockTypes.IF,
-                condition: "z > 6",
+                condition: "z > 1",
                 body: [
                   {
                     type: BlockTypes.VARIABLE,
-                    name: "z",
-                    value: "7",
+                    name: "y",
+                    value: "4",
                   },
                 ],
               },
-              {
-                type: BlockTypes.VARIABLE,
-                name: "y",
-                value: "8",
-              },
             ],
+          },
+          {
+            type: BlockTypes.VARIABLE,
+            name: "y",
+            value: "2",
           },
         ],
       },
@@ -155,13 +190,13 @@ const App: React.FC = () => {
     <div>
       <h1>JSON Input:</h1>
       <pre>{JSON.stringify(jsonOutput, null, 2)}</pre>
-      <h1>Generated Code Blocks:</h1>
+      <h1>Generated Blocks:</h1>
       <div>
         {json.body.map((block, index) => (
           <Block key={index} block={block} />
         ))}
       </div>
-      <h1>Generated Python Code</h1>
+      <h1>Python Code Output:</h1>
       <pre>{pythonOutput}</pre>
     </div>
   );
