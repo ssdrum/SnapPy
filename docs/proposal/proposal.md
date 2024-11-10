@@ -4,7 +4,7 @@
 
 |                     |                |
 | ------------------- | -------------- |
-| Project Title:      | xxxxxx         |
+| Project Title:      | snap-py        |
 | Student 1 Name:     | Luigi Di Paolo |
 | Student 1 ID:       | 21725939       |
 | Student 2 Name:     | Andy Vodopi    |
@@ -69,15 +69,11 @@ The main learning challenges include:
 
 ### Breakdown of work
 
-> Clearly identify who will undertake which parts of the project.
->
-> It must be clear from the explanation of this breakdown of work both that each student is responsible for
-> separate, clearly-defined tasks, and that those responsibilities substantially cover all of the work required
-> for the project.
+#### Luigi Di Paolo
 
-#### Student 1
-
-> _Student 1 should complete this section._
+- Implementing a real-time Python interpreter using TypeScript: Luigi will design and implement the interpreter that allows users to execute the generated Python code in real time. This involves handling control flow, providing feedback on execution, and visually linking the code to the blocks.
+- Developing the conversion algorithms between block-based code and raw Python code: Luigi will work on the logic and algorithms necessary to translate blocks into Python code and vice versa. This requires implementing a robust two-way conversion system that ensures accuracy and usability.
+- Backend (server, database): Luigi will handle the server-side implementation and manage data storage with PostgreSQL. Responsibilities include setting up the backend architecture, managing user sessions, and providing data persistence for users’ projects and progress.
 
 #### Student 2
 
