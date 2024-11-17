@@ -77,4 +77,10 @@ The main learning challenges include:
 
 #### Student 2
 
-> _Student 2 should complete this section._
+> Implementing drag and drop interface
+
+Blocks and how they interact
+
+app layout
+
+
