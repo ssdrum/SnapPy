@@ -75,12 +75,14 @@ The main learning challenges include:
 - Developing the conversion algorithms between block-based code and raw Python code: Luigi will work on the logic and algorithms necessary to translate blocks into Python code and vice versa. This requires implementing a robust two-way conversion system that ensures accuracy and usability.
 - Backend (server, database): Luigi will handle the server-side implementation and manage data storage with PostgreSQL. Responsibilities include setting up the backend architecture, managing user sessions, and providing data persistence for users’ projects and progress.
 
-#### Student 2
+#### Andy Vodopi
 
 > Implementing drag and drop interface
 
 Blocks and how they interact
 
 app layout
+
+debugger
 
 
