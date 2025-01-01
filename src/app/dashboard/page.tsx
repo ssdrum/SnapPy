@@ -137,7 +137,7 @@ const jsonToPython = (
 };
 
 // Main App Component
-const App: React.FC = () => {
+const Dashboard: React.FC = () => {
   const json: { type: string; body: BlockType[] } = {
     type: "program",
     body: [
@@ -202,4 +202,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default Dashboard;
