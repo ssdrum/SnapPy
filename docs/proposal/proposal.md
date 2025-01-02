@@ -8,7 +8,7 @@
 | Student 1 Name:     | Luigi Di Paolo |
 | Student 1 ID:       | 21725939       |
 | Student 2 Name:     | Andy Vodopi    |
-| Student 2 ID:       | 21477816         |
+| Student 2 ID:       | 21477816       |
 | Project Supervisor: | Stephen Blott  |
 
 ## SECTION B
@@ -77,12 +77,7 @@ The main learning challenges include:
 
 #### Andy Vodopi
 
-> Implementing drag and drop interface
-
-Blocks and how they interact
-
-app layout
-
-debugger
-
-
+- Implementing drag and drop interface
+- Blocks and how they interact
+- app layout
+- debugger
