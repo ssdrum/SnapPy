@@ -10,3 +10,12 @@ export const fetchProjectsByUser = async (userId: number): Promise<Project[]> =>
     });
     return projects
 }
+
+export const fetchProjectById = async (id: number): Promise<Project | null> => {
+    const project = await prisma.project.findUnique({
+        where: {
+            id: id
+        }
+    })
+    return project
+}
