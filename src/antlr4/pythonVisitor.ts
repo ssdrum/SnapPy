@@ -1,8 +1,8 @@
 // Generated from ./src/antlr4/python.g4 by ANTLR 4.9.0-SNAPSHOT
 
-import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
+import { ParseTreeVisitor } from 'antlr4ts/tree/ParseTreeVisitor';
 
-import { ProgContext } from "./pythonParser";
+import { ProgContext } from './pythonParser';
 
 /**
  * This interface defines a complete generic visitor for a parse tree produced

@@ -1,7 +1,7 @@
-import { prisma } from "@/app/lib/prisma";
-import { session } from "@/app/lib/session";
-import { NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import { prisma } from '@/app/lib/prisma';
+import { session } from '@/app/lib/session';
+import { NextAuthOptions } from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
@@ -9,7 +9,7 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
 /* Defines authentication options */
 export const authOptions: NextAuthOptions = {
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   providers: [
     GoogleProvider({
@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ account, profile }) {
       if (!profile?.email) {
-        throw new Error("No profile");
+        throw new Error('No profile');
       }
 
       await prisma.user.upsert({
@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
           },
         });
         if (!user) {
-          throw new Error("No user found");
+          throw new Error('No user found');
         }
         token.id = user.id;
       }

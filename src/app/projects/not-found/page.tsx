@@ -1,3 +1,3 @@
 export default function NotFound() {
-    "Not Found"
+  'Not Found';
 }

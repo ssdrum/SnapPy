@@ -1,5 +1,5 @@
-import { Session } from "@/app/lib/types";
-import { getServerSession } from "next-auth";
+import { Session } from '@/app/lib/types';
+import { getServerSession } from 'next-auth';
 
 export const session = async ({ session, token }: any) => {
   session.user.id = token.id;

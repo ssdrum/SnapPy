@@ -1,8 +1,8 @@
 'use client';
 
-import React from "react"
+import React from 'react';
 import { FC, ReactNode, createContext } from 'react';
-import { Project } from "@prisma/client"
+import { Project } from '@prisma/client';
 
 type Props = {
   children: ReactNode;
@@ -18,10 +18,7 @@ export const DashboardContext = createContext<
 >(undefined);
 
 // Takes user data as props and stores them in a context object
-const DashboardProvider: FC<Props> = ({
-  children,
-  projects,
-}) => {
+const DashboardProvider: FC<Props> = ({ children, projects }) => {
   return (
     <DashboardContext.Provider
       value={{

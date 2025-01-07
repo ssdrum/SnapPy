@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "Snap-py",
-  description: "My App is a...",
+  title: 'Snap-py',
+  description: 'My App is a...',
 };
 
 export default function RootLayout({
@@ -12,9 +12,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <body>
-        <div id="root">{children}</div>
+        <div id='root'>{children}</div>
       </body>
     </html>
   );
