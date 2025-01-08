@@ -22,7 +22,10 @@ export default async function DashboardLayout({
 
   return (
     <>
-      <DashboardProvider projects={projects}>{children}</DashboardProvider>
+      <DashboardProvider projects={projects}>
+        <h1>Dashboard</h1>
+        {children}
+      </DashboardProvider>
     </>
   );
 }

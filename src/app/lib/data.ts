@@ -1,5 +1,7 @@
+import { getUserSession } from '@/app/lib/session';
 import { prisma } from './prisma';
 import { Project } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 // Fetch projects by user
 export const fetchProjectsByUser = async (
@@ -21,3 +23,19 @@ export const fetchProjectById = async (id: number): Promise<Project | null> => {
   });
   return project;
 };
+
+// Create a new project and add it to db
+export async function createProject(name: string): Promise<Project> {
+  const user = await getUserSession();
+  // TODO: Handle unauthorised user
+
+  const project = await prisma.project.create({
+    data: {
+      name: name,
+      userId: user.id,
+      data: Prisma.JsonNull, // Set data to null as default
+    },
+  });
+
+  return project;
+}
