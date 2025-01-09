@@ -2,8 +2,9 @@
 
 import { useContext } from 'react';
 import { EditorContext } from './editor-context';
+import Editor from './editor.tsx';
 
-export default function Editor() {
+export default function Page() {
   const project = useContext(EditorContext)!; // Fetch projects from context
   const { id, data } = project.project;
 
@@ -11,6 +12,7 @@ export default function Editor() {
     <>
       <h1>Project ID: {id}</h1>
       <p>{JSON.stringify(data)}</p>
+      <Editor />
     </>
   );
 }
