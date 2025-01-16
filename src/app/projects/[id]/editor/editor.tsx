@@ -1,5 +1,10 @@
 import { useState } from 'react';
-import { DndContext } from '@dnd-kit/core';
+import {
+  DndContext,
+  useSensor,
+  useSensors,
+  PointerSensor,
+} from '@dnd-kit/core';
 import { Coordinates } from '@dnd-kit/utilities';
 import Workbench from './workbench';
 import Canvas from './canvas';
@@ -67,6 +72,16 @@ export default function Editor() {
     );
   };
 
+  // This workaround allows the onClick events for the input boxes to trigger.
+  // Without it, the dragEvent will override any onClick
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 0.1,
+      },
+    })
+  );
+
   const style: React.CSSProperties = {
     display: 'flex',
     width: '1000px',
@@ -83,6 +98,7 @@ export default function Editor() {
       onDragEnd={({ delta, over, active }) => {
         handleDragEnd(active.id as number, over, delta);
       }}
+      sensors={sensors}
     >
       <div style={style}>
         <Workbench blocks={workbenchBlocks} />
