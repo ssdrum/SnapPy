@@ -2,7 +2,7 @@
 
 import { useContext } from 'react';
 import { EditorContext } from './editor-context';
-import Editor from './editor.tsx';
+import Editor from './editor';
 
 export default function Page() {
   const project = useContext(EditorContext)!; // Fetch projects from context

@@ -4,12 +4,13 @@ import { CSS } from '@dnd-kit/utilities';
 
 // Draggable boxes
 interface VariableProps {
-  id: string;
+  id: number;
   top: number;
   left: number;
+  zIndex: number;
 }
 
-const Variable: React.FC<VariableProps> = ({ id, top, left }) => {
+const Variable: React.FC<VariableProps> = ({ id, top, left, zIndex }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
   });
@@ -24,6 +25,7 @@ const Variable: React.FC<VariableProps> = ({ id, top, left }) => {
     left: left,
     position: 'absolute',
     cursor: 'grab',
+    zIndex: zIndex.toString(),
   };
 
   return (

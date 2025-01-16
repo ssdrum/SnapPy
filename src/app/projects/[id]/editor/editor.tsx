@@ -1,31 +1,60 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { DndContext } from '@dnd-kit/core';
 import { Coordinates } from '@dnd-kit/utilities';
-import {
-  DndContext,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import { restrictToParentElement } from '@dnd-kit/modifiers';
-import Variable from '@/app/blocks/variable';
+import Workbench from './workbench';
+import Canvas from './canvas';
 
-interface Block {
-  id: string;
+export type VariableBlock = {
+  id: number;
+  name: string;
+  value: string;
   coords: Coordinates;
-}
+};
+
+const workbenchBlocks: VariableBlock[] = [
+  { id: -1, name: '', value: '', coords: { x: 0, y: 0 } },
+];
 
 export default function Editor() {
-  // Temporarily just hardcoding blocks in the editor's state
-  const [blocks, setBlocks] = useState<Block[]>([
-    { id: '1', coords: { x: 0, y: 0 } },
-  ]);
+  const [blocksCount, setBlocksCount] = useState(0);
+  const [canvasBlocks, setCanvasBlocks] = useState<VariableBlock[]>([]);
 
-  // This function is triggered whenever a drag event ends. It moves dragged
-  // element into its new position
-  const handleDragEnd = (id: string, delta: Coordinates) => {
-    setBlocks((prevBlocks) =>
+  const handleDragEnd = (active: number, over: any, delta: Coordinates) => {
+    if (!over || over.id !== 'canvas') {
+      return;
+    }
+
+    if (isWorkbenchBlock(active)) {
+      addBlockToCanvas(active, delta);
+    } else {
+      moveExistingBlock(active, delta);
+    }
+  };
+
+  const isWorkbenchBlock = (id: number) => id < 0;
+
+  const addBlockToCanvas = (active: number, delta: Coordinates) => {
+    const block = workbenchBlocks.find((b) => b.id === active);
+    if (!block) return;
+
+    const newBlockId = blocksCount + 1;
+    const newBlock = {
+      ...block,
+      id: newBlockId,
+      coords: {
+        x: block.coords.x + delta.x,
+        y: block.coords.y + delta.y,
+      },
+    };
+
+    setCanvasBlocks((prev) => [...prev, newBlock]);
+    setBlocksCount(newBlockId);
+  };
+
+  const moveExistingBlock = (active: number, delta: Coordinates) => {
+    setCanvasBlocks((prevBlocks) =>
       prevBlocks.map((block) =>
-        block.id === id
+        block.id === active
           ? {
               ...block,
               coords: {
@@ -38,8 +67,9 @@ export default function Editor() {
     );
   };
 
-  const wrapperStyle: React.CSSProperties = {
-    width: '600px',
+  const style: React.CSSProperties = {
+    display: 'flex',
+    width: '1000px',
     height: '1500px',
     maxWidth: '80%', // Ensures it doesn't take more than 80% of the screen width
     maxHeight: '80vh', // Ensures it doesn't take more than 80% of the screen height
@@ -48,34 +78,16 @@ export default function Editor() {
     overflow: 'scroll',
   };
 
-  // This workaround allows the onClick events for the input boxes to trigger.
-  // Without it, the dragEvent will override any onClick
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 1,
-      },
-    })
-  );
-
   return (
-    <div style={wrapperStyle}>
-      <DndContext
-        modifiers={[restrictToParentElement]}
-        onDragEnd={({ delta, active }) => {
-          handleDragEnd(active.id as string, delta);
-        }}
-        sensors={sensors}
-      >
-        {blocks.map((block) => (
-          <Variable
-            key={block.id}
-            id={block.id}
-            top={block.coords.y}
-            left={block.coords.x}
-          />
-        ))}
-      </DndContext>
-    </div>
+    <DndContext
+      onDragEnd={({ delta, over, active }) => {
+        handleDragEnd(active.id as number, over, delta);
+      }}
+    >
+      <div style={style}>
+        <Workbench blocks={workbenchBlocks} />
+        <Canvas blocks={canvasBlocks} />
+      </div>
+    </DndContext>
   );
 }
