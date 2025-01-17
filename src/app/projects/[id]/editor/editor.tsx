@@ -94,16 +94,25 @@ export default function Editor() {
   };
 
   return (
-    <DndContext
-      onDragEnd={({ delta, over, active }) => {
-        handleDragEnd(active.id as number, over, delta);
-      }}
-      sensors={sensors}
-    >
-      <div style={style}>
-        <Workbench blocks={workbenchBlocks} />
-        <Canvas blocks={canvasBlocks} />
+    <>
+      {/* JSON Display for canvasBlocks */}
+      <div style={{ marginBottom: '1rem', padding: '1rem', border: '1px solid #ccc', background: '#f9f9f9' }}>
+        <strong>Canvas Blocks JSON:</strong>
+        <pre>{JSON.stringify(canvasBlocks, null, 2)}</pre>
       </div>
-    </DndContext>
+
+      <DndContext
+        onDragEnd={({ delta, over, active }) => {
+          handleDragEnd(active.id as number, over, delta);
+        }}
+        sensors={sensors}
+      >
+        <div style={style}>
+          <Workbench blocks={workbenchBlocks} />
+          <Canvas blocks={canvasBlocks} />
+        </div>
+      </DndContext>
+    </>
   );
 }
+
