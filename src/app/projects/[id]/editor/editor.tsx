@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import {
   DndContext,
   useSensor,
@@ -16,13 +16,17 @@ export type VariableBlock = {
   coords: Coordinates;
 };
 
+interface EditorProps {
+  canvasBlocks: VariableBlock[];
+  setCanvasBlocks: Dispatch<SetStateAction<VariableBlock[]>>;
+}
+
 const workbenchBlocks: VariableBlock[] = [
   { id: -1, name: '', value: '', coords: { x: 0, y: 0 } },
 ];
 
-export default function Editor() {
+export default function Editor({ canvasBlocks, setCanvasBlocks }: EditorProps) {
   const [blocksCount, setBlocksCount] = useState(0);
-  const [canvasBlocks, setCanvasBlocks] = useState<VariableBlock[]>([]);
 
   const handleDragEnd = (active: number, over: any, delta: Coordinates) => {
     if (!over || over.id !== 'canvas') {
@@ -96,23 +100,31 @@ export default function Editor() {
   return (
     <>
       {/* JSON Display for canvasBlocks */}
-      <div style={{ marginBottom: '1rem', padding: '1rem', border: '1px solid #ccc', background: '#f9f9f9' }}>
-        <strong>Canvas Blocks JSON:</strong>
-        <pre>{JSON.stringify(canvasBlocks, null, 2)}</pre>
-      </div>
+      <div style={{ display: 'flex' }}>
+        <DndContext
+          onDragEnd={({ delta, over, active }) => {
+            handleDragEnd(active.id as number, over, delta);
+          }}
+          sensors={sensors}
+        >
+          <div style={style}>
+            <Workbench blocks={workbenchBlocks} />
+            <Canvas blocks={canvasBlocks} setCanvasBlocks={setCanvasBlocks} />
+          </div>
+        </DndContext>
 
-      <DndContext
-        onDragEnd={({ delta, over, active }) => {
-          handleDragEnd(active.id as number, over, delta);
-        }}
-        sensors={sensors}
-      >
-        <div style={style}>
-          <Workbench blocks={workbenchBlocks} />
-          <Canvas blocks={canvasBlocks} />
+        <div
+          style={{
+            marginBottom: '1rem',
+            padding: '1rem',
+            border: '1px solid #ccc',
+            background: '#f9f9f9',
+          }}
+        >
+          <strong>Canvas Blocks JSON:</strong>
+          <pre>{JSON.stringify(canvasBlocks, null, 2)}</pre>
         </div>
-      </DndContext>
+      </div>
     </>
   );
 }
-

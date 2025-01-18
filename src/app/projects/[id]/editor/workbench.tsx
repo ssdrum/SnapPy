@@ -13,7 +13,14 @@ export default function Workbench({ blocks }: { blocks: VariableBlock[] }) {
   return (
     <div style={style}>
       {blocks.map((block) => (
-        <Variable key={block.id} id={block.id} top={0} left={0} zIndex={2} />
+        <Variable
+          key={block.id}
+          id={block.id}
+          top={0}
+          left={0}
+          zIndex={2}
+          setCanvasBlocks={null}
+        />
       ))}
     </div>
   );

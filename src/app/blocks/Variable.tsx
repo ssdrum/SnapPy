@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
+import { VariableBlock } from '../projects/[id]/editor/editor';
 
 // Draggable boxes
 interface VariableProps {
@@ -8,9 +9,16 @@ interface VariableProps {
   top: number;
   left: number;
   zIndex: number;
+  setCanvasBlocks: Dispatch<SetStateAction<VariableBlock[]>> | null;
 }
 
-const Variable: React.FC<VariableProps> = ({ id, top, left, zIndex }) => {
+const Variable: React.FC<VariableProps> = ({
+  id,
+  top,
+  left,
+  zIndex,
+  setCanvasBlocks,
+}) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
   });
@@ -18,6 +26,40 @@ const Variable: React.FC<VariableProps> = ({ id, top, left, zIndex }) => {
   /* Just taking strings for simplicity at the moment */
   const [name, setName] = useState('');
   const [value, setValue] = useState('');
+
+  const handleChangeName = (id: number, name: string) => {
+    setName(name);
+
+    if (setCanvasBlocks) {
+      setCanvasBlocks((prevBlocks) =>
+        prevBlocks.map((block) =>
+          block.id === id
+            ? {
+                ...block,
+                name: name,
+              }
+            : block
+        )
+      );
+    }
+  };
+
+  const handleChangeValue = (id: number, value: string) => {
+    setValue(value);
+
+    if (setCanvasBlocks) {
+      setCanvasBlocks((prevBlocks) =>
+        prevBlocks.map((block) =>
+          block.id === id
+            ? {
+                ...block,
+                value: value,
+              }
+            : block
+        )
+      );
+    }
+  };
 
   const style: React.CSSProperties = {
     transform: CSS.Translate.toString(transform),
@@ -63,8 +105,7 @@ const Variable: React.FC<VariableProps> = ({ id, top, left, zIndex }) => {
             type='text'
             placeholder='a'
             value={name}
-            onChange={(e) => setName(e.target.value)}
-            onClick={(e) => console.log(e)}
+            onChange={(e) => handleChangeName(id, e.target.value)}
             style={{
               width: '100%',
               height: '100%',
@@ -85,7 +126,7 @@ const Variable: React.FC<VariableProps> = ({ id, top, left, zIndex }) => {
             type='text'
             placeholder='0'
             value={value}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) => handleChangeValue(id, e.target.value)}
             style={{
               width: '100%',
               height: '100%',

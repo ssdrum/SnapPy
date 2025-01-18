@@ -1,8 +1,14 @@
 import Variable from '@/app/blocks/variable';
 import { VariableBlock } from './editor';
 import { useDroppable } from '@dnd-kit/core';
+import { Dispatch, SetStateAction } from 'react';
 
-export default function Canvas({ blocks }: { blocks: VariableBlock[] }) {
+interface CanvasProps {
+  blocks: VariableBlock[];
+  setCanvasBlocks: Dispatch<SetStateAction<VariableBlock[]>>;
+}
+
+export default function Canvas({ blocks, setCanvasBlocks }: CanvasProps) {
   const { setNodeRef } = useDroppable({ id: 'canvas' });
 
   const style: React.CSSProperties = {
@@ -18,6 +24,7 @@ export default function Canvas({ blocks }: { blocks: VariableBlock[] }) {
           top={block.coords.y}
           left={block.coords.x}
           zIndex={0}
+          setCanvasBlocks={setCanvasBlocks}
         />
       ))}
     </div>
