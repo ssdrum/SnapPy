@@ -8,26 +8,32 @@ import {
 import { Coordinates } from '@dnd-kit/utilities';
 import Workbench from './workbench';
 import Canvas from './canvas';
-
-export type VariableBlock = {
-  id: number;
-  name: string;
-  value: string;
-  coords: Coordinates;
-};
+import { Block, BlockTypes } from '@/app/blocks/types';
 
 interface EditorProps {
-  canvasBlocks: VariableBlock[];
-  setCanvasBlocks: Dispatch<SetStateAction<VariableBlock[]>>;
+  canvasBlocks: Block[];
+  setCanvasBlocks: Dispatch<SetStateAction<Block[]>>;
+  blocksCount: number;
+  setBlocksCount: Dispatch<SetStateAction<number>>;
 }
 
-const workbenchBlocks: VariableBlock[] = [
-  { id: -1, name: '', value: '', coords: { x: 0, y: 0 } },
+const workbenchBlocks: Block[] = [
+  {
+    id: -1,
+    type: BlockTypes.VARIABLE,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    name: '',
+    value: '',
+  },
 ];
 
-export default function Editor({ canvasBlocks, setCanvasBlocks }: EditorProps) {
-  const [blocksCount, setBlocksCount] = useState(0);
-
+export default function Editor({
+  canvasBlocks,
+  setCanvasBlocks,
+  blocksCount,
+  setBlocksCount,
+}: EditorProps) {
   const handleDragEnd = (active: number, over: any, delta: Coordinates) => {
     if (!over || over.id !== 'canvas') {
       return;
@@ -54,6 +60,7 @@ export default function Editor({ canvasBlocks, setCanvasBlocks }: EditorProps) {
         x: block.coords.x + delta.x,
         y: block.coords.y + delta.y,
       },
+      isWorkbenchBlock: false,
     };
 
     setCanvasBlocks((prev) => [...prev, newBlock]);

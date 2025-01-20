@@ -1,22 +1,20 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { VariableBlock } from '../projects/[id]/editor/editor';
+import { Block } from './types';
 
 // Draggable boxes
 interface VariableProps {
   id: number;
   top: number;
   left: number;
-  zIndex: number;
-  setCanvasBlocks: Dispatch<SetStateAction<VariableBlock[]>> | null;
+  setCanvasBlocks: Dispatch<SetStateAction<Block[]>> | null;
 }
 
 const Variable: React.FC<VariableProps> = ({
   id,
   top,
   left,
-  zIndex,
   setCanvasBlocks,
 }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -67,7 +65,6 @@ const Variable: React.FC<VariableProps> = ({
     left: left,
     position: 'absolute',
     cursor: 'grab',
-    zIndex: zIndex.toString(),
   };
 
   return (

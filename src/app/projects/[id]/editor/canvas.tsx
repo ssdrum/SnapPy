@@ -23,7 +23,6 @@ export default function Canvas({ blocks, setCanvasBlocks }: CanvasProps) {
           id={block.id}
           top={block.coords.y}
           left={block.coords.x}
-          zIndex={0}
           setCanvasBlocks={setCanvasBlocks}
         />
       ))}

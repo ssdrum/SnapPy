@@ -1,7 +1,11 @@
+import { Block } from '@/app/blocks/types';
 import Variable from '@/app/blocks/variable';
-import { VariableBlock } from './editor';
 
-export default function Workbench({ blocks }: { blocks: VariableBlock[] }) {
+interface WorkbenchProps {
+  blocks: Block[];
+}
+
+export default function Workbench({ blocks }: WorkbenchProps) {
   const style: React.CSSProperties = {
     width: '250px',
     background: 'rgba(255, 255, 255, 0.1)', // Semi-transparent background
@@ -18,7 +22,6 @@ export default function Workbench({ blocks }: { blocks: VariableBlock[] }) {
           id={block.id}
           top={0}
           left={0}
-          zIndex={2}
           setCanvasBlocks={null}
         />
       ))}
