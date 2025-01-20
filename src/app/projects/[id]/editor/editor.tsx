@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import {
   DndContext,
   useSensor,
@@ -46,8 +46,10 @@ export default function Editor({
     }
   };
 
+  // Return true if block with id = is is a workbench block. Return false otherwise.
   const isWorkbenchBlock = (id: number) => id < 0;
 
+  // Adds a new block to the canvas
   const addBlockToCanvas = (active: number, delta: Coordinates) => {
     const block = workbenchBlocks.find((b) => b.id === active);
     if (!block) return;
@@ -67,6 +69,7 @@ export default function Editor({
     setBlocksCount(newBlockId);
   };
 
+  // Moves an existing block on the canvas
   const moveExistingBlock = (active: number, delta: Coordinates) => {
     setCanvasBlocks((prevBlocks) =>
       prevBlocks.map((block) =>
@@ -128,7 +131,7 @@ export default function Editor({
             background: '#f9f9f9',
           }}
         >
-          <strong>Canvas Blocks JSON:</strong>
+          <strong>Canvas Blocks:</strong>
           <pre>{JSON.stringify(canvasBlocks, null, 2)}</pre>
         </div>
       </div>

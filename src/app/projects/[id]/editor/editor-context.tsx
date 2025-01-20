@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
-import { FC, ReactNode, createContext } from 'react';
+import { ReactNode, createContext } from 'react';
 import { Project } from '@prisma/client';
 
-type Props = {
+interface EditorContextProps {
   children: ReactNode;
   project: Project;
-};
+}
 
 // Initialise context as undefined
 export const EditorContext = createContext<
@@ -18,7 +18,10 @@ export const EditorContext = createContext<
 >(undefined);
 
 // Takes user data as props and stores them in a context object
-const EditorProvider: FC<Props> = ({ children, project }) => {
+export default function EditorProvider({
+  children,
+  project,
+}: EditorContextProps) {
   return (
     <EditorContext.Provider
       value={{
@@ -28,6 +31,4 @@ const EditorProvider: FC<Props> = ({ children, project }) => {
       {children}
     </EditorContext.Provider>
   );
-};
-
-export default EditorProvider;
+}

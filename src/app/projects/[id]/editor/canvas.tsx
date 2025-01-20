@@ -1,11 +1,11 @@
-import Variable from '@/app/blocks/variable';
-import { VariableBlock } from './editor';
+import { Block } from '@/app/blocks/types';
+import BlocksRenderer from '@/app/blocks/blocks-renderer';
 import { useDroppable } from '@dnd-kit/core';
 import { Dispatch, SetStateAction } from 'react';
 
 interface CanvasProps {
-  blocks: VariableBlock[];
-  setCanvasBlocks: Dispatch<SetStateAction<VariableBlock[]>>;
+  blocks: Block[];
+  setCanvasBlocks: Dispatch<SetStateAction<Block[]>>; // Function to update canvas blocks
 }
 
 export default function Canvas({ blocks, setCanvasBlocks }: CanvasProps) {
@@ -17,15 +17,7 @@ export default function Canvas({ blocks, setCanvasBlocks }: CanvasProps) {
 
   return (
     <div ref={setNodeRef} style={style}>
-      {blocks.map((block) => (
-        <Variable
-          key={block.id}
-          id={block.id}
-          top={block.coords.y}
-          left={block.coords.x}
-          setCanvasBlocks={setCanvasBlocks}
-        />
-      ))}
+      <BlocksRenderer blocks={blocks} setCanvasBlocks={setCanvasBlocks} />
     </div>
   );
 }

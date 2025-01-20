@@ -3,30 +3,34 @@ import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { Block } from './types';
 
-// Draggable boxes
 interface VariableProps {
   id: number;
   top: number;
   left: number;
+  isWorkbenchBlock: boolean;
   setCanvasBlocks: Dispatch<SetStateAction<Block[]>> | null;
 }
 
-const Variable: React.FC<VariableProps> = ({
+export default function Variable({
   id,
   top,
   left,
+  isWorkbenchBlock,
   setCanvasBlocks,
-}) => {
+}: VariableProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
   });
 
-  /* Just taking strings for simplicity at the moment */
+  // State of input boxes
   const [name, setName] = useState('');
   const [value, setValue] = useState('');
 
+  // Updates the name of the variable both in its state and in the editor'state
   const handleChangeName = (id: number, name: string) => {
     setName(name);
+
+    // TODO: check for invalid names. (maybe with regex?)
 
     if (setCanvasBlocks) {
       setCanvasBlocks((prevBlocks) =>
@@ -42,8 +46,11 @@ const Variable: React.FC<VariableProps> = ({
     }
   };
 
+  // Updates the value of the variable both in its state and in the editor'state
   const handleChangeValue = (id: number, value: string) => {
     setValue(value);
+
+    // TODO: check for invalid values. (maybe with regex?)
 
     if (setCanvasBlocks) {
       setCanvasBlocks((prevBlocks) =>
@@ -61,26 +68,16 @@ const Variable: React.FC<VariableProps> = ({
 
   const style: React.CSSProperties = {
     transform: CSS.Translate.toString(transform),
-    top: top,
-    left: left,
-    position: 'absolute',
+    top: isWorkbenchBlock ? 0 : top,
+    left: isWorkbenchBlock ? 0 : left,
+    position: isWorkbenchBlock ? 'static' : 'absolute', // Blocks in canvas must be positioned absolutely
+    zIndex: isWorkbenchBlock ? '2' : '0',
     cursor: 'grab',
   };
 
   return (
     <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
       <svg width='250' height='60' xmlns='http://www.w3.org/2000/svg'>
-        {/* Little piece at the bottom */}
-        <rect
-          x='25'
-          y='40'
-          width='20'
-          height='20'
-          rx='5'
-          ry='5'
-          fill='lightblue'
-        />
-
         {/* Main block shape */}
         <rect
           x='0'
@@ -90,6 +87,8 @@ const Variable: React.FC<VariableProps> = ({
           rx='10'
           ry='10'
           fill='lightblue'
+          stroke='grey'
+          strokeWidth='1'
         />
 
         <text x='20' y='35' fontSize='20' fill='black'>
@@ -133,20 +132,7 @@ const Variable: React.FC<VariableProps> = ({
             }}
           />
         </foreignObject>
-
-        {/* Little piece at the top */}
-        <rect
-          x='25'
-          y='-10'
-          width='20'
-          height='20'
-          rx='5'
-          ry='5'
-          fill='white'
-        />
       </svg>
     </div>
   );
-};
-
-export default Variable;
+}

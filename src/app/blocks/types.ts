@@ -2,9 +2,11 @@ import { Coordinates } from '@dnd-kit/utilities';
 
 export enum BlockTypes {
   VARIABLE = 'variable',
-  OTHER = 'other',
+  EMPTY = 'empty',
 }
 
+// Main interface for all blocks. Do not export. Must be extended like examples
+// below
 interface BlockInterface {
   id: number;
   type: BlockTypes;
@@ -17,6 +19,6 @@ interface VariableBlock extends BlockInterface {
   value: string;
 }
 
-interface TestBlock extends BlockInterface {}
+interface EmptyBlock extends BlockInterface {}
 
-export type Block = VariableBlock | TestBlock;
+export type Block = VariableBlock | EmptyBlock;

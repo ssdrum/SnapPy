@@ -1,5 +1,5 @@
 import { Block } from '@/app/blocks/types';
-import Variable from '@/app/blocks/variable';
+import BlocksRenderer from '@/app/blocks/blocks-renderer';
 
 interface WorkbenchProps {
   blocks: Block[];
@@ -16,15 +16,7 @@ export default function Workbench({ blocks }: WorkbenchProps) {
 
   return (
     <div style={style}>
-      {blocks.map((block) => (
-        <Variable
-          key={block.id}
-          id={block.id}
-          top={0}
-          left={0}
-          setCanvasBlocks={null}
-        />
-      ))}
+      <BlocksRenderer blocks={blocks} setCanvasBlocks={null} />
     </div>
   );
 }
