@@ -112,6 +112,7 @@ export default function Editor({
       {/* JSON Display for canvasBlocks */}
       <div style={{ display: 'flex' }}>
         <DndContext
+          id='dnd-context' // Needs a unique id to avoid hydration errors
           onDragEnd={({ delta, over, active }) => {
             handleDragEnd(active.id as number, over, delta);
           }}

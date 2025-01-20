@@ -24,6 +24,7 @@ export default function BlocksRenderer({
           case BlockTypes.VARIABLE:
             return (
               <Variable
+                key={id}
                 id={id}
                 top={coords.y}
                 left={coords.x}
@@ -34,6 +35,7 @@ export default function BlocksRenderer({
           case BlockTypes.EMPTY:
             return (
               <Empty
+                key={id}
                 id={id}
                 top={coords.y}
                 left={coords.x}
