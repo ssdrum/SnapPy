@@ -1,7 +1,14 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useState,
+  useEffect,
+  useRef,
+} from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { Block } from './types';
+import { updateBlockPosition } from './helpers';
 
 interface VariableProps {
   id: number;
@@ -9,6 +16,7 @@ interface VariableProps {
   left: number;
   isWorkbenchBlock: boolean;
   setCanvasBlocks: Dispatch<SetStateAction<Block[]>> | null;
+  setWorkbenchBlocks: Dispatch<SetStateAction<Block[]>> | null;
 }
 
 export default function Variable({
@@ -17,6 +25,7 @@ export default function Variable({
   left,
   isWorkbenchBlock,
   setCanvasBlocks,
+  setWorkbenchBlocks,
 }: VariableProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
@@ -25,6 +34,16 @@ export default function Variable({
   // State of input boxes
   const [name, setName] = useState('');
   const [value, setValue] = useState('');
+
+  // Need this ref to calculate the position of the block relative to its container
+  // (if is a workbench block)
+  const localRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (isWorkbenchBlock) {
+      updateBlockPosition(localRef, setWorkbenchBlocks, id);
+    }
+  }, []);
 
   // Updates the name of the variable both in its state and in the editor'state
   const handleChangeName = (id: number, name: string) => {
@@ -76,7 +95,15 @@ export default function Variable({
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+    <div
+      ref={(node) => {
+        setNodeRef(node); // For DnD kit
+        localRef.current = node; // For measuring offsets
+      }}
+      style={style}
+      {...listeners}
+      {...attributes}
+    >
       <svg width='250' height='60' xmlns='http://www.w3.org/2000/svg'>
         {/* Main block shape */}
         <rect

@@ -1,11 +1,16 @@
+import React, { Dispatch, SetStateAction } from 'react';
 import { Block } from '@/app/blocks/types';
 import BlocksRenderer from '@/app/blocks/blocks-renderer';
 
 interface WorkbenchProps {
   blocks: Block[];
+  setWorkbenchBlocks: Dispatch<SetStateAction<Block[]>>;
 }
 
-export default function Workbench({ blocks }: WorkbenchProps) {
+export default function Workbench({
+  blocks,
+  setWorkbenchBlocks,
+}: WorkbenchProps) {
   const style: React.CSSProperties = {
     width: '250px',
     background: 'rgba(255, 255, 255, 0.1)', // Semi-transparent background
@@ -16,7 +21,11 @@ export default function Workbench({ blocks }: WorkbenchProps) {
 
   return (
     <div style={style}>
-      <BlocksRenderer blocks={blocks} setCanvasBlocks={null} />
+      <BlocksRenderer
+        blocks={blocks}
+        setCanvasBlocks={null}
+        setWorkbenchBlocks={setWorkbenchBlocks}
+      />
     </div>
   );
 }

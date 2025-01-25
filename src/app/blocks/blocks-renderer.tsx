@@ -9,11 +9,13 @@ import Empty from './empty';
 interface BlocksRendererProps {
   blocks: Block[];
   setCanvasBlocks: Dispatch<SetStateAction<Block[]>> | null;
+  setWorkbenchBlocks: Dispatch<SetStateAction<Block[]>> | null;
 }
 
 export default function BlocksRenderer({
   blocks,
   setCanvasBlocks,
+  setWorkbenchBlocks,
 }: BlocksRendererProps) {
   return (
     <>
@@ -30,6 +32,7 @@ export default function BlocksRenderer({
                 left={coords.x}
                 isWorkbenchBlock={isWorkbenchBlock}
                 setCanvasBlocks={setCanvasBlocks}
+                setWorkbenchBlocks={setWorkbenchBlocks}
               />
             );
           case BlockTypes.EMPTY:
@@ -40,6 +43,7 @@ export default function BlocksRenderer({
                 top={coords.y}
                 left={coords.x}
                 isWorkbenchBlock={isWorkbenchBlock}
+                setWorkbenchBlocks={setWorkbenchBlocks}
               />
             );
           default:

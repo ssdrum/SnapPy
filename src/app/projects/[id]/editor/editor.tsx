@@ -8,27 +8,20 @@ import {
 import { Coordinates } from '@dnd-kit/utilities';
 import Workbench from './workbench';
 import Canvas from './canvas';
-import { Block, BlockTypes } from '@/app/blocks/types';
+import { Block } from '@/app/blocks/types';
 
 interface EditorProps {
+  workbenchBlocks: Block[];
+  setWorkbenchBlocks: Dispatch<SetStateAction<Block[]>>;
   canvasBlocks: Block[];
   setCanvasBlocks: Dispatch<SetStateAction<Block[]>>;
   blocksCount: number;
   setBlocksCount: Dispatch<SetStateAction<number>>;
 }
 
-const workbenchBlocks: Block[] = [
-  {
-    id: -1,
-    type: BlockTypes.VARIABLE,
-    coords: { x: 0, y: 0 },
-    isWorkbenchBlock: true,
-    name: '',
-    value: '',
-  },
-];
-
 export default function Editor({
+  workbenchBlocks,
+  setWorkbenchBlocks,
   canvasBlocks,
   setCanvasBlocks,
   blocksCount,
@@ -119,7 +112,10 @@ export default function Editor({
           sensors={sensors}
         >
           <div style={style}>
-            <Workbench blocks={workbenchBlocks} />
+            <Workbench
+              blocks={workbenchBlocks}
+              setWorkbenchBlocks={setWorkbenchBlocks}
+            />
             <Canvas blocks={canvasBlocks} setCanvasBlocks={setCanvasBlocks} />
           </div>
         </DndContext>
