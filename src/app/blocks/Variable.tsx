@@ -8,7 +8,7 @@ import React, {
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { Block } from './types';
-import { updateBlockPosition } from './helpers';
+import { updateWorkbenchBlockCoords } from './helpers';
 
 interface VariableProps {
   id: number;
@@ -41,7 +41,7 @@ export default function Variable({
 
   useEffect(() => {
     if (isWorkbenchBlock) {
-      updateBlockPosition(localRef, setWorkbenchBlocks, id);
+      updateWorkbenchBlockCoords(localRef, setWorkbenchBlocks, id);
     }
   }, []);
 

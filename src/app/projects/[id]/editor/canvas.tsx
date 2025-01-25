@@ -17,7 +17,11 @@ export default function Canvas({ blocks, setCanvasBlocks }: CanvasProps) {
 
   return (
     <div ref={setNodeRef} style={style}>
-      <BlocksRenderer blocks={blocks} setCanvasBlocks={setCanvasBlocks} />
+      <BlocksRenderer
+        blocks={blocks}
+        setCanvasBlocks={setCanvasBlocks}
+        setWorkbenchBlocks={null}
+      />
     </div>
   );
 }

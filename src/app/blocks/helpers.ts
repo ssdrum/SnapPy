@@ -11,7 +11,7 @@ import React, { Dispatch, SetStateAction } from 'react';
  * @param setWorkbenchBlocks - A state updater function to update the workbench blocks.
  * @param id - The identifier of the block to be updated.
  */
-export function updateBlockPosition(
+export function updateWorkbenchBlockCoords(
   localRef: React.RefObject<HTMLDivElement>,
   setWorkbenchBlocks: Dispatch<SetStateAction<Block[]>> | null,
   id: number

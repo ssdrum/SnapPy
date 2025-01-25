@@ -3,7 +3,7 @@ import React, { Dispatch, SetStateAction, useRef, useEffect } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { Block } from './types';
-import { updateBlockPosition } from './helpers';
+import { updateWorkbenchBlockCoords } from './helpers';
 
 // Draggable boxes
 interface EmptyProps {
@@ -32,7 +32,7 @@ export default function Empty({
   // update x and y coordinates of workBenchBlocks
   useEffect(() => {
     if (isWorkbenchBlock) {
-      updateBlockPosition(localRef, setWorkbenchBlocks, id); // Use the extracted function
+      updateWorkbenchBlockCoords(localRef, setWorkbenchBlocks, id); // Use the extracted function
     }
   }, []);
 
