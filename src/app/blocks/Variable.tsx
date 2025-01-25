@@ -98,6 +98,7 @@ export default function Variable({
         {/* Input field for variable name */}
         <foreignObject x='50' y='10' width='50' height='30' data-no-dnd='true'>
           <input
+            disabled={isWorkbenchBlock}
             type='text'
             placeholder='a'
             value={name}
@@ -119,6 +120,7 @@ export default function Variable({
         {/* Input field for variable value */}
         <foreignObject x='150' y='10' width='50' height='30'>
           <input
+            disabled={isWorkbenchBlock}
             type='text'
             placeholder='0'
             value={value}
