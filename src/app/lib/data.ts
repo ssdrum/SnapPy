@@ -39,3 +39,21 @@ export async function createProject(name: string): Promise<Project> {
 
   return project;
 }
+
+// Update an existing project and add it to db
+export async function updateProject(projectId: number, data: string): Promise<Project> {
+  console.log("hello")
+  const user = await getUserSession();
+  // TODO: Handle unauthorised user
+
+  const project = await prisma.project.update({
+    where: {
+      id: projectId,
+    },
+    data: {
+      data: data
+    }
+  }
+  )
+  return project;
+}

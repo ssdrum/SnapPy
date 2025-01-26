@@ -46,6 +46,7 @@ export default function Page() {
         setCanvasBlocks={setCanvasBlocks}
         blocksCount={blocksCount}
         setBlocksCount={setBlocksCount}
+        projectId={id}
       />
     </>
   );

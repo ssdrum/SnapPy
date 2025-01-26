@@ -9,6 +9,7 @@ import { Coordinates } from '@dnd-kit/utilities';
 import Workbench from './workbench';
 import Canvas from './canvas';
 import { Block } from '@/app/blocks/types';
+import {saveProject} from './actions'
 
 interface EditorProps {
   workbenchBlocks: Block[];
@@ -17,6 +18,7 @@ interface EditorProps {
   setCanvasBlocks: Dispatch<SetStateAction<Block[]>>;
   blocksCount: number;
   setBlocksCount: Dispatch<SetStateAction<number>>;
+  projectId: number;
 }
 
 export default function Editor({
@@ -26,6 +28,7 @@ export default function Editor({
   setCanvasBlocks,
   blocksCount,
   setBlocksCount,
+  projectId,
 }: EditorProps) {
   const handleDragEnd = (active: number, over: any, delta: Coordinates) => {
     if (!over || over.id !== 'canvas') {
@@ -89,6 +92,10 @@ export default function Editor({
     })
   );
 
+  const handleSubmit = () => {
+    saveProject(projectId, JSON.stringify(workbenchBlocks))
+  }
+
   const style: React.CSSProperties = {
     display: 'flex',
     width: '1000px',
@@ -103,6 +110,9 @@ export default function Editor({
   return (
     <>
       {/* JSON Display for canvasBlocks */}
+        <form action={handleSubmit}>
+          <button type="submit">Save</button>
+        </form>
       <div style={{ display: 'flex' }}>
         <DndContext
           id='dnd-context' // Needs a unique id to avoid hydration errors
