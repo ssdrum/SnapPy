@@ -57,8 +57,15 @@ export default function Page() {
     saveProject(id, JSON.stringify(canvasBlocks));
   };
 
+  const style: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    maxHeight: '100vh',
+  };
+
   return (
-    <>
+    <div style={style}>
       <h1>{name}</h1>
 
       {/* Save blocks to DB */}
@@ -74,6 +81,6 @@ export default function Page() {
         blocksCount={blocksCount}
         setBlocksCount={setBlocksCount}
       />
-    </>
+    </div>
   );
 }

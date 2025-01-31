@@ -103,48 +103,51 @@ export default function Editor({
     })
   );
 
-  const style: React.CSSProperties = {
+  // CSS
+  const containerStyle: React.CSSProperties = {
     display: 'flex',
-    width: '1000px',
-    height: '1500px',
-    maxWidth: '80%', // Ensures it doesn't take more than 80% of the screen width
-    maxHeight: '80vh', // Ensures it doesn't take more than 80% of the screen height
+    flexGrow: 1,
+    height: '100vh', // Ensures the container takes up full viewport height
+    overflow: 'hidden', // Prevents container overflow
+  };
+
+  const editorStyle: React.CSSProperties = {
+    display: 'flex',
+    flexGrow: 1, // Take up remaining space
+    width: '100%',
     border: '2px solid #333',
     position: 'relative',
-    overflow: 'scroll',
+  };
+
+  const codeWrapperStyle: React.CSSProperties = {
+    backgroundColor: '#F5F5F5',
+    width: '380px',
+    maxWidth: '380px',
+    overflow: 'auto', // Scroll only if content overflows
   };
 
   return (
-    <>
-      <div style={{ display: 'flex' }}>
-        <DndContext
-          id='dnd-context' // Needs a unique id to avoid hydration errors
-          onDragEnd={({ delta, over, active }) => {
-            handleDragEnd(active.id as number, over, delta);
-          }}
-          sensors={sensors}
-        >
-          <div style={style}>
-            <Workbench
-              blocks={workbenchBlocks}
-              setWorkbenchBlocks={setWorkbenchBlocks}
-            />
-            <Canvas blocks={canvasBlocks} setCanvasBlocks={setCanvasBlocks} />
-          </div>
-        </DndContext>
-
-        <div
-          style={{
-            marginBottom: '1rem',
-            padding: '1rem',
-            border: '1px solid #ccc',
-            background: '#f9f9f9',
-          }}
-        >
-          <strong>Canvas Blocks:</strong>
-          <pre>{JSON.stringify(canvasBlocks, null, 2)}</pre>
+    <div style={containerStyle}>
+      <DndContext
+        id='dnd-context' // Needs a unique id to avoid hydration errors
+        onDragEnd={({ delta, over, active }) => {
+          handleDragEnd(active.id as number, over, delta);
+        }}
+        sensors={sensors}
+      >
+        <div style={editorStyle}>
+          <Workbench
+            blocks={workbenchBlocks}
+            setWorkbenchBlocks={setWorkbenchBlocks}
+          />
+          <Canvas blocks={canvasBlocks} setCanvasBlocks={setCanvasBlocks} />
         </div>
+      </DndContext>
+
+      <div style={codeWrapperStyle}>
+        <h2>Canvas Blocks:</h2>
+        <pre>{JSON.stringify(canvasBlocks, null, 2)}</pre>
       </div>
-    </>
+    </div>
   );
 }
