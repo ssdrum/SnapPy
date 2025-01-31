@@ -94,7 +94,6 @@ export default function Variable({
     top: isWorkbenchBlock ? 0 : top,
     left: isWorkbenchBlock ? 0 : left,
     position: isWorkbenchBlock ? 'static' : 'absolute', // Blocks in canvas must be positioned absolutely
-    zIndex: isWorkbenchBlock ? '2' : '0',
     cursor: 'grab',
   };
 

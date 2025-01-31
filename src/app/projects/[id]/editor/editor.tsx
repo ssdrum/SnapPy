@@ -28,14 +28,22 @@ export default function Editor({
   setBlocksCount,
 }: EditorProps) {
   const handleDragEnd = (active: number, over: any, delta: Coordinates) => {
-    if (!over || over.id !== 'canvas') {
+    if (!over) {
       return;
     }
 
-    if (isWorkbenchBlock(active)) {
-      addBlockToCanvas(active, delta);
-    } else {
-      moveExistingBlock(active, delta);
+    if (over.id === 'canvas') {
+      if (isWorkbenchBlock(active)) {
+        addBlockToCanvas(active, delta);
+      } else {
+        moveExistingBlock(active, delta);
+      }
+    }
+
+    if (over.id === 'bin') {
+      if (!isWorkbenchBlock(active)) {
+        deleteBlockFromCanvas(active);
+      }
     }
   };
 
@@ -60,6 +68,12 @@ export default function Editor({
 
     setCanvasBlocks((prev) => [...prev, newBlock]);
     setBlocksCount(newBlockId);
+  };
+
+  // Deletes a new block to the canvas
+  const deleteBlockFromCanvas = (active: number) => {
+    setCanvasBlocks((prev) => prev.filter((block) => block.id !== active));
+    console.log(`Deleting block with ID: ${active}`);
   };
 
   // Moves an existing block on the canvas

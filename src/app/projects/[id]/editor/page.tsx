@@ -8,7 +8,7 @@ import { saveProject } from './actions';
 
 export default function Page() {
   const project = useContext(EditorContext)!; // Fetch projects from context
-  const { id, data } = project.project;
+  const { id, name, data } = project.project;
 
   const [workbenchBlocks, setWorkbenchBlocks] = useState<Block[]>([
     {
@@ -28,6 +28,10 @@ export default function Page() {
   ]);
 
   const [canvasBlocks, setCanvasBlocks] = useState<Block[]>(() => {
+    if (!data) {
+      return [];
+    }
+
     try {
       return JSON.parse(data as string) as Block[]; // Parse project data retreived from DB into blocks array
     } catch (error) {
@@ -37,6 +41,10 @@ export default function Page() {
   });
 
   const [blocksCount, setBlocksCount] = useState<number>(() => {
+    if (!canvasBlocks) {
+      return 0;
+    }
+
     // Get highest block id
     const maxId =
       canvasBlocks.length > 0
@@ -51,7 +59,7 @@ export default function Page() {
 
   return (
     <>
-      <h1>Project ID: {id}</h1>
+      <h1>{name}</h1>
 
       {/* Save blocks to DB */}
       <form action={handleSubmit}>
