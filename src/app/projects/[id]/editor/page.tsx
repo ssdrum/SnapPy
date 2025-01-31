@@ -4,12 +4,12 @@ import { useState, useContext } from 'react';
 import { EditorContext } from './editor-context';
 import Editor from './editor';
 import { Block, BlockTypes } from '@/app/blocks/types';
+import { saveProject } from './actions';
 
 export default function Page() {
   const project = useContext(EditorContext)!; // Fetch projects from context
   const { id, data } = project.project;
 
-  // TODO: Parse data and set canvasBlocks
   const [workbenchBlocks, setWorkbenchBlocks] = useState<Block[]>([
     {
       id: -1,
@@ -25,20 +25,39 @@ export default function Page() {
       coords: { x: 0, y: 0 },
       isWorkbenchBlock: true,
     },
-    {
-      id: -3,
-      type: BlockTypes.EMPTY,
-      coords: { x: 0, y: 0 },
-      isWorkbenchBlock: true,
-    },
   ]);
-  const [canvasBlocks, setCanvasBlocks] = useState<Block[]>([]);
-  const [blocksCount, setBlocksCount] = useState<number>(0);
+
+  const [canvasBlocks, setCanvasBlocks] = useState<Block[]>(() => {
+    try {
+      return JSON.parse(data as string) as Block[]; // Parse project data retreived from DB into blocks array
+    } catch (error) {
+      console.error('Error parsing canvasBlocks from data:', error);
+      return [];
+    }
+  });
+
+  const [blocksCount, setBlocksCount] = useState<number>(() => {
+    // Get highest block id
+    const maxId =
+      canvasBlocks.length > 0
+        ? Math.max(...canvasBlocks.map((block) => block.id))
+        : 0;
+    return maxId;
+  });
+
+  const handleSubmit = () => {
+    saveProject(id, JSON.stringify(canvasBlocks));
+  };
 
   return (
     <>
       <h1>Project ID: {id}</h1>
-      <p>{JSON.stringify(data)}</p>
+
+      {/* Save blocks to DB */}
+      <form action={handleSubmit}>
+        <button type='submit'>Save</button>
+      </form>
+
       <Editor
         workbenchBlocks={workbenchBlocks}
         setWorkbenchBlocks={setWorkbenchBlocks}
@@ -46,7 +65,6 @@ export default function Page() {
         setCanvasBlocks={setCanvasBlocks}
         blocksCount={blocksCount}
         setBlocksCount={setBlocksCount}
-        projectId={id}
       />
     </>
   );

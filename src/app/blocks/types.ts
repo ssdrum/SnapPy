@@ -14,7 +14,7 @@ interface BlockInterface {
   isWorkbenchBlock: boolean;
 }
 
-interface VariableBlock extends BlockInterface {
+export interface VariableBlock extends BlockInterface {
   name: string;
   value: string;
 }

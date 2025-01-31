@@ -2,6 +2,7 @@ import { getUserSession } from '@/app/lib/session';
 import { prisma } from './prisma';
 import { Project } from '@prisma/client';
 import { Prisma } from '@prisma/client';
+import { Block } from '@/app/blocks/types';
 
 // Fetch projects by user
 export const fetchProjectsByUser = async (
@@ -41,19 +42,17 @@ export async function createProject(name: string): Promise<Project> {
 }
 
 // Update an existing project and add it to db
-export async function updateProject(projectId: number, data: string): Promise<Project> {
-  console.log("hello")
-  const user = await getUserSession();
+export async function updateProject(
+  projectId: number,
+  data: Block[]
+): Promise<Project> {
   // TODO: Handle unauthorised user
 
   const project = await prisma.project.update({
-    where: {
-      id: projectId,
-    },
-    data: {
-      data: data
-    }
-  }
-  )
+    where: { id: projectId },
+    data: { data: data as Prisma.JsonValue }, // TODO: This SHOULD work for now. Check compiler issues
+  });
+
   return project;
 }
+

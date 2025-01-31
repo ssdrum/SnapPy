@@ -2,7 +2,7 @@
   Renders a list of blocks
  */
 import React, { Dispatch, SetStateAction } from 'react';
-import { Block, BlockTypes } from './types';
+import { Block, BlockTypes, VariableBlock } from './types';
 import Variable from './variable';
 import Empty from './empty';
 
@@ -24,6 +24,7 @@ export default function BlocksRenderer({
 
         switch (type) {
           case BlockTypes.VARIABLE:
+            const { name, value } = block as VariableBlock;
             return (
               <Variable
                 key={id}
@@ -33,6 +34,8 @@ export default function BlocksRenderer({
                 isWorkbenchBlock={isWorkbenchBlock}
                 setCanvasBlocks={setCanvasBlocks}
                 setWorkbenchBlocks={setWorkbenchBlocks}
+                name={name}
+                value={value}
               />
             );
           case BlockTypes.EMPTY:

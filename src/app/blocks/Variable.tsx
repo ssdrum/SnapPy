@@ -17,6 +17,8 @@ interface VariableProps {
   isWorkbenchBlock: boolean;
   setCanvasBlocks: Dispatch<SetStateAction<Block[]>> | null;
   setWorkbenchBlocks: Dispatch<SetStateAction<Block[]>> | null;
+  name: string | null;
+  value: string | null;
 }
 
 export default function Variable({
@@ -26,14 +28,16 @@ export default function Variable({
   isWorkbenchBlock,
   setCanvasBlocks,
   setWorkbenchBlocks,
+  name,
+  value,
 }: VariableProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
   });
 
   // State of input boxes
-  const [name, setName] = useState('');
-  const [value, setValue] = useState('');
+  const [variableName, setVariableName] = useState(name ?? '');
+  const [variableValue, setVariableValue] = useState(value ?? '');
 
   // Need this ref to calculate the position of the block relative to its container
   // (if is a workbench block)
@@ -47,7 +51,7 @@ export default function Variable({
 
   // Updates the name of the variable both in its state and in the editor'state
   const handleChangeName = (id: number, name: string) => {
-    setName(name);
+    setVariableName(name);
 
     // TODO: check for invalid names. (maybe with regex?)
 
@@ -67,7 +71,7 @@ export default function Variable({
 
   // Updates the value of the variable both in its state and in the editor'state
   const handleChangeValue = (id: number, value: string) => {
-    setValue(value);
+    setVariableValue(value);
 
     // TODO: check for invalid values. (maybe with regex?)
 
@@ -128,7 +132,7 @@ export default function Variable({
             disabled={isWorkbenchBlock}
             type='text'
             placeholder='a'
-            value={name}
+            value={variableName}
             onChange={(e) => handleChangeName(id, e.target.value)}
             style={{
               width: '100%',
@@ -150,7 +154,7 @@ export default function Variable({
             disabled={isWorkbenchBlock}
             type='text'
             placeholder='0'
-            value={value}
+            value={variableValue}
             onChange={(e) => handleChangeValue(id, e.target.value)}
             style={{
               width: '100%',
