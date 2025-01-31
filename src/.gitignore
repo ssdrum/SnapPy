@@ -26,3 +26,4 @@ dist
 *.sln
 *.sw?
 .env
+.DS_Store

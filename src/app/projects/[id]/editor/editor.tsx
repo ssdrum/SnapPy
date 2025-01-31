@@ -9,7 +9,7 @@ import { Coordinates } from '@dnd-kit/utilities';
 import Workbench from './workbench';
 import Canvas from './canvas';
 import { Block } from '@/app/blocks/types';
-import {saveProject} from './actions'
+import { saveProject } from './actions';
 
 interface EditorProps {
   workbenchBlocks: Block[];
@@ -93,8 +93,8 @@ export default function Editor({
   );
 
   const handleSubmit = () => {
-    saveProject(projectId, JSON.stringify(workbenchBlocks))
-  }
+    saveProject(projectId, JSON.stringify(canvasBlocks));
+  };
 
   const style: React.CSSProperties = {
     display: 'flex',
@@ -109,10 +109,11 @@ export default function Editor({
 
   return (
     <>
-      {/* JSON Display for canvasBlocks */}
-        <form action={handleSubmit}>
-          <button type="submit">Save</button>
-        </form>
+      {/* Save blocks to DB */}
+      <form action={handleSubmit}>
+        <button type='submit'>Save</button>
+      </form>
+
       <div style={{ display: 'flex' }}>
         <DndContext
           id='dnd-context' // Needs a unique id to avoid hydration errors
