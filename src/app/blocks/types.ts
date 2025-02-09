@@ -19,6 +19,4 @@ export interface VariableBlock extends BlockInterface {
   value: string;
 }
 
-interface EmptyBlock extends BlockInterface {}
-
-export type Block = VariableBlock | EmptyBlock;
+export type Block = BlockInterface | VariableBlock;

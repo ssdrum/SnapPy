@@ -18,7 +18,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ account, profile }) {
+    async signIn({ profile }) {
       if (!profile?.email) {
         throw new Error('No profile');
       }
@@ -39,16 +39,18 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     session,
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, profile }) {
       if (profile) {
         const user = await prisma.user.findUnique({
           where: {
             email: profile.email,
           },
         });
+
         if (!user) {
           throw new Error('No user found');
         }
+
         token.id = user.id;
       }
 

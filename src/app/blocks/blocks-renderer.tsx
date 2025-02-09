@@ -23,7 +23,7 @@ export default function BlocksRenderer({
         const { id, type, coords, isWorkbenchBlock } = block;
 
         switch (type) {
-          case BlockTypes.VARIABLE:
+          case BlockTypes.VARIABLE: {
             const { name, value } = block as VariableBlock;
             return (
               <Variable
@@ -38,6 +38,7 @@ export default function BlocksRenderer({
                 value={value}
               />
             );
+          }
           case BlockTypes.EMPTY:
             return (
               <Empty

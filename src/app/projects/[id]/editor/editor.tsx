@@ -4,6 +4,8 @@ import {
   useSensor,
   useSensors,
   PointerSensor,
+  Over,
+  Translate,
 } from '@dnd-kit/core';
 import { Coordinates } from '@dnd-kit/utilities';
 import Workbench from './workbench';
@@ -27,7 +29,11 @@ export default function Editor({
   blocksCount,
   setBlocksCount,
 }: EditorProps) {
-  const handleDragEnd = (active: number, over: any, delta: Coordinates) => {
+  const handleDragEnd = (
+    active: number,
+    over: Over | null,
+    delta: Translate
+  ) => {
     if (!over) {
       return;
     }
