@@ -54,7 +54,7 @@ export default function Page() {
   });
 
   const handleSubmit = () => {
-    saveProject(id, JSON.stringify(canvasBlocks));
+    saveProject(id, canvasBlocks);
   };
 
   const style: React.CSSProperties = {

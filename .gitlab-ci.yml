@@ -8,5 +8,5 @@ lint:
   script:
     - cd src
     - bun install
-    - bun run lint # Perform static analysis
+    - bun run lint # Perform static analysis / type checking
     - bun run format:check # Check formatting rules
