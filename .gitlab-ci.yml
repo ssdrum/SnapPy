@@ -1,0 +1,12 @@
+image: oven/bun:latest
+
+stages:
+  - lint
+
+lint:
+  stage: lint
+  script:
+    - cd src
+    - bun install
+    - bun run lint # Perform static analysis
+    - bun run format:check # Check formatting rules
