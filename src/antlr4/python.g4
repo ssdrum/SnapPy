@@ -1,5 +1,0 @@
-grammar python;
-
-prog
-    : 'def'
-    ;
