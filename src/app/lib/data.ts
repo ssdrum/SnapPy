@@ -46,11 +46,13 @@ export async function updateProject(
   projectId: number,
   data: Block[]
 ): Promise<Project> {
-  // TODO: Handle unauthorised user
+  const jsonData: Prisma.InputJsonValue = JSON.parse(JSON.stringify(data));
 
   const project = await prisma.project.update({
     where: { id: projectId },
-    data: { data: data as Prisma.JsonValue }, // TODO: This SHOULD work for now. Check compiler issues
+    data: {
+      data: jsonData,
+    },
   });
 
   return project;

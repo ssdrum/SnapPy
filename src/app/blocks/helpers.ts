@@ -12,7 +12,7 @@ import React, { Dispatch, SetStateAction } from 'react';
  * @param id - The identifier of the block to be updated.
  */
 export function updateWorkbenchBlockCoords(
-  localRef: React.RefObject<HTMLDivElement>,
+  localRef: React.RefObject<HTMLDivElement | null>,
   setWorkbenchBlocks: Dispatch<SetStateAction<Block[]>> | null,
   id: number
 ) {
