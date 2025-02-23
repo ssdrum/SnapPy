@@ -33,7 +33,7 @@ export default function Page() {
     }
 
     try {
-      return JSON.parse(data as string) as Block[]; // Parse project data retreived from DB into blocks array
+      return JSON.parse(JSON.stringify(data)) as Block[]; // Parse project data retreived from DB into blocks array
     } catch (error) {
       console.error('Error parsing canvasBlocks from data:', error);
       return [];
