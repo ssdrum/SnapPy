@@ -10,7 +10,7 @@ type Props = {
 };
 
 // Initialise context as undefined
-export const DashboardContext = createContext<
+export const ProjectsContext = createContext<
   | {
       projects: Project[];
     }
@@ -18,16 +18,16 @@ export const DashboardContext = createContext<
 >(undefined);
 
 // Takes user data as props and stores them in a context object
-const DashboardProvider: FC<Props> = ({ children, projects }) => {
+const ProjectsProvider: FC<Props> = ({ children, projects }) => {
   return (
-    <DashboardContext.Provider
+    <ProjectsContext.Provider
       value={{
         projects: projects,
       }}
     >
       {children}
-    </DashboardContext.Provider>
+    </ProjectsContext.Provider>
   );
 };
 
-export default DashboardProvider;
+export default ProjectsProvider;
