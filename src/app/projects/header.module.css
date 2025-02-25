@@ -1,0 +1,6 @@
+.header {
+  height: 3rem;
+  padding-left: var(--mantine-spacing-md);
+  padding-right: var(--mantine-spacing-md);
+  background: var(--mantine-primary-color-0);
+}

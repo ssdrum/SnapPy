@@ -7,7 +7,7 @@ export default async function Home() {
 
   // redirect if logged in
   if (user) {
-    redirect('/dashboard');
+    redirect('/projects');
   }
 
   return 'Home';

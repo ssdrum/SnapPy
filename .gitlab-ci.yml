@@ -1,12 +1,26 @@
-image: oven/bun:latest
+image: node:23-alpine
 
 stages:
   - lint
+  - test
+
+cache:
+  untracked: true
+  paths:
+    - src/node_modules/
 
 lint:
   stage: lint
   script:
     - cd src
+    - npm install -g bun@1.1.39
     - bun install
-    - bun run lint # Perform static analysis / type checking
-    - bun run format:check # Check formatting rules
+    - bun run lint
+    - bun run format:check
+
+test:
+  stage: test
+  script:
+    - cd src
+    - npm install -g bun@1.1.39
+    - bun run test

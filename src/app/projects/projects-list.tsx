@@ -1,11 +1,11 @@
 'use client';
 
 import { useContext } from 'react';
-import { DashboardContext } from '@/app/dashboard/dashboard-context';
 import Link from 'next/link';
+import { ProjectsContext } from './projects-context';
 
 export default function ProjectsList() {
-  const projects = useContext(DashboardContext)!; // Fetch projects from context
+  const projects = useContext(ProjectsContext)!; // Fetch projects from context
 
   return (
     <>

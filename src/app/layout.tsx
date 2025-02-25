@@ -1,5 +1,11 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import '@mantine/core/styles.css';
+import {
+  ColorSchemeScript,
+  MantineProvider,
+  mantineHtmlProps,
+} from '@mantine/core';
 
 export const metadata: Metadata = {
   title: 'Snap-py',
@@ -12,9 +18,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en'>
+    <html lang='en' {...mantineHtmlProps}>
+      <head>
+        <ColorSchemeScript />
+      </head>
       <body>
-        <div id='root'>{children}</div>
+        <MantineProvider>
+          <div id='root'>{children}</div>
+        </MantineProvider>
       </body>
     </html>
   );

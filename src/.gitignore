@@ -15,6 +15,7 @@ dist-ssr
 next-env.d.ts
 dist
 tsconfig.tsbuildinfo
+coverage
 
 # Editor directories and files
 .vscode/*
