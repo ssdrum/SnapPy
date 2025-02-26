@@ -1,8 +1,6 @@
 'use client';
 
 import {
-  Box,
-  Button,
   Group,
   Menu,
   Title,
@@ -12,47 +10,63 @@ import {
   Anchor,
   MenuDivider,
   MenuLabel,
+  UnstyledButton,
+  Text,
+  Avatar,
 } from '@mantine/core';
 import { signOut } from 'next-auth/react';
-import { IconLogout } from '@tabler/icons-react';
+import { IconChevronDown, IconLogout } from '@tabler/icons-react';
+import { Session } from '@/app/lib/types';
 
 import classes from './header.module.css';
 
 interface HeaderProps {
-  userName: string;
-  userEmail: string;
+  session: Session;
 }
 
-export default function Header({ userName, userEmail }: HeaderProps) {
+export default function Header({ session }: HeaderProps) {
+  const { name, email, image } = session;
+
   return (
-    <Box mb={10}>
-      <header className={classes.header}>
-        <Group justify='space-between'>
-          <Anchor href='/projects' underline='never'>
-            <Title>Snap-Py</Title>
-          </Anchor>
+    <div className={classes.container}>
+      <Group justify='space-between'>
+        <Anchor href='/projects' underline='never'>
+          <Title>Snap-Py</Title>
+        </Anchor>
 
-          <Menu width={200}>
-            <MenuTarget>
-              <Button>{userName}</Button>
-            </MenuTarget>
+        <Menu width={220}>
+          <MenuTarget>
+            <UnstyledButton className={classes.user}>
+              <Group gap={7}>
+                {image ? (
+                  <Avatar src={image} alt={name} size={30} />
+                ) : (
+                  <Avatar alt={name} size={30} />
+                )}
 
-            <MenuDropdown>
-              <MenuLabel>{userEmail}</MenuLabel>
+                <Text fw={500} size='sm' lh={1} mr={3}>
+                  {name}
+                </Text>
+                <IconChevronDown size={12} stroke={1.5} />
+              </Group>
+            </UnstyledButton>
+          </MenuTarget>
 
-              <MenuDivider />
+          <MenuDropdown>
+            <MenuLabel>{email}</MenuLabel>
 
-              <MenuItem
-                color='red'
-                onClick={() => signOut()}
-                leftSection={<IconLogout />}
-              >
-                Log Out
-              </MenuItem>
-            </MenuDropdown>
-          </Menu>
-        </Group>
-      </header>
-    </Box>
+            <MenuDivider />
+
+            <MenuItem
+              color='red'
+              onClick={() => signOut()}
+              leftSection={<IconLogout />}
+            >
+              Log Out
+            </MenuItem>
+          </MenuDropdown>
+        </Menu>
+      </Group>
+    </div>
   );
 }
