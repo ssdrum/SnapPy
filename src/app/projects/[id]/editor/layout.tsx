@@ -30,9 +30,5 @@ export default async function EditorLayout({
     redirect('/projects/not-found');
   }
 
-  return (
-    <EditorProvider project={project}>
-      <main>{children}</main>
-    </EditorProvider>
-  );
+  return <EditorProvider project={project}>{children}</EditorProvider>;
 }
