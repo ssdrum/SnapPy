@@ -1,22 +1,13 @@
-/* 
-  Renders a list of blocks
- */
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { Block, BlockTypes, VariableBlock } from './types';
 import Variable from './variable';
 import Empty from './empty';
 
 interface BlocksRendererProps {
   blocks: Block[];
-  setCanvasBlocks: Dispatch<SetStateAction<Block[]>> | null;
-  setWorkbenchBlocks: Dispatch<SetStateAction<Block[]>> | null;
 }
 
-export default function BlocksRenderer({
-  blocks,
-  setCanvasBlocks,
-  setWorkbenchBlocks,
-}: BlocksRendererProps) {
+export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
   return (
     <>
       {blocks.map((block) => {
@@ -32,8 +23,6 @@ export default function BlocksRenderer({
                 top={coords.y}
                 left={coords.x}
                 isWorkbenchBlock={isWorkbenchBlock}
-                setCanvasBlocks={setCanvasBlocks}
-                setWorkbenchBlocks={setWorkbenchBlocks}
                 name={name}
                 value={value}
               />
@@ -47,7 +36,6 @@ export default function BlocksRenderer({
                 top={coords.y}
                 left={coords.x}
                 isWorkbenchBlock={isWorkbenchBlock}
-                setWorkbenchBlocks={setWorkbenchBlocks}
               />
             );
           default:

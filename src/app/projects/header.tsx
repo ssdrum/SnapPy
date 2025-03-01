@@ -38,12 +38,7 @@ export default function Header({ session }: HeaderProps) {
           <MenuTarget>
             <UnstyledButton className={classes.user}>
               <Group gap={7}>
-                {image ? (
-                  <Avatar src={image} alt={name} size={30} />
-                ) : (
-                  <Avatar alt={name} size={30} />
-                )}
-
+                <Avatar src={image} alt={name} size={30} />
                 <Text fw={500} size='sm' lh={1} mr={3}>
                   {name}
                 </Text>

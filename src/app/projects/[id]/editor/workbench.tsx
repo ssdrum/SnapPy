@@ -1,32 +1,16 @@
-import React, { Dispatch, SetStateAction } from 'react';
-import { Block } from '@/app/blocks/types';
+import React, { useContext } from 'react';
+import { EditorContext } from './editor-context';
 import BlocksRenderer from '@/app/blocks/blocks-renderer';
 import Bin from './bin.tsx';
+import classes from './editor.module.css';
 
-interface WorkbenchProps {
-  blocks: Block[];
-  setWorkbenchBlocks: Dispatch<SetStateAction<Block[]>>;
-}
-
-export default function Workbench({
-  blocks,
-  setWorkbenchBlocks,
-}: WorkbenchProps) {
-  const style: React.CSSProperties = {
-    width: '250px',
-    background: 'rgba(255, 255, 255, 0.1)', // Semi-transparent background
-    backdropFilter: 'blur(5px)', // Blur effect on the background
-    borderRight: '1px solid black',
-  };
+export default function Workbench() {
+  const { workbenchBlocks } = useContext(EditorContext)!;
 
   return (
-    <div style={style}>
+    <div className={classes.workbench}>
       <Bin />
-      <BlocksRenderer
-        blocks={blocks}
-        setCanvasBlocks={null}
-        setWorkbenchBlocks={setWorkbenchBlocks}
-      />
+      <BlocksRenderer blocks={workbenchBlocks} />
     </div>
   );
 }

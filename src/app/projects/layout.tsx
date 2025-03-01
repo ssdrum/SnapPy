@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'; // Use this redirect function for se
 import { fetchProjectsByUser } from '@/app/lib/data';
 import ProjectsProvider from './projects-context';
 import Header from './header';
-import { AppShell, AppShellHeader, AppShellMain } from '@mantine/core';
+import { AppShell, AppShellHeader } from '@mantine/core';
 
 // Handle authorization in layout page
 export default async function ProjectsLayout({
@@ -27,7 +27,7 @@ export default async function ProjectsLayout({
         <AppShellHeader>
           <Header session={session} />
         </AppShellHeader>
-        <AppShellMain>{children}</AppShellMain>
+        {children}
       </AppShell>
     </ProjectsProvider>
   );
