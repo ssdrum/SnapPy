@@ -3,18 +3,15 @@
 import React from 'react';
 import { ReactNode, createContext } from 'react';
 import { Project } from '@prisma/client';
-import { Coordinates } from '@dnd-kit/core/dist/types';
+import { DragEndEvent } from '@dnd-kit/core/dist/types';
 import { Block } from '@/app/blocks/types';
 import useBlocks from '@/app/hooks/useBlocks';
+import { SensorDescriptor, SensorOptions } from '@dnd-kit/core';
 
 type EditorContextType = {
   project: Project;
   workbenchBlocks: Block[];
   canvasBlocks: Block[];
-  getNewBlockId: () => number;
-  createCanvasBlock: (originalBlockId: number, delta: Coordinates) => void;
-  moveCanvasBlock: (blockId: number, delta: Coordinates) => void;
-  deleteCanvasBlock: (blockId: number) => void;
   updateWorkbenchBlockFieldById: <T extends Block>(
     blockId: number,
     updates: Partial<T>
@@ -23,6 +20,8 @@ type EditorContextType = {
     blockId: number,
     updates: Partial<T>
   ) => void;
+  handleDragEnd: (event: DragEndEvent) => void;
+  sensors: SensorDescriptor<SensorOptions>[];
 };
 
 interface EditorContextProps {
@@ -40,24 +39,20 @@ export default function EditorProvider({
   const {
     workbenchBlocks,
     canvasBlocks,
-    getNewBlockId,
-    createCanvasBlock,
-    moveCanvasBlock,
-    deleteCanvasBlock,
     updateWorkbenchBlockFieldById,
     updateCanvasBlockFieldById,
+    handleDragEnd,
+    sensors,
   } = useBlocks(project.data);
 
   const contextValue: EditorContextType = {
     project,
     workbenchBlocks,
     canvasBlocks,
-    getNewBlockId,
-    createCanvasBlock,
-    moveCanvasBlock,
-    deleteCanvasBlock,
     updateWorkbenchBlockFieldById,
     updateCanvasBlockFieldById,
+    handleDragEnd,
+    sensors,
   };
 
   return (

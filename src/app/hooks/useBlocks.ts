@@ -2,6 +2,13 @@ import { useState } from 'react';
 import { Block, BlockTypes } from '@/app/blocks/types';
 import { JsonValue } from '@prisma/client/runtime/library';
 import { Coordinates } from '@dnd-kit/core/dist/types';
+import {
+  DragEndEvent,
+  Over,
+  useSensor,
+  useSensors,
+  PointerSensor,
+} from '@dnd-kit/core';
 
 export default function useBlocks(data: JsonValue) {
   const [workbenchBlocks, setWorkbenchBlocks] = useState<Block[]>([
@@ -141,9 +148,41 @@ export default function useBlocks(data: JsonValue) {
     });
   };
 
+  // Triggered when a drag event ends. Either move a block, delete one,
+  // create one, or do nothing.
+  // Handle the drag end event
+  const handleDragEnd = (event: DragEndEvent): void => {
+    const { active, over, delta } = event;
+
+    if (!over) {
+      return;
+    }
+
+    const activeId = active.id as number;
+
+    if (wasDroppedOnCanvas(over)) {
+      if (isWorkbenchBlock(activeId)) {
+        createCanvasBlock(activeId, delta);
+      } else {
+        moveCanvasBlock(activeId, delta);
+      }
+    } else if (!isWorkbenchBlock(activeId) && wasDroppedOnBin(over)) {
+      deleteCanvasBlock(activeId);
+    }
+  };
+
+  // This workaround allows the onClick events for the input boxes to trigger.
+  // Without it, the dragEvent will override any onClick
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 0.1,
+      },
+    })
+  );
+
   return {
     workbenchBlocks,
-    setWorkbenchBlocks,
     canvasBlocks,
     getNewBlockId,
     createCanvasBlock,
@@ -151,6 +190,8 @@ export default function useBlocks(data: JsonValue) {
     deleteCanvasBlock,
     updateCanvasBlockFieldById,
     updateWorkbenchBlockFieldById,
+    handleDragEnd,
+    sensors,
   };
 }
 
@@ -186,3 +227,16 @@ function parseBlocksFromDB(data: JsonValue): Block[] {
 const findBlockIndex = (blocks: Block[], blockId: number) => {
   return blocks.findIndex((b) => b.id === blockId);
 };
+
+// Returns true if block with id = is is a workbench block. Return false otherwise.
+export const isWorkbenchBlock = (id: number) => id < 0;
+
+export const wasDroppedOnCanvas = (over: Over) => over.id === DropZones.CANVAS;
+
+export const wasDroppedOnBin = (over: Over) => over.id === DropZones.BIn;
+
+// Zones over which a draggable object can be dropped
+export enum DropZones {
+  CANVAS = 'canvas',
+  BIn = 'bin',
+}

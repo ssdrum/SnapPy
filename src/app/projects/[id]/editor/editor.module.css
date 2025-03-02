@@ -31,10 +31,21 @@
   min-width: 2000px;
 }
 
-.codeEditor {
+.codeEditorWrapper {
   width: 450px;
-  background-color: #f0f0f0;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.codeEditor {
+  flex: 1;
+  padding: 1rem;
   overflow: auto;
-  border: 1px solid black;
+}
+
+.codeOutput {
+  height: 300px;
+  overflow: auto;
 }
