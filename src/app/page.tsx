@@ -1,7 +1,7 @@
 import { getUserSession } from './lib/session';
 import SignInButton from './sign-in-button';
 import { redirect } from 'next/navigation';
-import { Session } from '@/app/lib/types';
+import { Session } from '@/app/lib/session';
 import classes from './page.module.css';
 import { Container, Text, Title } from '@mantine/core';
 

@@ -2,7 +2,8 @@ import { getUserSession } from '@/app/lib/session';
 import { prisma } from './prisma';
 import { Project } from '@prisma/client';
 import { Prisma } from '@prisma/client';
-import { Block } from '@/app/blocks/types';
+import { Block } from '@/app/projects/[id]/editor/blocks/types';
+import { JsonValue } from '@prisma/client/runtime/library';
 
 // Fetch projects by user
 export const fetchProjectsByUser = async (
@@ -56,4 +57,19 @@ export async function updateProject(
   });
 
   return project;
+}
+
+// Parses JSON data to an array of blocks
+export function parseBlocksFromDB(data: JsonValue): Block[] {
+  if (!data) {
+    console.error('No data returned from DB');
+    return [];
+  }
+
+  try {
+    return JSON.parse(JSON.stringify(data)) as Block[]; // Parse project data retreived from DB into blocks array
+  } catch (error) {
+    console.error('Error parsing canvasBlocks from data:', error);
+    return [];
+  }
 }

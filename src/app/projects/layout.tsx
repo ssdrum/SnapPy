@@ -1,4 +1,4 @@
-import { Session } from '@/app/lib/types';
+import { Session } from '@/app/lib/session';
 import { getUserSession } from '@/app/lib/session';
 import { redirect } from 'next/navigation'; // Use this redirect function for server components
 import { fetchProjectsByUser } from '@/app/lib/data';
@@ -23,7 +23,7 @@ export default async function ProjectsLayout({
 
   return (
     <ProjectsProvider projects={projects}>
-      <AppShell header={{ height: 60 }} padding={'md'}>
+      <AppShell header={{ height: 60 }} padding={'xs'}>
         <AppShellHeader>
           <Header session={session} />
         </AppShellHeader>

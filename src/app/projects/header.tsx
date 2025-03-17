@@ -16,7 +16,7 @@ import {
 } from '@mantine/core';
 import { signOut } from 'next-auth/react';
 import { IconChevronDown, IconLogout } from '@tabler/icons-react';
-import { Session } from '@/app/lib/types';
+import { Session } from '@/app/lib/session';
 
 import classes from './header.module.css';
 

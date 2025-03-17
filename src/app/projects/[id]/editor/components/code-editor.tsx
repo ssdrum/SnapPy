@@ -4,7 +4,7 @@ import { highlight, languages } from 'prismjs';
 import 'prismjs/themes/prism-coy.css';
 import 'prismjs/components/prism-python';
 import { Paper, rem } from '@mantine/core';
-import classes from './editor.module.css';
+import classes from '../editor.module.css';
 
 interface CodeEditorProps {
   code: string;
@@ -16,13 +16,7 @@ export default function CodeEditor({
   handleCodeChange,
 }: CodeEditorProps) {
   return (
-    <Paper
-      className={classes.codeEditor}
-      shadow='sm'
-      radius='md'
-      p='xs'
-      withBorder
-    >
+    <Paper className={classes.codeEditor}>
       <Editor
         value={code}
         onValueChange={(newCode) => handleCodeChange(newCode)}

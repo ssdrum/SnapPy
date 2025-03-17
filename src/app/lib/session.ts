@@ -1,5 +1,12 @@
-import { Session } from '@/app/lib/types';
 import { getServerSession } from 'next-auth';
+
+// Return type of getUserSession()
+export type Session = {
+  name: string;
+  email: string;
+  image?: string;
+  id: number;
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const session = async ({ session, token }: any) => {

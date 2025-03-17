@@ -1,6 +1,6 @@
 import React from 'react';
 import { Paper, Text, ScrollArea, Title, Divider } from '@mantine/core';
-import classes from './editor.module.css';
+import classes from '../editor.module.css';
 
 interface OutputBoxProps {
   output: string[];
