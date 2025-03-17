@@ -39,7 +39,8 @@ export default function useCodeEditor() {
       }
     }
 
-    loadPyodide();
+    //loadPyodide();
+    loadPyodide.toString(); // Avoids no unused variables error
   }, []);
 
   const handleCodeChange = (newCode: string): void => {

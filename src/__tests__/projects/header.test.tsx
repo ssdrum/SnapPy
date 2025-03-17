@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, userEvent, waitFor } from '../test-utils';
 import Header from '@/app/projects/header';
-import { Session } from '@/app/lib/types';
+import { Session } from '@/app/lib/session';
 
 describe('Header', () => {
   const session: Session = {

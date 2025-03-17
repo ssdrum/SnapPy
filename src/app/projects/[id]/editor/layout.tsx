@@ -1,34 +1,43 @@
 import React from 'react';
-import { Session } from '@/app/lib/types';
-import { getUserSession } from '@/app/lib/session';
-import { redirect } from 'next/navigation'; // Use this redirect function for server components
-import { fetchProjectById } from '@/app/lib/data';
-import EditorProvider from '@/app/projects/[id]/editor/editor-context';
+import { redirect } from 'next/navigation';
+import { Session, getUserSession } from '@/app/lib/session';
+import { fetchProjectById, parseBlocksFromDB } from '@/app/lib/data';
+import ProjectProvider from './contexts/project-context';
+import BlocksProvider from './contexts/blocks-context';
+
+interface EditorLayoutProps {
+  children: React.ReactNode;
+  params: Promise<{ id: string }>;
+}
 
 export default async function EditorLayout({
   children,
   params,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ id: string }>;
-}) {
+}: EditorLayoutProps) {
   // Check if user is authenticated
   const session: Session = await getUserSession();
   if (session === undefined) {
     redirect('/');
   }
 
-  // Fetch project info from db
+  // Take project id from url
   const { id } = await params;
+  // Fetch project data
   const project = await fetchProjectById(Number(id));
   if (!project) {
-    redirect('/projects/not-found'); // Redirect to a "not found" page or handle error
+    redirect('/projects/not-found'); // TODO: Implement not found page
   }
 
   // User is trying to access someone else's project
   if (project.userId !== session.id) {
-    redirect('/projects/not-found');
+    redirect('/projects/not-found'); // TODO: Implement not found page
   }
 
-  return <EditorProvider project={project}>{children}</EditorProvider>;
+  const canvasBlocks = parseBlocksFromDB(project.data);
+
+  return (
+    <ProjectProvider project={project}>
+      <BlocksProvider canvasBlocks={canvasBlocks}>{children}</BlocksProvider>
+    </ProjectProvider>
+  );
 }
