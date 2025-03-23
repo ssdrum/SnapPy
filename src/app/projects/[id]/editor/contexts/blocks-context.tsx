@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 interface BlocksProviderProps {
   children: React.ReactNode;
   canvasBlocks: Block[];
+  variables: string[];
 }
 
 // This might seem redundant and it probably is. I just need to wrap it into an
@@ -31,6 +32,7 @@ interface BlocksContextType {
   createBlockAction: (id: string) => void;
   deleteBlockAction: (id: string) => void;
   createVariableAction: (name: string) => boolean;
+  changeVariableSelectedOptionAction: (selected: string, id?: string) => void;
 }
 
 // Create context object
@@ -49,14 +51,16 @@ export const useBlocks = () => {
 export default function BlocksProvider({
   children,
   canvasBlocks,
+  variables,
 }: BlocksProviderProps) {
   const initialState: BlocksState = {
     workbenchBlocks: workBenchBlocks,
     canvasBlocks,
-    variables: [],
+    variables: variables.length > 0 ? variables : ['x'],
     selectedBlockId: null,
     draggingBlockId: null,
   };
+  console.log(variables);
 
   const [state, dispatch] = useReducer(BlocksReducer, initialState);
 
@@ -116,6 +120,26 @@ export default function BlocksProvider({
     return true;
   };
 
+  /* If no id is passed, this function will update the workbench variable block */
+  const changeVariableSelectedOptionAction = (
+    selected: string,
+    id?: string
+  ) => {
+    const isWorkbenchBlock = id ? false : true;
+
+    // Find id of variable block in the workbench
+    if (!id) {
+      id = state.workbenchBlocks.find((block) => {
+        return block.type === BlockType.Variable;
+      })!.id;
+    }
+
+    dispatch({
+      type: BlockActionEnum.CHANGE_VARIABLE_SELECTED_OPTION,
+      payload: { id, isWorkbenchBlock, selected },
+    });
+  };
+
   const value: BlocksContextType = {
     state,
     selectBlockAction,
@@ -125,6 +149,7 @@ export default function BlocksProvider({
     createBlockAction,
     deleteBlockAction,
     createVariableAction,
+    changeVariableSelectedOptionAction,
   };
 
   return (
@@ -147,8 +172,8 @@ const workBenchBlocks: Block[] = [
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
-    name: 'x',
     dataType: DataType.Int,
+    selected: 'x',
     value: 1,
   },
 ];

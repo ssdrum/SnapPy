@@ -31,7 +31,10 @@ export default function Canvas() {
           </Text>
         </Box>
       ) : (
-        <BlocksRenderer blocks={state.canvasBlocks} />
+        <BlocksRenderer
+          blocks={state.canvasBlocks}
+          variables={state.variables}
+        />
       )}
     </div>
   );

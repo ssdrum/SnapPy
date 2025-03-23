@@ -4,9 +4,13 @@ import Variable from '../blocks/variable';
 
 interface BlocksRendererProps {
   blocks: Block[];
+  variables: string[];
 }
 
-export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
+export default function BlocksRenderer({
+  blocks,
+  variables,
+}: BlocksRendererProps) {
   return (
     <>
       {blocks.map((block) => {
@@ -20,15 +24,15 @@ export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
                 id={id}
                 top={coords.y}
                 left={coords.x}
+                blockType={type}
                 isWorkbenchBlock={isWorkbenchBlock}
                 state={state}
-                blockType={type}
               />
             );
 
           case BlockType.Variable:
             const variableBlock = block as VariableBlock;
-            const { name, dataType, value } = variableBlock;
+            const { selected, dataType, value } = variableBlock;
 
             return (
               <Variable
@@ -36,10 +40,11 @@ export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
                 id={id}
                 top={coords.y}
                 left={coords.x}
+                blockType={type}
                 isWorkbenchBlock={isWorkbenchBlock}
                 state={state}
-                name={name}
-                blockType={type}
+                variables={variables}
+                selected={selected}
                 dataType={dataType}
                 value={value}
               />
