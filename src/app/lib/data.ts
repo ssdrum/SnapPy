@@ -35,41 +35,64 @@ export async function createProject(name: string): Promise<Project> {
     data: {
       name: name,
       userId: user.id,
-      data: Prisma.JsonNull, // Set data to null as default
+      canvasBlocks: Prisma.JsonNull, // Set data to null as default
+      variables: Prisma.JsonNull, // Set data to null as default
     },
   });
 
   return project;
 }
 
-// Update an existing project and add it to db
+/**
+ * Updates an existing project on the db
+ */
 export async function updateProject(
   projectId: number,
-  data: Block[]
+  canvasBlocks: Block[],
+  variables: string[]
 ): Promise<Project> {
-  const jsonData: Prisma.InputJsonValue = JSON.parse(JSON.stringify(data));
+  const canvasBlocksJson: Prisma.InputJsonValue = JSON.parse(
+    JSON.stringify(canvasBlocks)
+  );
+  const variablesJson: Prisma.InputJsonValue = JSON.parse(
+    JSON.stringify(variables)
+  );
 
   const project = await prisma.project.update({
     where: { id: projectId },
     data: {
-      data: jsonData,
+      canvasBlocks: canvasBlocksJson,
+      variables: variablesJson,
     },
   });
 
   return project;
 }
 
-// Parses JSON data to an array of blocks
-export function parseBlocksFromDB(data: JsonValue): Block[] {
-  if (!data) {
-    console.error('No data returned from DB');
+// Parses canvas blocks
+export function parseBlocksFromDB(canvasBlocks: JsonValue): Block[] {
+  if (!canvasBlocks) {
     return [];
   }
 
   try {
-    return JSON.parse(JSON.stringify(data)) as Block[]; // Parse project data retreived from DB into blocks array
+    return JSON.parse(JSON.stringify(canvasBlocks)) as Block[]; // Parse project data retreived from DB into blocks array
   } catch (error) {
-    console.error('Error parsing canvasBlocks from data:', error);
+    console.error('Error parsing canvasBlocks from db:', error);
+    return [];
+  }
+}
+
+// Parses variables
+export function parseVariablesFromDB(variables: JsonValue): string[] {
+  if (!variables) {
+    return [];
+  }
+
+  try {
+    return JSON.parse(JSON.stringify(variables)) as string[];
+  } catch (error) {
+    console.error('Error parsing variables from db:', error);
     return [];
   }
 }

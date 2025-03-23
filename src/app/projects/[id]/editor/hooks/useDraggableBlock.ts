@@ -26,6 +26,7 @@ export default function useDraggableBlock(
     cursor: 'grab',
     width: 'fit-content', // Stops it from taking full width of parent container
     display: 'flex',
+    gap: '8px',
     alignItems: 'center',
     color: 'white',
     fontWeight: 'bold',

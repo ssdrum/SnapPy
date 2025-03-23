@@ -141,6 +141,43 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return { ...state, variables: [...state.variables, name] };
     }
 
+    case BlockActionEnum.CHANGE_VARIABLE_SELECTED_OPTION: {
+      const { id, isWorkbenchBlock, selected } = action.payload;
+
+      const blocksArray = isWorkbenchBlock
+        ? state.workbenchBlocks
+        : state.canvasBlocks;
+
+      const block = validateBlockExists(
+        blocksArray,
+        id,
+        BlockActionEnum.CHANGE_VARIABLE_SELECTED_OPTION
+      );
+      if (!block) return state;
+
+      // Update the block with the new selected variable option
+      const updatedBlock = {
+        ...block,
+        selected: selected,
+      };
+
+      // Update the appropriate blocks array based on whether it's a workbench block
+      if (isWorkbenchBlock) {
+        return {
+          ...state,
+          workbenchBlocks: updateBlockInArray(
+            state.workbenchBlocks,
+            updatedBlock
+          ),
+        };
+      } else {
+        return {
+          ...state,
+          canvasBlocks: updateBlockInArray(state.canvasBlocks, updatedBlock),
+        };
+      }
+    }
+
     default:
       return state;
   }

@@ -1,7 +1,11 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
 import { Session, getUserSession } from '@/app/lib/session';
-import { fetchProjectById, parseBlocksFromDB } from '@/app/lib/data';
+import {
+  fetchProjectById,
+  parseBlocksFromDB,
+  parseVariablesFromDB,
+} from '@/app/lib/data';
 import ProjectProvider from './contexts/project-context';
 import BlocksProvider from './contexts/blocks-context';
 
@@ -33,11 +37,14 @@ export default async function EditorLayout({
     redirect('/projects/not-found'); // TODO: Implement not found page
   }
 
-  const canvasBlocks = parseBlocksFromDB(project.data);
+  const canvasBlocks = parseBlocksFromDB(project.canvasBlocks);
+  const variables = parseVariablesFromDB(project.variables);
 
   return (
     <ProjectProvider project={project}>
-      <BlocksProvider canvasBlocks={canvasBlocks}>{children}</BlocksProvider>
+      <BlocksProvider canvasBlocks={canvasBlocks} variables={variables}>
+        {children}
+      </BlocksProvider>
     </ProjectProvider>
   );
 }

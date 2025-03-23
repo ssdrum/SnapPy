@@ -12,10 +12,11 @@ interface Result {
 
 export async function saveProject(
   projectId: number,
-  data: Block[]
+  canvasBlocks: Block[],
+  variables: string[]
 ): Promise<Result> {
   try {
-    await updateProject(projectId, data);
+    await updateProject(projectId, canvasBlocks, variables);
     revalidatePath(`/projects/${projectId}/editor`); // Update UI with the latest data
     return { success: true, message: 'Project saved successfully!' };
   } catch (error) {

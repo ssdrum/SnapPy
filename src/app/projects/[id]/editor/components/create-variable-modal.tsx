@@ -11,7 +11,8 @@ export default function CreateVariableModal({
   opened,
   close,
 }: CreateVariableModalProps) {
-  const { createVariableAction } = useBlocks();
+  const { createVariableAction, changeVariableSelectedOptionAction } =
+    useBlocks();
   const [name, setName] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
@@ -33,6 +34,8 @@ export default function CreateVariableModal({
       return;
     }
 
+    // Update selected variable in workbench variable block
+    changeVariableSelectedOptionAction(name);
     handleClose();
   };
 

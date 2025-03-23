@@ -25,9 +25,9 @@ interface BlockInterface {
 
 // Variable block
 export interface VariableBlock extends BlockInterface {
-  name: string;
   type: BlockType.Variable;
   dataType: DataType;
+  selected: string;
   value: VariableValue;
 }
 
@@ -61,6 +61,7 @@ export enum BlockActionEnum {
   CREATE_BLOCK = 'create block',
   DELETE_BLOCK = 'delete block',
   CREATE_VARIABLE = 'create variable',
+  CHANGE_VARIABLE_SELECTED_OPTION = 'change variable selected option',
 }
 
 // Action Interfaces
@@ -98,6 +99,11 @@ interface CreateVariableAction {
   payload: { name: string };
 }
 
+interface ChangeVariableSelectedOptionAction {
+  type: BlockActionEnum.CHANGE_VARIABLE_SELECTED_OPTION;
+  payload: { id: string; isWorkbenchBlock: boolean; selected: string };
+}
+
 // Union type of all actions
 export type BlockAction =
   | SelectBlockAction
@@ -106,4 +112,5 @@ export type BlockAction =
   | EndDragAction
   | CreateBlockAction
   | DeleteBlockAction
-  | CreateVariableAction;
+  | CreateVariableAction
+  | ChangeVariableSelectedOptionAction;
