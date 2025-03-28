@@ -60,21 +60,34 @@ export default function EditorPage() {
   const handleDragEnd = (e: DragEndEvent) => {
     const { over, delta, active } = e;
 
-    // Only trigger action if block was dropped onto canvas
-    if (!over) {
-      deleteBlockAction(active.id as string);
-      return;
-    }
+    // Exit early if not dropped on a valid target
+    if (!over) return;
 
     const overId = over.id.toString();
-    // Nest blocks
-    if (overId.startsWith('drop')) {
-      const targetBlock = overId.substr(5); // Remove "drop-" from id
-      addChildBlockAction(active.id.toString(), targetBlock);
+    const activeId = active.id.toString();
+
+    // Handle drop on canvas
+    if (overId === 'canvas') {
+      endDragAction(delta);
       return;
     }
 
-    endDragAction(delta);
+    // Handle nesting blocks
+    if (overId.startsWith('drop-')) {
+      const targetBlock = overId.substring(5); // remove "drop-"
+
+      // Prevent dropping onto itself
+      if (activeId === targetBlock) {
+        endDragAction(delta);
+        return;
+      }
+
+      addChildBlockAction(activeId, targetBlock);
+      return;
+    }
+
+    // Default case - delete the block
+    deleteBlockAction(activeId);
   };
 
   return (
