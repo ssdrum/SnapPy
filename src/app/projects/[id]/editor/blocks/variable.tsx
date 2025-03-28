@@ -11,10 +11,11 @@ interface VariableProps {
   id: string;
   isWorkbenchBlock: boolean;
   selected: string;
-  children?: Block[];
+  children: Block[];
 }
 
 function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
+  console.log(children);
   const { changeVariableSelectedOptionAction, state } = useBlocks();
 
   // Set up the drop zone
@@ -56,7 +57,7 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
       to
       {/* Only display children if this block has any. Display dropzone by default */}
       <div
-        ref={!children ? setNodeRef : undefined} // Only add droppable area if there's no children
+        ref={children.length == 0 ? setNodeRef : undefined} // Only add droppable area if there's no children
         className={classes.snapTarget}
       >
         {children && <BlocksRenderer blocks={children} />}

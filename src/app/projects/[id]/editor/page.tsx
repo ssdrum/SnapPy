@@ -14,7 +14,7 @@ import useCodeEditor from './hooks/use-code-editor';
 import CodeEditor from './components/code-editor';
 import OutputBox from './components/output-box';
 import { useCustomSensors } from './utils/sensors';
-import { isBlockInArray } from './utils/utils';
+import { findParentId, isBlockInArray } from './utils/utils';
 
 export default function EditorPage() {
   const { name, id } = useContext(ProjectContext)!;
@@ -25,6 +25,7 @@ export default function EditorPage() {
     createBlockAction,
     deleteBlockAction,
     addChildBlockAction,
+    removeChildBlockAction,
     state,
   } = useBlocks();
 
@@ -49,10 +50,18 @@ export default function EditorPage() {
     // First de-select any previously selected block
     deselectBlockAction();
 
-    const id = e.active.id as string;
+    // If dragging a block from the workbench, create new canvas block
+    const id = e.active.id.toString();
     if (isBlockInArray(state.workbenchBlocks, id)) {
       createBlockAction(id);
     }
+
+    const parentId = findParentId(state.canvasBlocks, id);
+    if (parentId) {
+      console.log(parentId);
+      removeChildBlockAction(id, parentId);
+    }
+
     // If user started dragging a workbench block, create a new block
     startDragAction(id);
   };
@@ -65,6 +74,8 @@ export default function EditorPage() {
 
     const overId = over.id.toString();
     const activeId = active.id.toString();
+    console.log(overId);
+    console.log(activeId);
 
     // Handle drop on canvas
     if (overId === 'canvas') {
@@ -72,9 +83,9 @@ export default function EditorPage() {
       return;
     }
 
-    // Handle nesting blocks
-    if (overId.startsWith('drop-')) {
-      const targetBlock = overId.substring(5); // remove "drop-"
+    // Handle drop on another block (nesting)
+    if (overId.startsWith('drop')) {
+      const targetBlock = overId.substring(5); // More readable than substr
 
       // Prevent dropping onto itself
       if (activeId === targetBlock) {

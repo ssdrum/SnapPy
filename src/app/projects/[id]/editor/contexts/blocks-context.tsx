@@ -34,6 +34,7 @@ interface BlocksContextType {
   createVariableAction: (name: string) => boolean;
   changeVariableSelectedOptionAction: (selected: string, id?: string) => void;
   addChildBlockAction: (id: string, target: string) => void;
+  removeChildBlockAction: (id: string, parentId: string) => void;
 }
 
 // Create context object
@@ -147,6 +148,13 @@ export default function BlocksProvider({
     });
   };
 
+  const removeChildBlockAction = (id: string, parentId: string) => {
+    dispatch({
+      type: BlockActionEnum.REMOVE_CHILD_BLOCK,
+      payload: { id, parentId },
+    });
+  };
+
   const value: BlocksContextType = {
     state,
     selectBlockAction,
@@ -158,6 +166,7 @@ export default function BlocksProvider({
     createVariableAction,
     changeVariableSelectedOptionAction,
     addChildBlockAction,
+    removeChildBlockAction,
   };
 
   return (
@@ -173,6 +182,8 @@ const workBenchBlocks: Block[] = [
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
+    parentId: null,
+    children: [],
   },
   {
     id: uuidv4(),
@@ -182,6 +193,7 @@ const workBenchBlocks: Block[] = [
     state: BlockState.Idle,
     dataType: DataType.Int,
     selected: 'x',
-    value: 1,
+    parentId: null,
+    children: [],
   },
 ];

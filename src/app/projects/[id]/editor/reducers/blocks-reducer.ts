@@ -213,6 +213,50 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
+    case BlockActionEnum.REMOVE_CHILD_BLOCK: {
+      const { id, parentId } = action.payload;
+
+      // Find the parent block
+      const parentBlock = findBlockById(state.canvasBlocks, parentId);
+      if (!parentBlock) {
+        console.error(
+          `Error in action: ${BlockActionEnum.REMOVE_CHILD_BLOCK}. Parent block with id = ${parentId} not found`
+        );
+        return state;
+      }
+
+      // Find the child block in the parent's children array
+      const childBlock = parentBlock.children.find((child) => child.id === id);
+      if (!childBlock) {
+        console.error(
+          `Error in action: ${BlockActionEnum.REMOVE_CHILD_BLOCK}. Child block with id = ${id} not found in parent's children`
+        );
+        return state;
+      }
+
+      // Reset the child block's state and parent
+      const updatedChildBlock = {
+        ...childBlock,
+        state: BlockState.Idle,
+        parentId: null,
+      };
+
+      // Remove child from parent's children array
+      const updatedParentBlock = {
+        ...parentBlock,
+        children: parentBlock.children.filter((child) => child.id !== id),
+      };
+
+      return {
+        ...state,
+        canvasBlocks: [
+          ...state.canvasBlocks.filter((block) => block.id !== parentId),
+          updatedParentBlock,
+          updatedChildBlock,
+        ],
+      };
+    }
+
     default:
       return state;
   }

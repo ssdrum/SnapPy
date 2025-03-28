@@ -8,6 +8,52 @@ export const isBlockInArray = (blocks: Block[], id: string) => {
 };
 
 /**
+ * Finds the parent ID of a block with the given ID by traversing the block structure
+ */
+export const findParentId = (blocks: Block[], id: string): string | null => {
+  // Direct check for the block in the current level
+  const block = blocks.find((block) => block.id === id);
+  if (block) {
+    return block.parentId;
+  }
+
+  // Recursively search through children of each block
+  for (const block of blocks) {
+    // Check if any child has the target ID
+    for (const childBlock of block.children) {
+      if (childBlock.id === id) {
+        return block.id;
+      }
+    }
+
+    // Recursively search deeper in the children
+    const foundInChildren = findParentId(block.children, id);
+    if (foundInChildren !== null) {
+      return foundInChildren;
+    }
+  }
+
+  return null;
+};
+
+// Helper function to find a block in the tree
+const findBlockInTree = (blocks: Block[], id: string): Block | undefined => {
+  // Check in the current level
+  const block = blocks.find((b) => b.id === id);
+  if (block) return block;
+
+  // Recursively check in children
+  for (const parentBlock of blocks) {
+    if (parentBlock.children.length > 0) {
+      const found = findBlockInTree(parentBlock.children, id);
+      if (found) return found;
+    }
+  }
+
+  return undefined;
+};
+
+/**
  * Resizes a select element to match the width of its selected option
  * @param selectRef React ref to the select element
  * source: https://stackoverflow.com/questions/28308103/adjust-width-of-select-element-according-to-selected-options-width
