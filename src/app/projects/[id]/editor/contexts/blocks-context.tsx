@@ -33,6 +33,7 @@ interface BlocksContextType {
   deleteBlockAction: (id: string) => void;
   createVariableAction: (name: string) => boolean;
   changeVariableSelectedOptionAction: (selected: string, id?: string) => void;
+  addChildBlockAction: (id: string, target: string) => void;
 }
 
 // Create context object
@@ -56,11 +57,10 @@ export default function BlocksProvider({
   const initialState: BlocksState = {
     workbenchBlocks: workBenchBlocks,
     canvasBlocks,
-    variables: variables.length > 0 ? variables : ['x'],
+    variables,
     selectedBlockId: null,
     draggingBlockId: null,
   };
-  console.log(variables);
 
   const [state, dispatch] = useReducer(BlocksReducer, initialState);
 
@@ -140,6 +140,13 @@ export default function BlocksProvider({
     });
   };
 
+  const addChildBlockAction = (id: string, target: string) => {
+    dispatch({
+      type: BlockActionEnum.ADD_CHILD_BLOCK,
+      payload: { id, target },
+    });
+  };
+
   const value: BlocksContextType = {
     state,
     selectBlockAction,
@@ -150,6 +157,7 @@ export default function BlocksProvider({
     deleteBlockAction,
     createVariableAction,
     changeVariableSelectedOptionAction,
+    addChildBlockAction,
   };
 
   return (

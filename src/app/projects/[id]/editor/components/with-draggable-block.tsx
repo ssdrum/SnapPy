@@ -1,7 +1,7 @@
 /* This HOC wraps all blocks to provide draggable functionallity */
 
 import useDraggableBlock from '../hooks/useDraggableBlock';
-import { BlockState, BlockType } from '../blocks/types';
+import { Block, BlockState, BlockType } from '../blocks/types';
 import { useBlocks } from '../contexts/blocks-context';
 import classes from '../blocks/blocks.module.css';
 
@@ -10,17 +10,28 @@ export interface DraggableBlockProps {
   id: string;
   top: number;
   left: number;
-  isWorkbenchBlock: boolean;
-  state: BlockState;
   blockType: BlockType;
+  state: BlockState;
+  isWorkbenchBlock: boolean;
+  parentId?: string;
+  children?: Block[];
 }
 
 export default function withDraggableBlock<T extends object>(
   WrappedBlock: React.ComponentType<T>
 ) {
   const WithDraggable = (props: T & DraggableBlockProps) => {
-    const { id, top, left, isWorkbenchBlock, state, blockType, ...restProps } =
-      props;
+    const {
+      id,
+      top,
+      left,
+      blockType,
+      state,
+      isWorkbenchBlock,
+      parentId,
+      children,
+      ...restProps
+    } = props;
     const { selectBlockAction, deselectBlockAction } = useBlocks();
 
     // Add dnd functionality
@@ -37,8 +48,8 @@ export default function withDraggableBlock<T extends object>(
       // dnd-kit setup
       <div
         ref={setNodeRef}
-        className={classes.base}
-        style={style}
+        className={classes.base} // Static CSS
+        style={style} // Dynamic CSS (bg color etc)
         {...listeners}
         {...attributes}
         onClick={() => {
@@ -51,6 +62,8 @@ export default function withDraggableBlock<T extends object>(
         <WrappedBlock
           id={id}
           isWorkbenchBlock={isWorkbenchBlock}
+          parentId={parentId}
+          children={children}
           {...(restProps as T)}
         />
       </div>

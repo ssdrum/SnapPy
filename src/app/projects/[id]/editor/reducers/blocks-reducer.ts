@@ -178,6 +178,41 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       }
     }
 
+    case BlockActionEnum.ADD_CHILD_BLOCK: {
+      const { id, target } = action.payload;
+
+      // Get parent and nested blocks
+      const targetBlock = validateBlockExists(
+        state.canvasBlocks,
+        target,
+        BlockActionEnum.ADD_CHILD_BLOCK
+      );
+      const nestedBlock = validateBlockExists(
+        state.canvasBlocks,
+        id,
+        BlockActionEnum.ADD_CHILD_BLOCK
+      );
+      if (!targetBlock || !nestedBlock) return state;
+
+      nestedBlock.state = BlockState.Nested;
+      nestedBlock.parentId = target;
+
+      return {
+        ...state,
+        canvasBlocks: state.canvasBlocks
+          .map((block) => {
+            if (block.id === target) {
+              return {
+                ...block,
+                children: [...(block.children || []), nestedBlock], // Append child
+              };
+            }
+            return block;
+          })
+          .filter((block) => block.id !== id), // Remove the block with id == id from the top level
+      };
+    }
+
     default:
       return state;
   }

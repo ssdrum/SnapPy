@@ -21,7 +21,8 @@ export default function useDraggableBlock(
     transform: CSS.Translate.toString(transform),
     top: isWorkbenchBlock ? 0 : top,
     left: isWorkbenchBlock ? 0 : left,
-    position: isWorkbenchBlock ? 'static' : 'absolute',
+    position:
+      isWorkbenchBlock || state === BlockState.Nested ? 'static' : 'absolute',
     zIndex: state === BlockState.Dragging ? '10' : isWorkbenchBlock ? '2' : '1',
 
     backgroundColor: (() => {

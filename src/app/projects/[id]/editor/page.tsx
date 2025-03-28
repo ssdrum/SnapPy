@@ -24,6 +24,7 @@ export default function EditorPage() {
     deselectBlockAction,
     createBlockAction,
     deleteBlockAction,
+    addChildBlockAction,
     state,
   } = useBlocks();
 
@@ -60,8 +61,16 @@ export default function EditorPage() {
     const { over, delta, active } = e;
 
     // Only trigger action if block was dropped onto canvas
-    if (!over || over.id !== 'canvas') {
+    if (!over) {
       deleteBlockAction(active.id as string);
+      return;
+    }
+
+    const overId = over.id.toString();
+    // Nest blocks
+    if (overId.startsWith('drop')) {
+      const targetBlock = overId.substr(5); // Remove "drop-" from id
+      addChildBlockAction(active.id.toString(), targetBlock);
       return;
     }
 

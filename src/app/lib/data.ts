@@ -36,7 +36,7 @@ export async function createProject(name: string): Promise<Project> {
       name: name,
       userId: user.id,
       canvasBlocks: Prisma.JsonNull, // Set data to null as default
-      variables: Prisma.JsonNull, // Set data to null as default
+      variables: ['x'],
     },
   });
 

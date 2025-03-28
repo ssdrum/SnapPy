@@ -21,6 +21,8 @@ interface BlockInterface {
   state: BlockState;
   coords: Coordinates;
   isWorkbenchBlock: boolean;
+  parentId?: string;
+  children?: Block[];
 }
 
 // Variable block
@@ -50,6 +52,7 @@ export enum BlockState {
   Idle = 'idle',
   Selected = 'selected',
   Dragging = 'dragging',
+  Nested = 'nested',
 }
 
 // All possible block actions
@@ -62,6 +65,7 @@ export enum BlockActionEnum {
   DELETE_BLOCK = 'delete block',
   CREATE_VARIABLE = 'create variable',
   CHANGE_VARIABLE_SELECTED_OPTION = 'change variable selected option',
+  ADD_CHILD_BLOCK = 'add child block',
 }
 
 // Action Interfaces
@@ -104,6 +108,11 @@ interface ChangeVariableSelectedOptionAction {
   payload: { id: string; isWorkbenchBlock: boolean; selected: string };
 }
 
+interface AddChildBlockAction {
+  type: BlockActionEnum.ADD_CHILD_BLOCK;
+  payload: { id: string; target: string };
+}
+
 // Union type of all actions
 export type BlockAction =
   | SelectBlockAction
@@ -113,4 +122,5 @@ export type BlockAction =
   | CreateBlockAction
   | DeleteBlockAction
   | CreateVariableAction
-  | ChangeVariableSelectedOptionAction;
+  | ChangeVariableSelectedOptionAction
+  | AddChildBlockAction;

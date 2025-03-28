@@ -10,6 +10,9 @@
   padding: 5px 12px;
   border-radius: 3px;
   transition: box-shadow 0.15s ease;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
 }
 
 .select {
