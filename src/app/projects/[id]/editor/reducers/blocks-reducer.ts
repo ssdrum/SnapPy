@@ -6,6 +6,7 @@ import {
   BlockActionEnum,
 } from '../blocks/types';
 import { v4 as uuidv4 } from 'uuid';
+import { findBlockInForest } from '../utils/utils';
 
 export default function BlocksReducer(state: BlocksState, action: BlockAction) {
   switch (action.type) {
@@ -181,35 +182,74 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     case BlockActionEnum.ADD_CHILD_BLOCK: {
       const { id, target } = action.payload;
 
-      // Get parent and nested blocks
-      const targetBlock = validateBlockExists(
-        state.canvasBlocks,
-        target,
-        BlockActionEnum.ADD_CHILD_BLOCK
-      );
-      const nestedBlock = validateBlockExists(
-        state.canvasBlocks,
-        id,
-        BlockActionEnum.ADD_CHILD_BLOCK
-      );
-      if (!targetBlock || !nestedBlock) return state;
+      // Find the target block that will receive the child block
+      const targetBlock = findBlockInForest(state.canvasBlocks, target);
+      if (!targetBlock) {
+        console.error(
+          `Error in action: ${BlockActionEnum.ADD_CHILD_BLOCK}. Target block with id = ${target} not found`
+        );
+        return state;
+      }
 
-      nestedBlock.state = BlockState.Nested;
-      nestedBlock.parentId = target;
+      // Find the block to be nested
+      const blockToNest = findBlockInForest(state.canvasBlocks, id);
+      if (!blockToNest) {
+        console.error(
+          `Error in action: ${BlockActionEnum.ADD_CHILD_BLOCK}. Block to nest with id = ${id} not found`
+        );
+        return state;
+      }
 
-      return {
-        ...state,
-        canvasBlocks: state.canvasBlocks
+      // Create an updated version of the block to be nested
+      const updatedNestedBlock = {
+        ...blockToNest,
+        state: BlockState.Nested,
+        parentId: target,
+      };
+
+      // Function to update block tree by either:
+      // 1. Updating the target block with a new child
+      // 2. Removing the nested block from its original position
+      const updateBlockTree = (
+        blocks: Block[],
+        isRootLevel: boolean
+      ): Block[] => {
+        return blocks
           .map((block) => {
+            // If this is the target block, add the nested block to its children
             if (block.id === target) {
               return {
                 ...block,
-                children: [...(block.children || []), nestedBlock], // Append child
+                children: [...block.children, updatedNestedBlock],
               };
             }
+
+            // If it has children, process them recursively
+            if (block.children.length > 0) {
+              return {
+                ...block,
+                children: updateBlockTree(block.children, false),
+              };
+            }
+
             return block;
           })
-          .filter((block) => block.id !== id), // Remove the block with id == id from the top level
+          .filter((block) => {
+            // Only filter out the nested block at the level where it exists
+            // We only want to remove it from the root level if it's at the root level
+            if (isRootLevel && block.id === id) {
+              return false;
+            }
+            return true;
+          });
+      };
+
+      // Update the canvas blocks
+      const updatedCanvasBlocks = updateBlockTree(state.canvasBlocks, true);
+
+      return {
+        ...state,
+        canvasBlocks: updatedCanvasBlocks,
       };
     }
 

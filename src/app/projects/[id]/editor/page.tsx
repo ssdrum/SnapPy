@@ -58,7 +58,6 @@ export default function EditorPage() {
 
     const parentId = findParentId(state.canvasBlocks, id);
     if (parentId) {
-      console.log(parentId);
       removeChildBlockAction(id, parentId);
     }
 
@@ -74,8 +73,6 @@ export default function EditorPage() {
 
     const overId = over.id.toString();
     const activeId = active.id.toString();
-    console.log(overId);
-    console.log(activeId);
 
     // Handle drop on canvas
     if (overId === 'canvas') {
@@ -85,7 +82,7 @@ export default function EditorPage() {
 
     // Handle drop on another block (nesting)
     if (overId.startsWith('drop')) {
-      const targetBlock = overId.substring(5); // More readable than substr
+      const targetBlock = overId.substring(5);
 
       // Prevent dropping onto itself
       if (activeId === targetBlock) {

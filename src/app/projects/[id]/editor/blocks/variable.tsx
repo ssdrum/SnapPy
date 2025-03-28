@@ -15,7 +15,6 @@ interface VariableProps {
 }
 
 function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
-  console.log(children);
   const { changeVariableSelectedOptionAction, state } = useBlocks();
 
   // Set up the drop zone
