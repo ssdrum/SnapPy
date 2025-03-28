@@ -3,6 +3,7 @@
 import useDraggableBlock from '../hooks/useDraggableBlock';
 import { BlockState, BlockType } from '../blocks/types';
 import { useBlocks } from '../contexts/blocks-context';
+import classes from '../blocks/blocks.module.css';
 
 // Base props that all draggable blocks will have
 export interface DraggableBlockProps {
@@ -36,6 +37,7 @@ export default function withDraggableBlock<T extends object>(
       // dnd-kit setup
       <div
         ref={setNodeRef}
+        className={classes.base}
         style={style}
         {...listeners}
         {...attributes}

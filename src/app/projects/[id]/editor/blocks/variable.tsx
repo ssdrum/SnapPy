@@ -1,16 +1,14 @@
 import React, { useRef, useEffect } from 'react';
 import withDraggableBlock from '../components/with-draggable-block';
 import { useBlocks } from '../contexts/blocks-context';
-import { DataType, VariableValue } from './types';
 import { resizeSelect } from '../utils/utils';
+import classes from './blocks.module.css';
 
 interface VariableProps {
   id: string;
   isWorkbenchBlock: boolean;
   variables: string[];
   selected: string;
-  dataType: DataType;
-  value: VariableValue; // Might move this to its own block
 }
 
 function Variable({
@@ -35,18 +33,6 @@ function Variable({
     resizeSelect(selectRef);
   }, [selected, variables]);
 
-  const selectStyle: React.CSSProperties = {
-    background: '#7A4DD6', // Slightly darker than the block background
-    color: 'white',
-    border: 'none',
-    borderRadius: '2px',
-    padding: '2px 4px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    fontSize: '14px',
-    outline: 'none',
-  };
-
   return (
     <>
       Set
@@ -54,7 +40,8 @@ function Variable({
         ref={selectRef}
         value={selected}
         onChange={handleChange}
-        style={selectStyle}
+        className={classes.select}
+        style={{ background: '#7A4DD6' }}
       >
         {variables.map((variable) => (
           <option key={variable} value={variable}>
@@ -63,6 +50,7 @@ function Variable({
         ))}
       </select>
       to
+      <div></div>
     </>
   );
 }
