@@ -50,7 +50,7 @@ function Variable({
         ))}
       </select>
       to
-      <div></div>
+      <div className={classes.snapTarget}></div>
     </>
   );
 }
