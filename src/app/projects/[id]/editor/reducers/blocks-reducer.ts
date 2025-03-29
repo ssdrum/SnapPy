@@ -6,7 +6,11 @@ import {
   BlockActionEnum,
 } from '../blocks/types';
 import { v4 as uuidv4 } from 'uuid';
-import { findBlockById } from '../utils/utils';
+import {
+  findBlockById,
+  removeBlockById,
+  updateBlockById,
+} from '../utils/utils';
 
 export default function BlocksReducer(state: BlocksState, action: BlockAction) {
   switch (action.type) {
@@ -182,7 +186,6 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     case BlockActionEnum.ADD_CHILD_BLOCK: {
       const { id, target } = action.payload;
 
-      // Find the target block that will receive the child block
       const targetBlock = validateBlockExists(
         state.canvasBlocks,
         target,
@@ -204,49 +207,19 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         parentId: target,
       };
 
-      // Function to update block tree by either:
-      // 1. Updating the target block with a new child
-      // 2. Removing the nested block from its original position
-      const updateBlockTree = (
-        blocks: Block[],
-        isRootLevel: boolean
-      ): Block[] => {
-        return blocks
-          .map((block) => {
-            // If this is the target block, add the nested block to its children
-            if (block.id === target) {
-              return {
-                ...block,
-                children: [...block.children, updatedNestedBlock],
-              };
-            }
+      // First, remove the block from its current position in the forest
+      const newBlocks = removeBlockById(state.canvasBlocks, id);
 
-            // If it has children, process them recursively
-            if (block.children.length > 0) {
-              return {
-                ...block,
-                children: updateBlockTree(block.children, false),
-              };
-            }
-
-            return block;
-          })
-          .filter((block) => {
-            // Only filter out the nested block at the level where it exists
-            // We only want to remove it from the root level if it's at the root level
-            if (isRootLevel && block.id === id) {
-              return false;
-            }
-            return true;
-          });
+      // Then, update the target block to include the nested block in its children
+      const updatedTargetBlock = {
+        ...targetBlock,
+        children: [...targetBlock.children, updatedNestedBlock],
       };
 
-      // Update the canvas blocks
-      const updatedCanvasBlocks = updateBlockTree(state.canvasBlocks, true);
-
+      // Finally, update the forest with the modified target block
       return {
         ...state,
-        canvasBlocks: updatedCanvasBlocks,
+        canvasBlocks: updateBlockById(newBlocks, target, updatedTargetBlock),
       };
     }
 

@@ -3,12 +3,12 @@ import {
   BlockState,
   BlockType,
 } from '@/app/projects/[id]/editor/blocks/types';
-import { findBlockInForest } from '@/app/projects/[id]/editor/utils/utils';
+import { findBlockById } from '@/app/projects/[id]/editor/utils/utils';
 
-describe('findBlockInForest', () => {
+describe('findBlockById', () => {
   test('Returns null for empty forest', () => {
     const emptyForest: Block[] = [];
-    expect(findBlockInForest(emptyForest, 'id')).toBeNull();
+    expect(findBlockById(emptyForest, 'id')).toBeNull();
   });
 
   test('Finds non-nested block', () => {
@@ -44,7 +44,7 @@ describe('findBlockInForest', () => {
     ];
 
     // Test finding the second block by ID
-    const foundBlock = findBlockInForest(nonNestedForest, 'block2');
+    const foundBlock = findBlockById(nonNestedForest, 'block2');
 
     // Expectations
     expect(foundBlock).not.toBeNull();
@@ -53,7 +53,7 @@ describe('findBlockInForest', () => {
     });
 
     // Test finding a block that doesn't exist
-    expect(findBlockInForest(nonNestedForest, 'nonexistentId')).toBeNull();
+    expect(findBlockById(nonNestedForest, 'nonexistentId')).toBeNull();
   });
 
   test('Finds deeply nested block', () => {
@@ -110,7 +110,7 @@ describe('findBlockInForest', () => {
     ];
 
     // Test finding a nested block by ID
-    const foundBlock = findBlockInForest(nestedForest, 'target-block');
+    const foundBlock = findBlockById(nestedForest, 'target-block');
 
     // Expectations
     expect(foundBlock).not.toBeNull();
@@ -124,7 +124,7 @@ describe('findBlockInForest', () => {
     });
 
     // Test finding a deeply nested block
-    const deeplyNestedBlock = findBlockInForest(nestedForest, 'block1-1-1');
+    const deeplyNestedBlock = findBlockById(nestedForest, 'block1-1-1');
     expect(deeplyNestedBlock).toMatchObject({
       id: 'block1-1-1',
       parentId: 'block1-1',
