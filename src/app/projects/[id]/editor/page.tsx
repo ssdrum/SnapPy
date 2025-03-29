@@ -14,7 +14,7 @@ import useCodeEditor from './hooks/use-code-editor';
 import CodeEditor from './components/code-editor';
 import OutputBox from './components/output-box';
 import { useCustomSensors } from './utils/sensors';
-import { findParentId, isBlockInArray } from './utils/utils';
+import { findBlockById } from './utils/utils';
 
 export default function EditorPage() {
   const { name, id } = useContext(ProjectContext)!;
@@ -52,13 +52,14 @@ export default function EditorPage() {
 
     // If dragging a block from the workbench, create new canvas block
     const id = e.active.id.toString();
-    if (isBlockInArray(state.workbenchBlocks, id)) {
+    if (findBlockById(state.workbenchBlocks, id)) {
       createBlockAction(id);
     }
 
-    const parentId = findParentId(state.canvasBlocks, id);
-    if (parentId) {
-      removeChildBlockAction(id, parentId);
+    // If dragging a nested block, remove child block from parent
+    const draggedBlock = findBlockById(state.canvasBlocks, id);
+    if (draggedBlock && draggedBlock.parentId) {
+      removeChildBlockAction(id, draggedBlock.parentId);
     }
 
     // If user started dragging a workbench block, create a new block

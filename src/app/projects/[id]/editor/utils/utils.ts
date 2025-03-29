@@ -1,42 +1,6 @@
 import { Block } from '../blocks/types';
 
 /**
- * Returns true if block with id = id is in blocks array
- */
-export const isBlockInArray = (blocks: Block[], id: string) => {
-  return blocks.some((block) => block.id === id);
-};
-
-/**
- * Finds the parent ID of a block with the given ID by traversing the block structure
- */
-export const findParentId = (blocks: Block[], id: string): string | null => {
-  // Direct check for the block in the current level
-  const block = blocks.find((block) => block.id === id);
-  if (block) {
-    return block.parentId;
-  }
-
-  // Recursively search through children of each block
-  for (const block of blocks) {
-    // Check if any child has the target ID
-    for (const childBlock of block.children) {
-      if (childBlock.id === id) {
-        return block.id;
-      }
-    }
-
-    // Recursively search deeper in the children
-    const foundInChildren = findParentId(block.children, id);
-    if (foundInChildren !== null) {
-      return foundInChildren;
-    }
-  }
-
-  return null;
-};
-
-/**
  * Traverses the forest recursively and returns the block with the provided id
  * if found. Returns null if not found.
  * Note: A forest is a set of disjoint trees.
