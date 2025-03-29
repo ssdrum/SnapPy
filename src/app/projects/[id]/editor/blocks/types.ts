@@ -6,6 +6,11 @@ export enum BlockType {
   Variable = 'variable',
 }
 
+export interface StackOptions {
+  top: boolean;
+  bottom: boolean;
+}
+
 // All data types supported
 export enum DataType {
   Int = 'int',
@@ -21,7 +26,9 @@ interface BlockInterface {
   state: BlockState;
   coords: Coordinates;
   isWorkbenchBlock: boolean;
+  stackOptions: StackOptions;
   parentId: string | null;
+  nextBlockId: string | null;
   children: Block[];
 }
 
