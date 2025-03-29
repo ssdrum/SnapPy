@@ -116,6 +116,27 @@ export const removeBlockById = (blocks: Block[], id: string): Block[] => {
   });
 };
 
+export const validateBlockExists = (
+  blocks: Block[],
+  id: string | null,
+  actionName: string
+): Block | null => {
+  if (!id) {
+    return null;
+  }
+
+  const block = findBlockById(blocks, id);
+  if (!block) {
+    console.error(
+      `Error in action: ${actionName}. Block with id = ${id} not found`
+    );
+
+    return null;
+  }
+
+  return block;
+};
+
 /**
  * Resizes a select element to match the width of its selected option
  * @param selectRef React ref to the select element

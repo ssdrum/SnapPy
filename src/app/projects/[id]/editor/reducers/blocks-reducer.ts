@@ -1,5 +1,4 @@
 import {
-  Block,
   BlockState,
   BlocksState,
   BlockAction,
@@ -7,9 +6,9 @@ import {
 } from '../blocks/types';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  findBlockById,
   removeBlockById,
   updateBlockById,
+  validateBlockExists,
 } from '../utils/utils';
 
 export default function BlocksReducer(state: BlocksState, action: BlockAction) {
@@ -244,45 +243,34 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
 
     case BlockActionEnum.REMOVE_CHILD_BLOCK: {
       const { id, parentId } = action.payload;
-
-      // Find the parent block
-      const parentBlock = findBlockById(state.canvasBlocks, parentId);
-      if (!parentBlock) {
-        console.error(
-          `Error in action: ${BlockActionEnum.REMOVE_CHILD_BLOCK}. Parent block with id = ${parentId} not found`
-        );
+      const parentBlock = validateBlockExists(
+        state.canvasBlocks,
+        parentId,
+        BlockActionEnum.REMOVE_CHILD_BLOCK
+      );
+      const childBlock = validateBlockExists(
+        state.canvasBlocks,
+        id,
+        BlockActionEnum.REMOVE_CHILD_BLOCK
+      );
+      if (!parentBlock || !childBlock) {
         return state;
       }
 
-      // Find the child block in the parent's children array
-      const childBlock = parentBlock.children.find((child) => child.id === id);
-      if (!childBlock) {
-        console.error(
-          `Error in action: ${BlockActionEnum.REMOVE_CHILD_BLOCK}. Child block with id = ${id} not found in parent's children`
-        );
-        return state;
-      }
+      // First, remove the child from the existing forest structure
+      const newBlocks = removeBlockById(state.canvasBlocks, id);
 
-      // Reset the child block's state and parent
+      // Create updated version of the child block with reset state and parentId
       const updatedChildBlock = {
         ...childBlock,
         state: BlockState.Idle,
         parentId: null,
       };
 
-      // Remove child from parent's children array
-      const updatedParentBlock = {
-        ...parentBlock,
-        children: parentBlock.children.filter((child) => child.id !== id),
-      };
-
+      // Add the reset child block back to the top level of the forest
       return {
         ...state,
-        canvasBlocks: [
-          ...state.canvasBlocks.filter((block) => block.id !== parentId),
-          updatedParentBlock,
-          updatedChildBlock,
-        ],
+        canvasBlocks: [...newBlocks, updatedChildBlock],
       };
     }
 
@@ -290,25 +278,3 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return state;
   }
 }
-
-// Helper functions
-const validateBlockExists = (
-  blocks: Block[],
-  id: string | null,
-  actionName: string
-): Block | null => {
-  if (!id) {
-    return null;
-  }
-
-  const block = findBlockById(blocks, id);
-  if (!block) {
-    console.error(
-      `Error in action: ${actionName}. Block with id = ${id} not found`
-    );
-
-    return null;
-  }
-
-  return block;
-};
