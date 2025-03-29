@@ -36,24 +36,28 @@ export const findParentId = (blocks: Block[], id: string): string | null => {
   return null;
 };
 
-// Helper function to find a block in the tree
+/**
+ * Traverses the forest recursively and returns the block with the provided id
+ * if found. Returns null if not found.
+ */
 export const findBlockInForest = (
-  blocks: Block[],
+  forest: Block[],
   id: string
-): Block | undefined => {
-  // Check in the current level
-  const block = blocks.find((b) => b.id === id);
-  if (block) return block;
+): Block | null => {
+  for (const root of forest) {
+    if (root.id === id) {
+      return root;
+    }
 
-  // Recursively check in children
-  for (const parentBlock of blocks) {
-    if (parentBlock.children.length > 0) {
-      const found = findBlockInForest(parentBlock.children, id);
-      if (found) return found;
+    if (root.children.length > 0) {
+      const found = findBlockInForest(root.children, id);
+      if (found) {
+        return found;
+      }
     }
   }
 
-  return undefined;
+  return null;
 };
 
 /**
