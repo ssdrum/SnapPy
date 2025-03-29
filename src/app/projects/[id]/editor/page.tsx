@@ -68,6 +68,7 @@ export default function EditorPage() {
 
   const handleDragEnd = (e: DragEndEvent) => {
     const { over, delta, active } = e;
+    //console.log(over?.id.toString());
 
     // Exit early if not dropped on a valid target
     if (!over) return;
@@ -92,6 +93,12 @@ export default function EditorPage() {
       }
 
       addChildBlockAction(activeId, targetBlock);
+      return;
+    }
+
+    // Handle drop on another block (nesting)
+    if (overId.startsWith('stack')) {
+      const [_, position, target] = overId.split('_');
       return;
     }
 
