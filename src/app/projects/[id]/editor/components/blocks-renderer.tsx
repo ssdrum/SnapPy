@@ -10,7 +10,15 @@ export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
   return (
     <>
       {blocks.map((block) => {
-        const { id, type, coords, isWorkbenchBlock, state, children } = block;
+        const {
+          id,
+          type,
+          coords,
+          isWorkbenchBlock,
+          state,
+          parentId,
+          children,
+        } = block;
 
         switch (type) {
           case BlockType.Empty:
@@ -23,6 +31,7 @@ export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
                 blockType={type}
                 isWorkbenchBlock={isWorkbenchBlock}
                 state={state}
+                parentId={parentId}
               />
             );
 
@@ -39,6 +48,7 @@ export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
                 blockType={type}
                 isWorkbenchBlock={isWorkbenchBlock}
                 state={state}
+                parentId={parentId}
                 selected={selected}
               >
                 {children}

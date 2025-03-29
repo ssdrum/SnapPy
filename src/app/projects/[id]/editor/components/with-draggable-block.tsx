@@ -1,9 +1,8 @@
-/* This HOC wraps all blocks to provide draggable functionallity */
-
 import useDraggableBlock from '../hooks/useDraggableBlock';
-import { Block, BlockState, BlockType } from '../blocks/types';
+import { Block, BlockState, BlockType, StackOptions } from '../blocks/types';
 import { useBlocks } from '../contexts/blocks-context';
 import classes from '../blocks/blocks.module.css';
+import BlockDropZone from '../blocks/BlockDropZone';
 
 // Base props that all draggable blocks will have
 export interface DraggableBlockProps {
@@ -13,8 +12,9 @@ export interface DraggableBlockProps {
   blockType: BlockType;
   state: BlockState;
   isWorkbenchBlock: boolean;
-  parentId?: string;
-  children?: Block[];
+  stackOptions: StackOptions;
+  parentId: string | null;
+  children: Block[];
 }
 
 export default function withDraggableBlock<T extends object>(
@@ -44,29 +44,44 @@ export default function withDraggableBlock<T extends object>(
       blockType
     );
 
+    // Split style properties
+    const { backgroundColor, boxShadow, ...positionStyle } = style;
+
+    // Helper function that renders dropZones above and/or below block
+    const renderDropZone = () => {
+      if (!isWorkbenchBlock && !parentId) {
+        return <BlockDropZone />;
+      }
+      return null;
+    };
+
     return (
-      // dnd-kit setup
-      <div
-        ref={setNodeRef}
-        className={classes.base} // Static CSS
-        style={style} // Dynamic CSS (bg color etc)
-        {...listeners}
-        {...attributes}
-        onClick={() => {
-          deselectBlockAction(); // Deselect previous selection before making new selection
-          if (!isWorkbenchBlock) {
-            selectBlockAction(id);
-          }
-        }}
-      >
-        <WrappedBlock
-          id={id}
-          isWorkbenchBlock={isWorkbenchBlock}
-          parentId={parentId}
-          {...(restProps as T)}
+      // dnd-kit setup - outer container with positioning
+      <div ref={setNodeRef} style={positionStyle} {...attributes}>
+        {renderDropZone()}
+
+        <div
+          className={classes.base}
+          style={{ backgroundColor, boxShadow }}
+          {...listeners}
+          onClick={() => {
+            deselectBlockAction();
+            if (!isWorkbenchBlock) {
+              selectBlockAction(id);
+            }
+          }}
         >
-          {children}
-        </WrappedBlock>
+          <WrappedBlock
+            id={id}
+            isWorkbenchBlock={isWorkbenchBlock}
+            parentId={parentId}
+            {...(restProps as T)}
+          >
+            {children}
+          </WrappedBlock>
+        </div>
+
+        {renderDropZone()}
       </div>
     );
   };
