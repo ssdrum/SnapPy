@@ -40,17 +40,14 @@ export const findParentId = (blocks: Block[], id: string): string | null => {
  * Traverses the forest recursively and returns the block with the provided id
  * if found. Returns null if not found.
  */
-export const findBlockInForest = (
-  forest: Block[],
-  id: string
-): Block | null => {
+export const findBlockById = (forest: Block[], id: string): Block | null => {
   for (const root of forest) {
     if (root.id === id) {
       return root;
     }
 
     if (root.children.length > 0) {
-      const found = findBlockInForest(root.children, id);
+      const found = findBlockById(root.children, id);
       if (found) {
         return found;
       }

@@ -6,7 +6,7 @@ import {
   BlockActionEnum,
 } from '../blocks/types';
 import { v4 as uuidv4 } from 'uuid';
-import { findBlockInForest } from '../utils/utils';
+import { findBlockById } from '../utils/utils';
 
 export default function BlocksReducer(state: BlocksState, action: BlockAction) {
   switch (action.type) {
@@ -183,20 +183,17 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       const { id, target } = action.payload;
 
       // Find the target block that will receive the child block
-      const targetBlock = findBlockInForest(state.canvasBlocks, target);
-      if (!targetBlock) {
-        console.error(
-          `Error in action: ${BlockActionEnum.ADD_CHILD_BLOCK}. Target block with id = ${target} not found`
-        );
-        return state;
-      }
-
-      // Find the block to be nested
-      const blockToNest = findBlockInForest(state.canvasBlocks, id);
-      if (!blockToNest) {
-        console.error(
-          `Error in action: ${BlockActionEnum.ADD_CHILD_BLOCK}. Block to nest with id = ${id} not found`
-        );
+      const targetBlock = validateBlockExists(
+        state.canvasBlocks,
+        target,
+        BlockActionEnum.ADD_CHILD_BLOCK
+      );
+      const blockToNest = validateBlockExists(
+        state.canvasBlocks,
+        id,
+        BlockActionEnum.ADD_CHILD_BLOCK
+      );
+      if (!targetBlock || !blockToNest) {
         return state;
       }
 
@@ -322,10 +319,6 @@ const validateBlockExists = (
   }
 
   return block;
-};
-
-const findBlockById = (blocks: Block[], id: string): Block | undefined => {
-  return blocks.find((block) => block.id === id);
 };
 
 const updateBlockInArray = (blocks: Block[], updatedBlock: Block): Block[] => {
