@@ -7,6 +7,7 @@ import {
   BlocksState,
   BlockState,
   BlockType,
+  StackPosition,
 } from '../blocks/types';
 import { createContext, useContext, useReducer } from 'react';
 import BlocksReducer from '../reducers/blocks-reducer';
@@ -33,8 +34,13 @@ interface BlocksContextType {
   deleteBlockAction: (id: string) => void;
   createVariableAction: (name: string) => boolean;
   changeVariableSelectedOptionAction: (selected: string, id?: string) => void;
-  addChildBlockAction: (id: string, target: string) => void;
+  addChildBlockAction: (id: string, targetId: string) => void;
   removeChildBlockAction: (id: string, parentId: string) => void;
+  stackBlockAction: (
+    id: string,
+    targetId: string,
+    position: StackPosition
+  ) => void;
 }
 
 // Create context object
@@ -153,10 +159,10 @@ export default function BlocksProvider({
     });
   };
 
-  const addChildBlockAction = (id: string, target: string) => {
+  const addChildBlockAction = (id: string, targetId: string) => {
     dispatch({
       type: BlockActionEnum.ADD_CHILD_BLOCK,
-      payload: { id, target },
+      payload: { id, targetId },
     });
   };
 
@@ -164,6 +170,17 @@ export default function BlocksProvider({
     dispatch({
       type: BlockActionEnum.REMOVE_CHILD_BLOCK,
       payload: { id, parentId },
+    });
+  };
+
+  const stackBlockAction = (
+    id: string,
+    targetId: string,
+    position: StackPosition
+  ) => {
+    dispatch({
+      type: BlockActionEnum.STACK_BLOCK,
+      payload: { id, targetId, position },
     });
   };
 
@@ -179,6 +196,7 @@ export default function BlocksProvider({
     changeVariableSelectedOptionAction,
     addChildBlockAction,
     removeChildBlockAction,
+    stackBlockAction,
   };
 
   return (

@@ -15,6 +15,7 @@ import CodeEditor from './components/code-editor';
 import OutputBox from './components/output-box';
 import { useCustomSensors } from './utils/sensors';
 import { findBlockById } from './utils/utils';
+import { StackPosition } from './blocks/types';
 
 export default function EditorPage() {
   const { name, id } = useContext(ProjectContext)!;
@@ -26,6 +27,7 @@ export default function EditorPage() {
     deleteBlockAction,
     addChildBlockAction,
     removeChildBlockAction,
+    stackBlockAction,
     state,
   } = useBlocks();
 
@@ -99,7 +101,11 @@ export default function EditorPage() {
     // Handle drop on another block (nesting)
     if (overId.startsWith('stack')) {
       const [_, position, target] = overId.split('_');
-      console.log(position, target);
+      stackBlockAction(
+        activeId,
+        target,
+        position === 'top' ? StackPosition.Top : StackPosition.Bottom
+      );
       return;
     }
 

@@ -3,6 +3,7 @@ import {
   BlocksState,
   BlockAction,
   BlockActionEnum,
+  StackPosition,
 } from '../blocks/types';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -202,11 +203,11 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     }
 
     case BlockActionEnum.ADD_CHILD_BLOCK: {
-      const { id, target } = action.payload;
+      const { id, targetId } = action.payload;
 
       const targetBlock = validateBlockExists(
         state.canvasBlocks,
-        target,
+        targetId,
         BlockActionEnum.ADD_CHILD_BLOCK
       );
       const blockToNest = validateBlockExists(
@@ -222,7 +223,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       const updatedNestedBlock = {
         ...blockToNest,
         state: BlockState.Nested,
-        parentId: target,
+        parentId: targetId,
       };
 
       // First, remove the block from its current position in the forest
@@ -237,7 +238,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       // Finally, update the forest with the modified target block
       return {
         ...state,
-        canvasBlocks: updateBlockById(newBlocks, target, updatedTargetBlock),
+        canvasBlocks: updateBlockById(newBlocks, targetId, updatedTargetBlock),
       };
     }
 
@@ -271,6 +272,53 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return {
         ...state,
         canvasBlocks: [...newBlocks, updatedChildBlock],
+      };
+    }
+
+    case BlockActionEnum.STACK_BLOCK: {
+      const { id, targetId, position } = action.payload;
+
+      const targetBlock = validateBlockExists(
+        state.canvasBlocks,
+        targetId,
+        BlockActionEnum.STACK_BLOCK
+      );
+      const blockToStack = validateBlockExists(
+        state.canvasBlocks,
+        id,
+        BlockActionEnum.STACK_BLOCK
+      );
+      if (!targetBlock || !blockToStack) {
+        return state;
+      }
+
+      // Copy blocks and update their prev and next block ids
+      let updatedTargetBlock = { ...targetBlock };
+      let updatedBlockToStack = { ...blockToStack };
+      if (position === StackPosition.Top) {
+        updatedTargetBlock.prevBlockId = id;
+        blockToStack.nextBlockId = targetId;
+      } else {
+        updatedBlockToStack.prevBlockId = id;
+        updatedTargetBlock.nextBlockId = targetId;
+      }
+
+      // Update the blocks in the canvas
+      let updatedCanvasBlocks = updateBlockById(
+        state.canvasBlocks,
+        targetId,
+        updatedTargetBlock
+      );
+
+      updatedCanvasBlocks = updateBlockById(
+        updatedCanvasBlocks,
+        id,
+        updatedBlockToStack
+      );
+
+      return {
+        ...state,
+        canvasBlocks: updatedCanvasBlocks,
       };
     }
 

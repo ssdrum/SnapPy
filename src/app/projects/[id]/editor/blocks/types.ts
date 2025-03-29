@@ -11,6 +11,11 @@ export interface StackOptions {
   bottom: boolean;
 }
 
+export enum StackPosition {
+  Top = 'top',
+  Bottom = 'bottom',
+}
+
 // All data types supported
 export enum DataType {
   Int = 'int',
@@ -74,6 +79,7 @@ export enum BlockActionEnum {
   CHANGE_VARIABLE_SELECTED_OPTION = 'change variable selected option',
   ADD_CHILD_BLOCK = 'add child block',
   REMOVE_CHILD_BLOCK = 'remove child block',
+  STACK_BLOCK = 'stack block',
 }
 
 // Action Interfaces
@@ -118,12 +124,17 @@ interface ChangeVariableSelectedOptionAction {
 
 interface AddChildBlockAction {
   type: BlockActionEnum.ADD_CHILD_BLOCK;
-  payload: { id: string; target: string };
+  payload: { id: string; targetId: string };
 }
 
 interface RemoveChildBlockAction {
   type: BlockActionEnum.REMOVE_CHILD_BLOCK;
   payload: { id: string; parentId: string };
+}
+
+interface StackBlockAction {
+  type: BlockActionEnum.STACK_BLOCK;
+  payload: { id: string; targetId: string; position: StackPosition };
 }
 
 // Union type of all actions
@@ -137,4 +148,5 @@ export type BlockAction =
   | CreateVariableAction
   | ChangeVariableSelectedOptionAction
   | AddChildBlockAction
-  | RemoveChildBlockAction;
+  | RemoveChildBlockAction
+  | StackBlockAction;
