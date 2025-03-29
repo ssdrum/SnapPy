@@ -15,6 +15,7 @@ export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
           type,
           coords,
           isWorkbenchBlock,
+          stackOptions,
           state,
           parentId,
           children,
@@ -30,9 +31,12 @@ export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
                 left={coords.x}
                 blockType={type}
                 isWorkbenchBlock={isWorkbenchBlock}
+                stackOptions={stackOptions}
                 state={state}
                 parentId={parentId}
-              />
+              >
+                {children}
+              </Empty>
             );
 
           case BlockType.Variable:
@@ -47,6 +51,7 @@ export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
                 left={coords.x}
                 blockType={type}
                 isWorkbenchBlock={isWorkbenchBlock}
+                stackOptions={stackOptions}
                 state={state}
                 parentId={parentId}
                 selected={selected}

@@ -28,6 +28,7 @@ export default function withDraggableBlock<T extends object>(
       blockType,
       state,
       isWorkbenchBlock,
+      stackOptions,
       parentId,
       children,
       ...restProps
@@ -58,7 +59,7 @@ export default function withDraggableBlock<T extends object>(
     return (
       // dnd-kit setup - outer container with positioning
       <div ref={setNodeRef} style={positionStyle} {...attributes}>
-        {renderDropZone()}
+        {stackOptions.top && renderDropZone()}
 
         <div
           className={classes.base}
@@ -81,7 +82,7 @@ export default function withDraggableBlock<T extends object>(
           </WrappedBlock>
         </div>
 
-        {renderDropZone()}
+        {stackOptions.bottom && renderDropZone()}
       </div>
     );
   };

@@ -7,7 +7,6 @@ import {
   BlocksState,
   BlockState,
   BlockType,
-  DataType,
 } from '../blocks/types';
 import { createContext, useContext, useReducer } from 'react';
 import BlocksReducer from '../reducers/blocks-reducer';
@@ -195,7 +194,9 @@ const workBenchBlocks: Block[] = [
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
+    stackOptions: { top: true, bottom: true },
     parentId: null,
+    nextBlockId: null,
     children: [],
   },
   {
@@ -204,9 +205,10 @@ const workBenchBlocks: Block[] = [
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
-    dataType: DataType.Int,
     selected: 'x',
+    stackOptions: { top: true, bottom: true },
     parentId: null,
+    nextBlockId: null,
     children: [],
   },
 ];
