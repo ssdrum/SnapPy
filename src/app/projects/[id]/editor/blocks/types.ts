@@ -28,8 +28,9 @@ interface BlockInterface {
   isWorkbenchBlock: boolean;
   stackOptions: StackOptions;
   parentId: string | null;
+  prevBlockId: string | null;
   nextBlockId: string | null;
-  children: Block[];
+  children: Block[]; // TODO: Consider removing this properti from the base interface since not all blocks use it
 }
 
 // Variable block

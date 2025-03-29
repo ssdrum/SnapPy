@@ -99,6 +99,7 @@ export default function EditorPage() {
     // Handle drop on another block (nesting)
     if (overId.startsWith('stack')) {
       const [_, position, target] = overId.split('_');
+      console.log(position, target);
       return;
     }
 
