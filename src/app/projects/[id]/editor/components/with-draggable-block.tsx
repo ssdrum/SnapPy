@@ -28,7 +28,6 @@ export default function withDraggableBlock<T extends object>(
       blockType,
       state,
       isWorkbenchBlock,
-      stackOptions,
       parentId,
       children,
       ...restProps
@@ -48,19 +47,9 @@ export default function withDraggableBlock<T extends object>(
     // Split style properties
     const { backgroundColor, boxShadow, ...positionStyle } = style;
 
-    // Helper function that renders dropZones above and/or below block
-    const renderDropZone = (blockId: string, position: 'top' | 'bottom') => {
-      if (!isWorkbenchBlock && !parentId) {
-        return <BlockDropZone blockId={blockId} position={position} />;
-      }
-      return null;
-    };
-
     return (
       // dnd-kit setup - outer container with positioning
       <div ref={setNodeRef} style={positionStyle} {...attributes}>
-        {stackOptions.top && renderDropZone(id, 'top')}
-
         <div
           className={classes.base}
           style={{ backgroundColor, boxShadow }}
@@ -81,8 +70,6 @@ export default function withDraggableBlock<T extends object>(
             {children}
           </WrappedBlock>
         </div>
-
-        {stackOptions.top && renderDropZone(id, 'bottom')}
       </div>
     );
   };

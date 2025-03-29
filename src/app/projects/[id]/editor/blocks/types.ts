@@ -35,7 +35,7 @@ interface BlockInterface {
   parentId: string | null;
   prevBlockId: string | null;
   nextBlockId: string | null;
-  children: Block[]; // TODO: Consider removing this properti from the base interface since not all blocks use it
+  children: Block[]; // TODO: Consider removing this property from the base interface since not all blocks use it
 }
 
 // Variable block
