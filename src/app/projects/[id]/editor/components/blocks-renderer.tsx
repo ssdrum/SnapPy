@@ -40,8 +40,9 @@ export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
                 isWorkbenchBlock={isWorkbenchBlock}
                 state={state}
                 selected={selected}
-                children={children}
-              />
+              >
+                {children}
+              </Variable>
             );
 
           default:

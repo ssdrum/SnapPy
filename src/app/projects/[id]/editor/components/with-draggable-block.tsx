@@ -63,9 +63,10 @@ export default function withDraggableBlock<T extends object>(
           id={id}
           isWorkbenchBlock={isWorkbenchBlock}
           parentId={parentId}
-          children={children}
           {...(restProps as T)}
-        />
+        >
+          {children}
+        </WrappedBlock>
       </div>
     );
   };
