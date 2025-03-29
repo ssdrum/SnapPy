@@ -14,7 +14,6 @@ import {
 
 export default function BlocksReducer(state: BlocksState, action: BlockAction) {
   switch (action.type) {
-    // SELECT BLOCK
     case BlockActionEnum.SELECT_BLOCK: {
       const { id } = action.payload;
       const block = validateBlockExists(
@@ -22,35 +21,41 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         id,
         BlockActionEnum.SELECT_BLOCK
       );
-      if (!block) return state;
+      if (!block) {
+        return state;
+      }
 
       const updatedBlock = { ...block, state: BlockState.Selected };
       return {
         ...state,
-        canvasBlocks: updateBlockInArray(state.canvasBlocks, updatedBlock),
+        canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
         selectedBlockId: id,
       };
     }
 
-    // DESELECT BLOCK
     case BlockActionEnum.DESELECT_BLOCK: {
       const id = state.selectedBlockId;
+      if (!id) {
+        return state;
+      }
+
       const block = validateBlockExists(
         state.canvasBlocks,
         id,
         BlockActionEnum.DESELECT_BLOCK
       );
-      if (!block) return state;
+      if (!block) {
+        return state;
+      }
 
       const updatedBlock = { ...block, state: BlockState.Idle };
       return {
         ...state,
-        canvasBlocks: updateBlockInArray(state.canvasBlocks, updatedBlock),
+        canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
         selectedBlockId: null,
       };
     }
 
-    // START DRAG
     case BlockActionEnum.START_DRAG: {
       const { id } = action.payload;
       const block = validateBlockExists(
@@ -58,25 +63,32 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         id,
         BlockActionEnum.START_DRAG
       );
-      if (!block) return state;
+      if (!block) {
+        return state;
+      }
 
       const updatedBlock = { ...block, state: BlockState.Dragging };
       return {
         ...state,
-        canvasBlocks: updateBlockInArray(state.canvasBlocks, updatedBlock),
+        canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
         draggingBlockId: id,
       };
     }
 
-    // END DRAG
     case BlockActionEnum.END_DRAG: {
       const id = state.draggingBlockId;
+      if (!id) {
+        return state;
+      }
+
       const block = validateBlockExists(
         state.canvasBlocks,
         id,
         BlockActionEnum.END_DRAG
       );
-      if (!block) return state;
+      if (!block) {
+        return state;
+      }
 
       // Update coordinates and set state to idle
       const delta = action.payload.delta;
@@ -88,7 +100,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
 
       return {
         ...state,
-        canvasBlocks: updateBlockInArray(state.canvasBlocks, updatedBlock),
+        canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
         draggingBlockId: null,
       };
     }
@@ -100,7 +112,9 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         id,
         BlockActionEnum.CREATE_BLOCK
       );
-      if (!block) return state;
+      if (!block) {
+        return state;
+      }
 
       // Create a copy for the canvas with the same ID
       const newBlock = {
@@ -133,7 +147,9 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         id,
         BlockActionEnum.DELETE_BLOCK
       );
-      if (!block) return state;
+      if (!block) {
+        return state;
+      }
 
       return {
         ...state,
@@ -158,7 +174,9 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         id,
         BlockActionEnum.CHANGE_VARIABLE_SELECTED_OPTION
       );
-      if (!block) return state;
+      if (!block) {
+        return state;
+      }
 
       // Update the block with the new selected variable option
       const updatedBlock = {
@@ -170,15 +188,16 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       if (isWorkbenchBlock) {
         return {
           ...state,
-          workbenchBlocks: updateBlockInArray(
+          workbenchBlocks: updateBlockById(
             state.workbenchBlocks,
+            id,
             updatedBlock
           ),
         };
       } else {
         return {
           ...state,
-          canvasBlocks: updateBlockInArray(state.canvasBlocks, updatedBlock),
+          canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
         };
       }
     }
@@ -292,10 +311,4 @@ const validateBlockExists = (
   }
 
   return block;
-};
-
-const updateBlockInArray = (blocks: Block[], updatedBlock: Block): Block[] => {
-  return blocks.map((block) =>
-    block.id === updatedBlock.id ? updatedBlock : block
-  );
 };
