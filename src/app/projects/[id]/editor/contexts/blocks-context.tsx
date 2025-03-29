@@ -13,6 +13,7 @@ import { createContext, useContext, useReducer } from 'react';
 import BlocksReducer from '../reducers/blocks-reducer';
 import { Coordinates } from '@dnd-kit/core/dist/types';
 import { v4 as uuidv4 } from 'uuid';
+import { findBlockById } from '../utils/utils';
 
 interface BlocksProviderProps {
   children: React.ReactNode;
@@ -65,8 +66,20 @@ export default function BlocksProvider({
 
   const [state, dispatch] = useReducer(BlocksReducer, initialState);
 
-  // API to interact with blocks
+  // ----------------- API to interact with blocks -------------------
   const selectBlockAction = (id: string) => {
+    const selectedBlock = findBlockById(state.canvasBlocks, id);
+    if (!selectedBlock) {
+      return;
+    }
+
+    // TODO: This is a temporary fix that disables selecting a nested block
+    // to avoid css positioning issues. It will need to be modified to allow
+    // users to select nested blocks
+    if (selectedBlock.state === BlockState.Nested) {
+      return;
+    }
+
     dispatch({
       type: BlockActionEnum.SELECT_BLOCK,
       payload: { id },
