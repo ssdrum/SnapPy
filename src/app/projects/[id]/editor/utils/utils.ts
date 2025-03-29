@@ -1,10 +1,104 @@
 import { Block } from '../blocks/types';
 
 /**
- * Returns true if block with id = id is in blocks array
+ * Traverses the forest recursively and returns the block with the provided id
+ * if found. Returns null if not found.
+ * Note: A forest is a set of disjoint trees.
+ * TODO: Add unit tests
  */
-export const isBlockInArray = (blocks: Block[], id: string) => {
-  return blocks.some((block) => block.id === id);
+export const findBlockById = (forest: Block[], id: string): Block | null => {
+  for (const root of forest) {
+    if (root.id === id) {
+      return root;
+    }
+
+    if (root.children.length > 0) {
+      const found = findBlockById(root.children, id);
+      if (found) {
+        return found;
+      }
+    }
+  }
+
+  return null;
+};
+
+/**
+ * Traverses the forest recursively and updates the block with the provided id
+ * with the updatedBlock.
+ * TODO: Add unit tests
+ */
+export const updateBlockById = (
+  blocks: Block[],
+  id: string,
+  updatedBlock: Block
+): Block[] => {
+  // Create a new array to avoid mutating the original
+  return blocks.map((block) => {
+    // If this is the block to update, return the updated block
+    if (block.id === id) {
+      return updatedBlock;
+    }
+
+    // If this block has children, recursively update them
+    if (block.children.length > 0) {
+      return {
+        ...block,
+        children: updateBlockById(block.children, id, updatedBlock),
+      };
+    }
+
+    // Otherwise, return the block unchanged
+    return block;
+  });
+};
+
+/**
+ * Removes the block with the provided id from the forest.
+ */
+export const removeBlockById = (blocks: Block[], id: string): Block[] => {
+  // First filter out any blocks that match the id at the current level
+  const filteredBlocks = blocks.filter((block) => block.id !== id);
+
+  // If we removed something, return the filtered array
+  if (filteredBlocks.length < blocks.length) {
+    return filteredBlocks;
+  }
+
+  // Otherwise, map through the blocks and check children
+  return blocks.map((block) => {
+    // If this block has children, recursively check them
+    if (block.children.length > 0) {
+      return {
+        ...block,
+        children: removeBlockById(block.children, id),
+      };
+    }
+
+    // Otherwise, return the block unchanged
+    return block;
+  });
+};
+
+export const validateBlockExists = (
+  blocks: Block[],
+  id: string | null,
+  actionName: string
+): Block | null => {
+  if (!id) {
+    return null;
+  }
+
+  const block = findBlockById(blocks, id);
+  if (!block) {
+    console.error(
+      `Error in action: ${actionName}. Block with id = ${id} not found`
+    );
+
+    return null;
+  }
+
+  return block;
 };
 
 /**

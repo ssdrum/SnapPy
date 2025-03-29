@@ -41,8 +41,6 @@ export default function SaveButton({ projectId }: SaveButtonProps) {
       console.error(error);
     }
 
-    console.log(message);
-
     setIsSaving(false);
   };
 

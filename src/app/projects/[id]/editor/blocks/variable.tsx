@@ -1,26 +1,26 @@
 import React, { useRef, useEffect } from 'react';
 import withDraggableBlock from '../components/with-draggable-block';
 import { useBlocks } from '../contexts/blocks-context';
-import { DataType, VariableValue } from './types';
 import { resizeSelect } from '../utils/utils';
+import classes from './blocks.module.css';
+import { useDroppable } from '@dnd-kit/core';
+import { Block } from './types';
+import BlocksRenderer from '../components/blocks-renderer';
 
 interface VariableProps {
   id: string;
   isWorkbenchBlock: boolean;
-  variables: string[];
   selected: string;
-  dataType: DataType;
-  value: VariableValue; // Might move this to its own block
+  children: Block[];
 }
 
-function Variable({
-  id,
-  isWorkbenchBlock,
-  variables,
-  selected,
-}: VariableProps) {
-  const { changeVariableSelectedOptionAction } = useBlocks();
-  const selectRef = useRef<HTMLSelectElement>(null);
+function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
+  const { changeVariableSelectedOptionAction, state } = useBlocks();
+
+  // Set up the drop zone
+  const { setNodeRef } = useDroppable({
+    id: `drop-${id}`,
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (isWorkbenchBlock) {
@@ -31,21 +31,10 @@ function Variable({
   };
 
   // Resize select when component mounts or selected option changes
+  const selectRef = useRef<HTMLSelectElement>(null); // This ref targets the select box
   useEffect(() => {
     resizeSelect(selectRef);
-  }, [selected, variables]);
-
-  const selectStyle: React.CSSProperties = {
-    background: '#7A4DD6', // Slightly darker than the block background
-    color: 'white',
-    border: 'none',
-    borderRadius: '2px',
-    padding: '2px 4px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    fontSize: '14px',
-    outline: 'none',
-  };
+  }, [selected, state.variables]);
 
   return (
     <>
@@ -54,15 +43,24 @@ function Variable({
         ref={selectRef}
         value={selected}
         onChange={handleChange}
-        style={selectStyle}
+        className={classes.select}
+        style={{ background: '#7A4DD6' }}
       >
-        {variables.map((variable) => (
+        {/* Display options */}
+        {state.variables.map((variable) => (
           <option key={variable} value={variable}>
             {variable}
           </option>
         ))}
       </select>
       to
+      {/* Only display children if this block has any. Display dropzone by default */}
+      <div
+        ref={children.length == 0 ? setNodeRef : undefined} // Only add droppable area if there's no children
+        className={classes.snapTarget}
+      >
+        {children && <BlocksRenderer blocks={children} />}
+      </div>
     </>
   );
 }

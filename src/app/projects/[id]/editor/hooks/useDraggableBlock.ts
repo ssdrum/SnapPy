@@ -21,17 +21,9 @@ export default function useDraggableBlock(
     transform: CSS.Translate.toString(transform),
     top: isWorkbenchBlock ? 0 : top,
     left: isWorkbenchBlock ? 0 : left,
-    position: isWorkbenchBlock ? 'static' : 'absolute',
+    position:
+      isWorkbenchBlock || state === BlockState.Nested ? 'static' : 'absolute',
     zIndex: state === BlockState.Dragging ? '10' : isWorkbenchBlock ? '2' : '1',
-    cursor: 'grab',
-    width: 'fit-content', // Stops it from taking full width of parent container
-    display: 'flex',
-    gap: '8px',
-    alignItems: 'center',
-    color: 'white',
-    fontWeight: 'bold',
-    padding: '5px 12px',
-    borderRadius: '3px',
 
     backgroundColor: (() => {
       switch (blockType) {
@@ -54,8 +46,6 @@ export default function useDraggableBlock(
         return '0 5px 10px rgba(0,0,0,0.2)';
       }
     })(),
-
-    transition: 'box-shadow 0.15s ease',
   };
 
   return { attributes, listeners, setNodeRef, style };

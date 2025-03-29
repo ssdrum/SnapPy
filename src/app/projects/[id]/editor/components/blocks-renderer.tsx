@@ -4,17 +4,13 @@ import Variable from '../blocks/variable';
 
 interface BlocksRendererProps {
   blocks: Block[];
-  variables: string[];
 }
 
-export default function BlocksRenderer({
-  blocks,
-  variables,
-}: BlocksRendererProps) {
+export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
   return (
     <>
       {blocks.map((block) => {
-        const { id, type, coords, isWorkbenchBlock, state } = block;
+        const { id, type, coords, isWorkbenchBlock, state, children } = block;
 
         switch (type) {
           case BlockType.Empty:
@@ -32,7 +28,7 @@ export default function BlocksRenderer({
 
           case BlockType.Variable:
             const variableBlock = block as VariableBlock;
-            const { selected, dataType, value } = variableBlock;
+            const { selected } = variableBlock;
 
             return (
               <Variable
@@ -43,11 +39,10 @@ export default function BlocksRenderer({
                 blockType={type}
                 isWorkbenchBlock={isWorkbenchBlock}
                 state={state}
-                variables={variables}
                 selected={selected}
-                dataType={dataType}
-                value={value}
-              />
+              >
+                {children}
+              </Variable>
             );
 
           default:

@@ -14,7 +14,7 @@ import useCodeEditor from './hooks/use-code-editor';
 import CodeEditor from './components/code-editor';
 import OutputBox from './components/output-box';
 import { useCustomSensors } from './utils/sensors';
-import { isBlockInArray } from './utils/utils';
+import { findBlockById } from './utils/utils';
 
 export default function EditorPage() {
   const { name, id } = useContext(ProjectContext)!;
@@ -24,6 +24,8 @@ export default function EditorPage() {
     deselectBlockAction,
     createBlockAction,
     deleteBlockAction,
+    addChildBlockAction,
+    removeChildBlockAction,
     state,
   } = useBlocks();
 
@@ -48,10 +50,18 @@ export default function EditorPage() {
     // First de-select any previously selected block
     deselectBlockAction();
 
-    const id = e.active.id as string;
-    if (isBlockInArray(state.workbenchBlocks, id)) {
+    // If dragging a block from the workbench, create new canvas block
+    const id = e.active.id.toString();
+    if (findBlockById(state.workbenchBlocks, id)) {
       createBlockAction(id);
     }
+
+    // If dragging a nested block, remove child block from parent
+    const draggedBlock = findBlockById(state.canvasBlocks, id);
+    if (draggedBlock && draggedBlock.parentId) {
+      removeChildBlockAction(id, draggedBlock.parentId);
+    }
+
     // If user started dragging a workbench block, create a new block
     startDragAction(id);
   };
@@ -59,13 +69,34 @@ export default function EditorPage() {
   const handleDragEnd = (e: DragEndEvent) => {
     const { over, delta, active } = e;
 
-    // Only trigger action if block was dropped onto canvas
-    if (!over || over.id !== 'canvas') {
-      deleteBlockAction(active.id as string);
+    // Exit early if not dropped on a valid target
+    if (!over) return;
+
+    const overId = over.id.toString();
+    const activeId = active.id.toString();
+
+    // Handle drop on canvas
+    if (overId === 'canvas') {
+      endDragAction(delta);
       return;
     }
 
-    endDragAction(delta);
+    // Handle drop on another block (nesting)
+    if (overId.startsWith('drop')) {
+      const targetBlock = overId.substring(5);
+
+      // Prevent dropping onto itself
+      if (activeId === targetBlock) {
+        endDragAction(delta);
+        return;
+      }
+
+      addChildBlockAction(activeId, targetBlock);
+      return;
+    }
+
+    // Default case - delete the block
+    deleteBlockAction(activeId);
   };
 
   return (

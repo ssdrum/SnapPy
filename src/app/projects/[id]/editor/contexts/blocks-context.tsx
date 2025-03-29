@@ -13,6 +13,7 @@ import { createContext, useContext, useReducer } from 'react';
 import BlocksReducer from '../reducers/blocks-reducer';
 import { Coordinates } from '@dnd-kit/core/dist/types';
 import { v4 as uuidv4 } from 'uuid';
+import { findBlockById } from '../utils/utils';
 
 interface BlocksProviderProps {
   children: React.ReactNode;
@@ -33,6 +34,8 @@ interface BlocksContextType {
   deleteBlockAction: (id: string) => void;
   createVariableAction: (name: string) => boolean;
   changeVariableSelectedOptionAction: (selected: string, id?: string) => void;
+  addChildBlockAction: (id: string, target: string) => void;
+  removeChildBlockAction: (id: string, parentId: string) => void;
 }
 
 // Create context object
@@ -56,16 +59,27 @@ export default function BlocksProvider({
   const initialState: BlocksState = {
     workbenchBlocks: workBenchBlocks,
     canvasBlocks,
-    variables: variables.length > 0 ? variables : ['x'],
+    variables,
     selectedBlockId: null,
     draggingBlockId: null,
   };
-  console.log(variables);
 
   const [state, dispatch] = useReducer(BlocksReducer, initialState);
 
-  // API to interact with blocks
+  // ----------------- API to interact with blocks -------------------
   const selectBlockAction = (id: string) => {
+    const selectedBlock = findBlockById(state.canvasBlocks, id);
+    if (!selectedBlock) {
+      return;
+    }
+
+    // TODO: This is a temporary fix that disables selecting a nested block
+    // to avoid css positioning issues. It will need to be modified to allow
+    // users to select nested blocks
+    if (selectedBlock.state === BlockState.Nested) {
+      return;
+    }
+
     dispatch({
       type: BlockActionEnum.SELECT_BLOCK,
       payload: { id },
@@ -140,6 +154,20 @@ export default function BlocksProvider({
     });
   };
 
+  const addChildBlockAction = (id: string, target: string) => {
+    dispatch({
+      type: BlockActionEnum.ADD_CHILD_BLOCK,
+      payload: { id, target },
+    });
+  };
+
+  const removeChildBlockAction = (id: string, parentId: string) => {
+    dispatch({
+      type: BlockActionEnum.REMOVE_CHILD_BLOCK,
+      payload: { id, parentId },
+    });
+  };
+
   const value: BlocksContextType = {
     state,
     selectBlockAction,
@@ -150,6 +178,8 @@ export default function BlocksProvider({
     deleteBlockAction,
     createVariableAction,
     changeVariableSelectedOptionAction,
+    addChildBlockAction,
+    removeChildBlockAction,
   };
 
   return (
@@ -165,6 +195,8 @@ const workBenchBlocks: Block[] = [
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
+    parentId: null,
+    children: [],
   },
   {
     id: uuidv4(),
@@ -174,6 +206,7 @@ const workBenchBlocks: Block[] = [
     state: BlockState.Idle,
     dataType: DataType.Int,
     selected: 'x',
-    value: 1,
+    parentId: null,
+    children: [],
   },
 ];
