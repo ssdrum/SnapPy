@@ -42,6 +42,7 @@ interface BlocksContextType {
     targetId: string,
     position: StackPosition
   ) => void;
+  breakStackAction: (id: string) => void;
 }
 
 // Create context object
@@ -147,6 +148,13 @@ export default function BlocksProvider({
     return true;
   };
 
+  const breakStackAction = (id: string) => {
+    dispatch({
+      type: BlockActionEnum.BREAK_STACK,
+      payload: { id },
+    });
+  };
+
   /* If no id is passed, this function will update the workbench variable block */
   const changeVariableSelectedOptionAction = (
     selected: string,
@@ -200,6 +208,7 @@ export default function BlocksProvider({
     moveBlockAction,
     endDragAction,
     createBlockAction,
+    breakStackAction,
     deleteBlockAction,
     createVariableAction,
     changeVariableSelectedOptionAction,

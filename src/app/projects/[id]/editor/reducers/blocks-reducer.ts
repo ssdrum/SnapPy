@@ -377,6 +377,47 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
+    case BlockActionEnum.BREAK_STACK: {
+      const { id } = action.payload;
+      const block = validateBlockExists(
+        state.canvasBlocks,
+        id,
+        BlockActionEnum.BREAK_STACK
+      );
+      if (!block) {
+        return state;
+      }
+
+      const prevBlockId = block.prevBlockId;
+      if (!prevBlockId) {
+        return state;
+      }
+      const prevBlock = validateBlockExists(
+        state.canvasBlocks,
+        prevBlockId,
+        BlockActionEnum.BREAK_STACK
+      );
+      if (!prevBlock) {
+        return state;
+      }
+
+      const updatedBlock = { ...block, prevBlockId: null };
+      const updatedPrevBlock = { ...prevBlock, nextBlockId: null };
+
+      let updatedCanvasBlocks = updateBlockById(
+        state.canvasBlocks,
+        id,
+        updatedBlock
+      );
+      updatedCanvasBlocks = updateBlockById(
+        updatedCanvasBlocks,
+        prevBlockId,
+        updatedPrevBlock
+      );
+
+      return { ...state, canvasBlocks: updatedCanvasBlocks };
+    }
+
     default:
       return state;
   }

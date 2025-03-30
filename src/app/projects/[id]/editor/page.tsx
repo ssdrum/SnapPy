@@ -34,6 +34,7 @@ export default function EditorPage() {
     addChildBlockAction,
     removeChildBlockAction,
     stackBlockAction,
+    breakStackAction,
     state,
   } = useBlocks();
 
@@ -66,8 +67,17 @@ export default function EditorPage() {
 
     // If dragging a nested block, remove child block from parent
     const draggedBlock = findBlockById(state.canvasBlocks, id);
-    if (draggedBlock && draggedBlock.parentId) {
+    if (!draggedBlock) {
+      return;
+    }
+
+    if (draggedBlock.parentId) {
       removeChildBlockAction(id, draggedBlock.parentId);
+    }
+
+    // if dragging a block witha prev block, unsnap
+    if (draggedBlock.prevBlockId) {
+      breakStackAction(id);
     }
 
     // If user started dragging a workbench block, create a new block
