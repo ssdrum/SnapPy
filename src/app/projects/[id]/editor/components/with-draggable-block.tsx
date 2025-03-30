@@ -15,6 +15,7 @@ export interface DraggableBlockProps {
   stackOptions: StackOptions;
   parentId: string | null;
   children: Block[];
+  ref: React.RefObject<HTMLElement | null>;
 }
 
 export default function withDraggableBlock<T extends object>(
@@ -30,6 +31,7 @@ export default function withDraggableBlock<T extends object>(
       isWorkbenchBlock,
       parentId,
       children,
+      ref,
       ...restProps
     } = props;
     const { selectBlockAction, deselectBlockAction } = useBlocks();

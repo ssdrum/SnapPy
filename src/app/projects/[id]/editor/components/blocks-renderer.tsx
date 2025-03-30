@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Block, BlockType, VariableBlock } from '../blocks/types';
 import Empty from '../blocks/empty';
 import Variable from '../blocks/variable';
+import { calcNextBlockStartPosition } from '../utils/utils';
 
 interface BlocksRendererProps {
   blocks: Block[];
@@ -17,12 +18,6 @@ export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
 const renderBlockSequence = (currBlock: Block, allBlocks: Block[]) => {
   const renderedBlock = renderBlock(currBlock);
 
-  // Temporarily hardcoded
-  const nextBlockStartPosition = {
-    x: currBlock.coords.x,
-    y: currBlock.coords.y + 50,
-  };
-
   return (
     <div>
       {renderedBlock}
@@ -31,7 +26,7 @@ const renderBlockSequence = (currBlock: Block, allBlocks: Block[]) => {
         renderBlockSequence(
           {
             ...allBlocks.find((block) => block.id === currBlock.nextBlockId)!,
-            coords: nextBlockStartPosition, // Pass the hardcoded position to the next block
+            coords: calcNextBlockStartPosition(currBlock),
           },
           allBlocks
         )}

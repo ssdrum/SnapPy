@@ -1,3 +1,4 @@
+import { Coordinates } from '@dnd-kit/core/dist/types';
 import { Block } from '../blocks/types';
 
 /**
@@ -6,7 +7,7 @@ import { Block } from '../blocks/types';
  * Note: A forest is a set of disjoint trees.
  * TODO: Add unit tests
  */
-export const findBlockById = (forest: Block[], id: string): Block | null => {
+export function findBlockById(forest: Block[], id: string): Block | null {
   for (const root of forest) {
     if (root.id === id) {
       return root;
@@ -21,18 +22,18 @@ export const findBlockById = (forest: Block[], id: string): Block | null => {
   }
 
   return null;
-};
+}
 
 /**
  * Traverses the forest recursively and updates the block with the provided id
  * with the updatedBlock.
  * TODO: Add unit tests
  */
-export const updateBlockById = (
+export function updateBlockById(
   blocks: Block[],
   id: string,
   updatedBlock: Block
-): Block[] => {
+): Block[] {
   // Create a new array to avoid mutating the original
   return blocks.map((block) => {
     // If this is the block to update, return the updated block
@@ -51,12 +52,12 @@ export const updateBlockById = (
     // Otherwise, return the block unchanged
     return block;
   });
-};
+}
 
 /**
  * Removes the block with the provided id from the forest.
  */
-export const removeBlockById = (blocks: Block[], id: string): Block[] => {
+export function removeBlockById(blocks: Block[], id: string): Block[] {
   // First filter out any blocks that match the id at the current level
   const filteredBlocks = blocks.filter((block) => block.id !== id);
 
@@ -78,13 +79,13 @@ export const removeBlockById = (blocks: Block[], id: string): Block[] => {
     // Otherwise, return the block unchanged
     return block;
   });
-};
+}
 
-export const validateBlockExists = (
+export function validateBlockExists(
   blocks: Block[],
   id: string | null,
   actionName: string
-): Block | null => {
+): Block | null {
   if (!id) {
     return null;
   }
@@ -99,16 +100,16 @@ export const validateBlockExists = (
   }
 
   return block;
-};
+}
 
 /**
  * Resizes a select element to match the width of its selected option
  * @param selectRef React ref to the select element
  * source: https://stackoverflow.com/questions/28308103/adjust-width-of-select-element-according-to-selected-options-width
  */
-export const resizeSelect = (
+export function resizeSelect(
   selectRef: React.RefObject<HTMLSelectElement | null>
-): void => {
+): void {
   if (!selectRef.current) return;
 
   const select = selectRef.current;
@@ -139,4 +140,39 @@ export const resizeSelect = (
 
   // Clean up
   tempSelect.remove();
-};
+}
+
+// Calculates the start position for the next block in the sequence
+export function calcNextBlockStartPosition(currBlock: Block): Coordinates {
+  const nextBlockStartPosition = {
+    x: currBlock.coords.x,
+    y: currBlock.coords.y,
+  };
+
+  // Base height for every block
+  nextBlockStartPosition.y += 34.8; // TODO: Remove magic numbers
+
+  // Calculate max nesting depth and multiply by 14
+  const maxDepth = getMaxDepth(currBlock);
+  if (maxDepth > 0) {
+    nextBlockStartPosition.y += maxDepth * 14;
+  }
+
+  return nextBlockStartPosition;
+}
+
+// Recursive function that finds the max depth of a tree
+function getMaxDepth(block: Block): number {
+  if (block.children.length === 0) {
+    return 0;
+  }
+
+  // Find the maximum depth among children
+  let maxDepth = 0;
+  for (const child of block.children) {
+    const childDepth = getMaxDepth(child);
+    maxDepth = Math.max(maxDepth, childDepth);
+  }
+
+  return maxDepth + 1;
+}
