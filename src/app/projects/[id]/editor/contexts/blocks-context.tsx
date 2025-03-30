@@ -59,7 +59,7 @@ export const useBlocks = () => {
 
 export default function BlocksProvider({
   children,
-  canvasBlocks,
+  //canvasBlocks,
   variables,
 }: BlocksProviderProps) {
   const initialState: BlocksState = {

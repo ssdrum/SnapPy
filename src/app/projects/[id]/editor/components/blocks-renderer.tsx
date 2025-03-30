@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Block, BlockType, VariableBlock } from '../blocks/types';
 import Empty from '../blocks/empty';
 import Variable from '../blocks/variable';
@@ -11,26 +11,49 @@ interface BlocksRendererProps {
 export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
   // Find the start nodes
   const startNodes = findStartNodes(blocks);
+
   // Render the start nodes
-  return <>{startNodes.map((block) => renderBlockSequence(block, blocks))}</>;
+  return (
+    <>
+      {startNodes.map((block) => (
+        <React.Fragment key={block.id}>
+          {renderBlockSequence(block, blocks)}
+        </React.Fragment>
+      ))}
+    </>
+  );
 }
 
-const renderBlockSequence = (currBlock: Block, allBlocks: Block[]) => {
+const renderBlockSequence = (
+  currBlock: Block,
+  allBlocks: Block[]
+): React.ReactNode => {
   const renderedBlock = renderBlock(currBlock);
 
+  if (!currBlock.nextBlockId) {
+    return renderedBlock;
+  }
+
+  const nextBlock = allBlocks.find(
+    (block) => block.id === currBlock.nextBlockId
+  );
+
+  if (!nextBlock) {
+    console.warn(`Next block with id ${currBlock.nextBlockId} not found`);
+    return renderedBlock;
+  }
+
   return (
-    <div>
+    <>
       {renderedBlock}
-      {/* Render the next block in the sequence if it exists */}
-      {currBlock.nextBlockId &&
-        renderBlockSequence(
-          {
-            ...allBlocks.find((block) => block.id === currBlock.nextBlockId)!,
-            coords: calcNextBlockStartPosition(currBlock),
-          },
-          allBlocks
-        )}
-    </div>
+      {renderBlockSequence(
+        {
+          ...nextBlock,
+          coords: calcNextBlockStartPosition(currBlock),
+        },
+        allBlocks
+      )}
+    </>
   );
 };
 
@@ -84,7 +107,7 @@ const renderBlock = (block: Block) => {
         </Variable>
       );
     default:
-      console.error(`invalid block type in BlockRenderer: ${type}`);
+      console.error(`Invalid block type in BlockRenderer: ${type}`);
       return null;
   }
 };

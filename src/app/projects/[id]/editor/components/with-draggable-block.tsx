@@ -2,7 +2,7 @@ import useDraggableBlock from '../hooks/useDraggableBlock';
 import { Block, BlockState, BlockType, StackOptions } from '../blocks/types';
 import { useBlocks } from '../contexts/blocks-context';
 import classes from '../blocks/blocks.module.css';
-import BlockDropZone from '../blocks/BlockDropZone';
+//import BlockDropZone from '../blocks/BlockDropZone';
 
 // Base props that all draggable blocks will have
 export interface DraggableBlockProps {
@@ -15,7 +15,6 @@ export interface DraggableBlockProps {
   stackOptions: StackOptions;
   parentId: string | null;
   children: Block[];
-  ref: React.RefObject<HTMLElement | null>;
 }
 
 export default function withDraggableBlock<T extends object>(
@@ -31,7 +30,6 @@ export default function withDraggableBlock<T extends object>(
       isWorkbenchBlock,
       parentId,
       children,
-      ref,
       ...restProps
     } = props;
     const { selectBlockAction, deselectBlockAction } = useBlocks();
