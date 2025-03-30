@@ -70,10 +70,11 @@ export default function EditorPage() {
 
   const handleDragEnd = (e: DragEndEvent) => {
     const { over, delta, active } = e;
-    //console.log(over?.id.toString());
 
     // Exit early if not dropped on a valid target
-    if (!over) return;
+    if (!over) {
+      return;
+    }
 
     const overId = over.id.toString();
     const activeId = active.id.toString();
