@@ -4,7 +4,12 @@ import { useContext, useEffect } from 'react';
 import classes from './editor.module.css';
 import { ProjectContext } from './contexts/project-context';
 import { Title, Paper, Group, Button, AppShellMain, Box } from '@mantine/core';
-import { DndContext, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import {
+  DndContext,
+  DragEndEvent,
+  DragMoveEvent,
+  DragStartEvent,
+} from '@dnd-kit/core';
 import { useBlocks } from './contexts/blocks-context';
 import Canvas from './components/canvas';
 import Workbench from './components/workbench';
@@ -21,6 +26,7 @@ export default function EditorPage() {
   const { name, id } = useContext(ProjectContext)!;
   const {
     startDragAction,
+    moveBlockAction,
     endDragAction,
     deselectBlockAction,
     createBlockAction,
@@ -66,6 +72,13 @@ export default function EditorPage() {
 
     // If user started dragging a workbench block, create a new block
     startDragAction(id);
+  };
+
+  const handleDragMove = (e: DragMoveEvent) => {
+    const { delta, active } = e;
+    const activeId = active.id.toString();
+    console.log(`moving ${activeId}`);
+    moveBlockAction(activeId, delta);
   };
 
   const handleDragEnd = (e: DragEndEvent) => {
@@ -137,6 +150,7 @@ export default function EditorPage() {
           id='dnd-context'
           sensors={sensors}
           onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
         >
           <Workbench />

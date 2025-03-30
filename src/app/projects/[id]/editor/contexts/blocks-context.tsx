@@ -29,6 +29,7 @@ interface BlocksContextType {
   selectBlockAction: (id: string) => void;
   deselectBlockAction: () => void;
   startDragAction: (id: string) => void;
+  moveBlockAction: (id: string, delta: Coordinates) => void;
   endDragAction: (delta: Coordinates) => void;
   createBlockAction: (id: string) => void;
   deleteBlockAction: (id: string) => void;
@@ -101,6 +102,13 @@ export default function BlocksProvider({
     dispatch({
       type: BlockActionEnum.START_DRAG,
       payload: { id },
+    });
+  };
+
+  const moveBlockAction = (id: string, delta: Coordinates) => {
+    dispatch({
+      type: BlockActionEnum.MOVE_BLOCK,
+      payload: { id, delta },
     });
   };
 
@@ -189,6 +197,7 @@ export default function BlocksProvider({
     selectBlockAction,
     deselectBlockAction,
     startDragAction,
+    moveBlockAction,
     endDragAction,
     createBlockAction,
     deleteBlockAction,

@@ -75,6 +75,20 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
+    case BlockActionEnum.MOVE_BLOCK: {
+      const { id, delta } = action.payload;
+      const block = validateBlockExists(
+        state.canvasBlocks,
+        id,
+        BlockActionEnum.START_DRAG
+      );
+      if (!block) {
+        return state;
+      }
+
+      return state;
+    }
+
     case BlockActionEnum.END_DRAG: {
       const id = state.draggingBlockId;
       if (!id) {

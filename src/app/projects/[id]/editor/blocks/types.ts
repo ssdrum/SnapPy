@@ -72,6 +72,7 @@ export enum BlockActionEnum {
   SELECT_BLOCK = 'select block',
   DESELECT_BLOCK = 'deselect block',
   START_DRAG = 'start drag',
+  MOVE_BLOCK = 'move block',
   END_DRAG = 'end drag',
   CREATE_BLOCK = 'create block',
   DELETE_BLOCK = 'delete block',
@@ -137,6 +138,10 @@ interface StackBlockAction {
   payload: { id: string; targetId: string; position: StackPosition };
 }
 
+interface MoveBlockAction {
+  type: BlockActionEnum.MOVE_BLOCK;
+  payload: { id: string; delta: Coordinates };
+}
 // Union type of all actions
 export type BlockAction =
   | SelectBlockAction
@@ -149,4 +154,5 @@ export type BlockAction =
   | ChangeVariableSelectedOptionAction
   | AddChildBlockAction
   | RemoveChildBlockAction
-  | StackBlockAction;
+  | StackBlockAction
+  | MoveBlockAction;
