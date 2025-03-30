@@ -245,7 +245,7 @@ const workBenchBlocks: Block[] = [
 const b3: Block = {
   id: '3',
   type: BlockType.Empty,
-  coords: { x: 400, y: 300 },
+  coords: { x: 0, y: 0 },
   isWorkbenchBlock: false,
   state: BlockState.Nested,
   stackOptions: { top: true, bottom: true },
@@ -258,7 +258,7 @@ const b3: Block = {
 const b2: Block = {
   id: '2',
   type: BlockType.Empty,
-  coords: { x: 400, y: 300 },
+  coords: { x: 0, y: 0 },
   isWorkbenchBlock: false,
   state: BlockState.Idle,
   stackOptions: { top: true, bottom: true },
@@ -271,7 +271,7 @@ const b2: Block = {
 const b1: Block = {
   id: '1',
   type: BlockType.Variable,
-  coords: { x: 500, y: 250 },
+  coords: { x: 300, y: 300 },
   isWorkbenchBlock: false,
   state: BlockState.Idle,
   stackOptions: { top: true, bottom: true },

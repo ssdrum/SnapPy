@@ -1,5 +1,4 @@
 import { useDraggable } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
 import { BlockState, BlockType } from '../blocks/types';
 
 /**
@@ -13,12 +12,11 @@ export default function useDraggableBlock(
   state: BlockState,
   blockType: BlockType
 ) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const { attributes, listeners, setNodeRef } = useDraggable({
     id: id,
   });
 
   const style: React.CSSProperties = {
-    transform: CSS.Translate.toString(transform),
     top: isWorkbenchBlock ? 0 : top,
     left: isWorkbenchBlock ? 0 : left,
     position:

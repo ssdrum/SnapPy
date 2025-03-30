@@ -30,6 +30,7 @@ interface BlockInterface {
   type: BlockType;
   state: BlockState;
   coords: Coordinates;
+  lastDelta?: Coordinates;
   isWorkbenchBlock: boolean;
   stackOptions: StackOptions;
   parentId: string | null;

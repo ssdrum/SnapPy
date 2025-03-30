@@ -67,7 +67,14 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         return state;
       }
 
-      const updatedBlock = { ...block, state: BlockState.Dragging };
+      const updatedBlock = {
+        ...block,
+        state: BlockState.Dragging,
+        // Reset lastDelta when starting a new drag
+        // This will signal to the MOVE_BLOCK handler that it's the first move
+        lastDelta: undefined,
+      };
+
       return {
         ...state,
         canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
@@ -80,13 +87,50 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       const block = validateBlockExists(
         state.canvasBlocks,
         id,
-        BlockActionEnum.START_DRAG
+        BlockActionEnum.MOVE_BLOCK
       );
       if (!block) {
         return state;
       }
 
-      return state;
+      // For the first move after drag starts, store the original position
+      // We'll need it to calculate the absolute position
+      if (!block.lastDelta) {
+        // First move in this drag session
+        const updatedBlock = {
+          ...block,
+          coords: {
+            x: block.coords.x + delta.x,
+            y: block.coords.y + delta.y,
+          },
+          lastDelta: { ...delta },
+        };
+
+        return {
+          ...state,
+          canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
+        };
+      }
+
+      // For subsequent moves, calculate the incremental change since last move
+      const incrementalDelta = {
+        x: delta.x - block.lastDelta.x,
+        y: delta.y - block.lastDelta.y,
+      };
+
+      const updatedBlock = {
+        ...block,
+        coords: {
+          x: block.coords.x + incrementalDelta.x,
+          y: block.coords.y + incrementalDelta.y,
+        },
+        lastDelta: { ...delta },
+      };
+
+      return {
+        ...state,
+        canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
+      };
     }
 
     case BlockActionEnum.END_DRAG: {
@@ -104,12 +148,9 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         return state;
       }
 
-      // Update coordinates and set state to idle
-      const delta = action.payload.delta;
       const updatedBlock = {
         ...block,
         state: BlockState.Idle,
-        coords: { x: block.coords.x + delta.x, y: block.coords.y + delta.y },
       };
 
       return {

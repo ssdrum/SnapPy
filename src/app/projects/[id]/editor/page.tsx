@@ -77,7 +77,6 @@ export default function EditorPage() {
   const handleDragMove = (e: DragMoveEvent) => {
     const { delta, active } = e;
     const activeId = active.id.toString();
-    console.log(`moving ${activeId}`);
     moveBlockAction(activeId, delta);
   };
 
