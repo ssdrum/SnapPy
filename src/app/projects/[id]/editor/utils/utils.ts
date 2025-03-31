@@ -192,3 +192,36 @@ export function findRoot(forest: Block[], currBlock: Block) {
 
   return findRoot(forest, parentBlock);
 }
+
+export function updateSequencePositions(
+  blocks: Block[],
+  startBlock: Block
+): Block[] {
+  let updatedBlocks = [...blocks];
+  let currentBlock = startBlock;
+  let nextBlockId = currentBlock.nextBlockId;
+
+  while (nextBlockId) {
+    const nextBlock = findBlockById(updatedBlocks, nextBlockId);
+    if (!nextBlock) {
+      break;
+    }
+
+    const updatedNextBlock = {
+      ...nextBlock,
+      coords: calcNextBlockStartPosition(currentBlock),
+    };
+
+    updatedBlocks = updateBlockById(
+      updatedBlocks,
+      nextBlockId,
+      updatedNextBlock
+    );
+
+    // Move to the next iteration
+    currentBlock = updatedNextBlock;
+    nextBlockId = currentBlock.nextBlockId;
+  }
+
+  return updatedBlocks;
+}

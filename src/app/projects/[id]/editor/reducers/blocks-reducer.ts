@@ -8,10 +8,10 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import {
   calcNextBlockStartPosition,
-  findBlockById,
   findRoot,
   removeBlockById,
   updateBlockById,
+  updateSequencePositions,
   validateBlockExists,
 } from '../utils/utils';
 
@@ -331,7 +331,6 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
 
     case BlockActionEnum.ADD_CHILD_BLOCK: {
       const { id, targetId } = action.payload;
-
       const targetBlock = validateBlockExists(
         state.canvasBlocks,
         targetId,
@@ -353,10 +352,10 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         parentId: targetId,
       };
 
-      // First, remove the block from its current position in the forest
+      // Remove the block from its current position in the forest
       let newBlocks = removeBlockById(state.canvasBlocks, id);
 
-      // Then, update the target block to include the nested block in its children
+      // Update the target block to include the nested block in its children
       const updatedTargetBlock = {
         ...targetBlock,
         children: [...targetBlock.children, updatedNestedBlock],
@@ -365,27 +364,11 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       newBlocks = updateBlockById(newBlocks, targetId, updatedTargetBlock);
 
       // Update positions of following blocks
-      let currentBlock = findRoot(newBlocks, updatedTargetBlock);
-      let nextBlockId = currentBlock.nextBlockId;
-      while (nextBlockId) {
-        const nextBlock = findBlockById(newBlocks, nextBlockId);
-        if (!nextBlock) {
-          break;
-        }
-
-        const updatedNextBlock = {
-          ...nextBlock,
-          coords: calcNextBlockStartPosition(currentBlock),
-        };
-
-        newBlocks = updateBlockById(newBlocks, nextBlockId, updatedNextBlock);
-
-        // Move to the next iteration
-        currentBlock = updatedNextBlock;
-        nextBlockId = currentBlock.nextBlockId;
+      const rootBlock = findRoot(newBlocks, updatedTargetBlock);
+      if (rootBlock.nextBlockId) {
+        newBlocks = updateSequencePositions(newBlocks, rootBlock);
       }
 
-      // Finally, update the forest with the modified target block
       return {
         ...state,
         canvasBlocks: newBlocks,
@@ -399,17 +382,28 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         parentId,
         BlockActionEnum.REMOVE_CHILD_BLOCK
       );
-      const childBlock = validateBlockExists(
-        state.canvasBlocks,
-        id,
-        BlockActionEnum.REMOVE_CHILD_BLOCK
-      );
-      if (!parentBlock || !childBlock) {
+      if (!parentBlock) {
         return state;
       }
 
-      // First, remove the child from the existing forest structure
-      const newBlocks = removeBlockById(state.canvasBlocks, id);
+      // Find the child block in the parent's children
+      const childBlock = parentBlock.children.find((child) => child.id === id);
+      if (!childBlock) {
+        return state;
+      }
+
+      // Create updated version of the parent without this child
+      const updatedParentBlock = {
+        ...parentBlock,
+        children: parentBlock.children.filter((child) => child.id !== id),
+      };
+
+      // Update the parent block in our forest
+      let newBlocks = updateBlockById(
+        state.canvasBlocks,
+        parentId,
+        updatedParentBlock
+      );
 
       // Create updated version of the child block with reset state and parentId
       const updatedChildBlock = {
@@ -419,9 +413,17 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
 
       // Add the reset child block back to the top level of the forest
+      newBlocks = [...newBlocks, updatedChildBlock];
+
+      // Update positions of following blocks in the sequence if parent is part of a sequence
+      const rootBlock = findRoot(newBlocks, updatedParentBlock);
+      if (rootBlock.nextBlockId) {
+        newBlocks = updateSequencePositions(newBlocks, rootBlock);
+      }
+
       return {
         ...state,
-        canvasBlocks: [...newBlocks, updatedChildBlock],
+        canvasBlocks: newBlocks,
       };
     }
 
