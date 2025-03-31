@@ -2,8 +2,6 @@ import React from 'react';
 import { Block, BlockType, VariableBlock } from '../blocks/types';
 import Empty from '../blocks/empty';
 import Variable from '../blocks/variable';
-import { calcNextBlockStartPosition } from '../utils/utils';
-import { useBlocks } from '../contexts/blocks-context';
 
 interface BlocksRendererProps {
   blocks: Block[];
@@ -29,7 +27,6 @@ const renderBlockSequence = (
   currBlock: Block,
   allBlocks: Block[]
 ): React.ReactNode => {
-  const { updateBlockAction } = useBlocks();
   const renderedBlock = renderBlock(currBlock);
 
   if (!currBlock.nextBlockId) {
@@ -44,11 +41,6 @@ const renderBlockSequence = (
     console.warn(`Next block with id ${currBlock.nextBlockId} not found`);
     return renderedBlock;
   }
-
-  const nextBlockPosition = calcNextBlockStartPosition(currBlock);
-  updateBlockAction(nextBlock.id, {
-    coords: { x: nextBlockPosition.x, y: nextBlockPosition.y },
-  });
 
   return (
     <>

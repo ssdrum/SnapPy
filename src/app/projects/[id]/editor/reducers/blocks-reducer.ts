@@ -7,6 +7,7 @@ import {
 } from '../blocks/types';
 import { v4 as uuidv4 } from 'uuid';
 import {
+  calcNextBlockStartPosition,
   removeBlockById,
   updateBlockById,
   validateBlockExists,
@@ -93,8 +94,9 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         return state;
       }
 
+      let updatedBlocks = [...state.canvasBlocks];
+
       // For the first move after drag starts, store the original position
-      // We'll need it to calculate the absolute position
       if (!block.lastDelta) {
         // First move in this drag session
         const updatedBlock = {
@@ -106,9 +108,44 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
           lastDelta: { ...delta },
         };
 
+        // Update the dragged block first
+        updatedBlocks = updateBlockById(updatedBlocks, id, updatedBlock);
+
+        // Now update any blocks that follow in the sequence
+        let currentBlock = updatedBlock;
+        while (currentBlock.nextBlockId) {
+          // Find the next block
+          const nextBlock = updatedBlocks.find(
+            (b) => b.id === currentBlock.nextBlockId
+          );
+          if (!nextBlock) {
+            break;
+          }
+
+          // Calculate the next position
+          const nextPosition = calcNextBlockStartPosition(currentBlock);
+
+          // Update the next block
+          const updatedNextBlock = {
+            ...nextBlock,
+            coords: nextPosition,
+            lastDelta: { x: 0, y: 0 },
+          };
+
+          // Update our working copy
+          updatedBlocks = updateBlockById(
+            updatedBlocks,
+            nextBlock.id,
+            updatedNextBlock
+          );
+
+          // Move to the next block
+          currentBlock = updatedNextBlock;
+        }
+
         return {
           ...state,
-          canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
+          canvasBlocks: updatedBlocks,
         };
       }
 
@@ -127,9 +164,42 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         lastDelta: { ...delta },
       };
 
+      // Update the dragged block first
+      updatedBlocks = updateBlockById(updatedBlocks, id, updatedBlock);
+
+      // Now update any blocks that follow in the sequence
+      let currentBlock = updatedBlock;
+      while (currentBlock.nextBlockId) {
+        // Find the next block
+        const nextBlock = updatedBlocks.find(
+          (b) => b.id === currentBlock.nextBlockId
+        );
+        if (!nextBlock) break;
+
+        // Calculate the next position
+        const nextPosition = calcNextBlockStartPosition(currentBlock);
+
+        // Update the next block
+        const updatedNextBlock = {
+          ...nextBlock,
+          coords: nextPosition,
+          lastDelta: { x: 0, y: 0 },
+        };
+
+        // Update our working copy
+        updatedBlocks = updateBlockById(
+          updatedBlocks,
+          nextBlock.id,
+          updatedNextBlock
+        );
+
+        // Move to the next block
+        currentBlock = updatedNextBlock;
+      }
+
       return {
         ...state,
-        canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
+        canvasBlocks: updatedBlocks,
       };
     }
 
@@ -387,7 +457,6 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       if (!block) {
         return state;
       }
-
       const prevBlockId = block.prevBlockId;
       if (!prevBlockId) {
         return state;
@@ -416,6 +485,26 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       );
 
       return { ...state, canvasBlocks: updatedCanvasBlocks };
+    }
+
+    case BlockActionEnum.UPDATE_BLOCK: {
+      const { id, updates } = action.payload;
+      const block = validateBlockExists(
+        state.canvasBlocks,
+        id,
+        BlockActionEnum.BREAK_STACK
+      );
+      if (!block) {
+        return state;
+      }
+
+      return {
+        ...state,
+        canvasBlocks: updateBlockById(state.canvasBlocks, id, {
+          ...block,
+          ...updates,
+        }),
+      };
     }
 
     default:
