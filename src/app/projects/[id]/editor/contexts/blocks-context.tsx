@@ -61,12 +61,12 @@ export const useBlocks = () => {
 
 export default function BlocksProvider({
   children,
-  //canvasBlocks,
+  canvasBlocks,
   variables,
 }: BlocksProviderProps) {
   const initialState: BlocksState = {
     workbenchBlocks: workBenchBlocks,
-    canvasBlocks: testCanvasBlocks,
+    canvasBlocks,
     variables,
     selectedBlockId: null,
     draggingBlockId: null,
@@ -260,69 +260,69 @@ const workBenchBlocks: Block[] = [
   },
 ];
 
-const b3: Block = {
-  id: '3',
-  type: BlockType.Empty,
-  coords: { x: 0, y: 0 },
-  isWorkbenchBlock: false,
-  state: BlockState.Nested,
-  stackOptions: { top: true, bottom: true },
-  parentId: '1',
-  prevBlockId: null,
-  nextBlockId: null,
-  children: [],
-};
-
-const b2: Block = {
-  id: '2',
-  type: BlockType.Empty,
-  coords: { x: 0, y: 0 },
-  isWorkbenchBlock: false,
-  state: BlockState.Idle,
-  stackOptions: { top: true, bottom: true },
-  parentId: null,
-  prevBlockId: '1',
-  nextBlockId: '4',
-  children: [],
-};
-
-const b1: Block = {
-  id: '1',
-  type: BlockType.Variable,
-  coords: { x: 300, y: 300 },
-  isWorkbenchBlock: false,
-  state: BlockState.Idle,
-  stackOptions: { top: true, bottom: true },
-  parentId: null,
-  prevBlockId: null,
-  nextBlockId: '2',
-  children: [b3],
-};
-
-const b4: Block = {
-  id: '4',
-  type: BlockType.Variable,
-  coords: { x: 0, y: 0 },
-  isWorkbenchBlock: false,
-  state: BlockState.Idle,
-  stackOptions: { top: true, bottom: true },
-  parentId: null,
-  prevBlockId: '2',
-  nextBlockId: '5',
-  children: [],
-};
-
-const b5: Block = {
-  id: '5',
-  type: BlockType.Variable,
-  coords: { x: 0, y: 0 },
-  isWorkbenchBlock: false,
-  state: BlockState.Idle,
-  stackOptions: { top: true, bottom: true },
-  parentId: null,
-  prevBlockId: '4',
-  nextBlockId: null,
-  children: [],
-};
-
-const testCanvasBlocks: Block[] = [b1, b2, b4, b5];
+//const b3: Block = {
+//  id: '3',
+//  type: BlockType.Empty,
+//  coords: { x: 0, y: 0 },
+//  isWorkbenchBlock: false,
+//  state: BlockState.Nested,
+//  stackOptions: { top: true, bottom: true },
+//  parentId: '1',
+//  prevBlockId: null,
+//  nextBlockId: null,
+//  children: [],
+//};
+//
+//const b2: Block = {
+//  id: '2',
+//  type: BlockType.Empty,
+//  coords: { x: 0, y: 0 },
+//  isWorkbenchBlock: false,
+//  state: BlockState.Idle,
+//  stackOptions: { top: true, bottom: true },
+//  parentId: null,
+//  prevBlockId: '1',
+//  nextBlockId: '4',
+//  children: [],
+//};
+//
+//const b1: Block = {
+//  id: '1',
+//  type: BlockType.Variable,
+//  coords: { x: 300, y: 300 },
+//  isWorkbenchBlock: false,
+//  state: BlockState.Idle,
+//  stackOptions: { top: true, bottom: true },
+//  parentId: null,
+//  prevBlockId: null,
+//  nextBlockId: '2',
+//  children: [b3],
+//};
+//
+//const b4: Block = {
+//  id: '4',
+//  type: BlockType.Variable,
+//  coords: { x: 0, y: 0 },
+//  isWorkbenchBlock: false,
+//  state: BlockState.Idle,
+//  stackOptions: { top: true, bottom: true },
+//  parentId: null,
+//  prevBlockId: '2',
+//  nextBlockId: '5',
+//  children: [],
+//};
+//
+//const b5: Block = {
+//  id: '5',
+//  type: BlockType.Variable,
+//  coords: { x: 0, y: 0 },
+//  isWorkbenchBlock: false,
+//  state: BlockState.Idle,
+//  stackOptions: { top: true, bottom: true },
+//  parentId: null,
+//  prevBlockId: '4',
+//  nextBlockId: null,
+//  children: [],
+//};
+//
+//const testCanvasBlocks: Block[] = [b1, b2, b4, b5];

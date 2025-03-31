@@ -10,9 +10,7 @@ export default function BlockDropZone({
   blockId,
   position,
 }: BlockDropZoneProps) {
-  const { setNodeRef } = useDroppable({
-    id: `stack_${position}_${blockId}`,
-  });
+  const { setNodeRef } = useDroppable({ id: `stack_${position}_${blockId}` });
 
-  return <div className={classes.blockDropZone} ref={setNodeRef} />;
+  return <div ref={setNodeRef} className={classes.blockDropZone} />;
 }
