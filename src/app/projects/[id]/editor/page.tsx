@@ -24,6 +24,7 @@ import { StackPosition } from './blocks/types';
 
 export default function EditorPage() {
   const { name, id } = useContext(ProjectContext)!;
+
   const {
     startDragAction,
     moveBlockAction,
@@ -37,6 +38,7 @@ export default function EditorPage() {
     breakStackAction,
     state,
   } = useBlocks();
+
   const { code, handleCodeChange, error, output } = useCodeEditor();
 
   // Show a window alert when an error occurs
@@ -122,10 +124,15 @@ export default function EditorPage() {
 
     // Handle drop on another block (nesting)
     if (overId.startsWith('stack')) {
-      const [_, position, target] = overId.split('_');
+      const [_, position, targetId] = overId.split('_');
+      if (activeId === targetId) {
+        console.log('noooooooooooo');
+        return;
+      }
+
       stackBlockAction(
         activeId,
-        target,
+        targetId,
         position === 'top' ? StackPosition.Top : StackPosition.Bottom
       );
       return;

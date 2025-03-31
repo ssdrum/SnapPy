@@ -444,20 +444,108 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         return state;
       }
 
-      // Copy blocks and update their prev and next block ids
+      // Initialize the updated blocks array
+      let updatedCanvasBlocks = [...state.canvasBlocks];
+
+      // Create copies to modify
       let updatedTargetBlock = { ...targetBlock };
       let updatedBlockToStack = { ...blockToStack };
+
+      // Set up connections based on position
       if (position === StackPosition.Top) {
+        // Block will be placed above target block
+        // Handle current connections first
+
+        // If blockToStack already has a next block, we need to disconnect it
+        if (updatedBlockToStack.nextBlockId) {
+          // Find blockToStack's current next block
+          const currentNextBlock = updatedCanvasBlocks.find(
+            (b) => b.id === updatedBlockToStack.nextBlockId
+          );
+          if (currentNextBlock) {
+            // Update this block to disconnect from blockToStack
+            updatedCanvasBlocks = updateBlockById(
+              updatedCanvasBlocks,
+              currentNextBlock.id,
+              {
+                ...currentNextBlock,
+                prevBlockId: null,
+              }
+            );
+          }
+        }
+
+        // If targetBlock already has a previous block, we need to disconnect it
+        if (updatedTargetBlock.prevBlockId) {
+          // Find targetBlock's current previous block
+          const currentPrevBlock = updatedCanvasBlocks.find(
+            (b) => b.id === updatedTargetBlock.prevBlockId
+          );
+          if (currentPrevBlock) {
+            // Update this block to disconnect from targetBlock
+            updatedCanvasBlocks = updateBlockById(
+              updatedCanvasBlocks,
+              currentPrevBlock.id,
+              {
+                ...currentPrevBlock,
+                nextBlockId: null,
+              }
+            );
+          }
+        }
+
+        // Now connect blockToStack to targetBlock
+        updatedBlockToStack.nextBlockId = targetId;
         updatedTargetBlock.prevBlockId = id;
-        blockToStack.nextBlockId = targetId;
       } else {
-        updatedBlockToStack.prevBlockId = id;
-        updatedTargetBlock.nextBlockId = targetId;
+        // Block will be placed below target block
+
+        // If blockToStack already has a previous block, we need to disconnect it
+        if (updatedBlockToStack.prevBlockId) {
+          // Find blockToStack's current previous block
+          const currentPrevBlock = updatedCanvasBlocks.find(
+            (b) => b.id === updatedBlockToStack.prevBlockId
+          );
+          if (currentPrevBlock) {
+            // Update this block to disconnect from blockToStack
+            updatedCanvasBlocks = updateBlockById(
+              updatedCanvasBlocks,
+              currentPrevBlock.id,
+              {
+                ...currentPrevBlock,
+                nextBlockId: null,
+              }
+            );
+          }
+        }
+
+        // If targetBlock already has a next block, we need to disconnect it
+        if (updatedTargetBlock.nextBlockId) {
+          // Find targetBlock's current next block
+          const currentNextBlock = updatedCanvasBlocks.find(
+            (b) => b.id === updatedTargetBlock.nextBlockId
+          );
+          if (currentNextBlock) {
+            // Update this block to disconnect from targetBlock
+            updatedCanvasBlocks = updateBlockById(
+              updatedCanvasBlocks,
+              currentNextBlock.id,
+              {
+                ...currentNextBlock,
+                prevBlockId: null,
+              }
+            );
+          }
+        }
+
+        // Now connect targetBlock to blockToStack
+        updatedTargetBlock.nextBlockId = id;
+        updatedBlockToStack.prevBlockId = targetId;
       }
 
-      // Update the blocks in the canvas
-      let updatedCanvasBlocks = updateBlockById(
-        state.canvasBlocks,
+      // Update the target blocks
+      updatedCanvasBlocks = updateBlockById(
+        updatedCanvasBlocks,
         targetId,
         updatedTargetBlock
       );
@@ -467,6 +555,56 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         id,
         updatedBlockToStack
       );
+
+      // Update positions for the entire sequence
+      // Find the start of the sequence
+      let startBlock = updatedBlockToStack;
+      if (position === StackPosition.Top) {
+        // If we stacked on top, the blockToStack is the new start
+        while (startBlock.prevBlockId) {
+          const prevBlock = updatedCanvasBlocks.find(
+            (b) => b.id === startBlock.prevBlockId
+          );
+          if (!prevBlock) break;
+          startBlock = prevBlock;
+        }
+      } else {
+        // If we stacked on bottom, we need to find the start of targetBlock's sequence
+        startBlock = updatedTargetBlock;
+        while (startBlock.prevBlockId) {
+          const prevBlock = updatedCanvasBlocks.find(
+            (b) => b.id === startBlock.prevBlockId
+          );
+          if (!prevBlock) break;
+          startBlock = prevBlock;
+        }
+      }
+
+      // Now update positions for the sequence
+      let currentBlock = startBlock;
+      while (currentBlock.nextBlockId) {
+        const nextBlock = updatedCanvasBlocks.find(
+          (b) => b.id === currentBlock.nextBlockId
+        );
+        if (!nextBlock) break;
+
+        // Update the next block's position
+        const nextPosition = calcNextBlockStartPosition(currentBlock);
+        updatedCanvasBlocks = updateBlockById(
+          updatedCanvasBlocks,
+          nextBlock.id,
+          {
+            ...nextBlock,
+            coords: nextPosition,
+          }
+        );
+
+        // Move to the next block
+        currentBlock = {
+          ...nextBlock,
+          coords: nextPosition,
+        };
+      }
 
       return {
         ...state,

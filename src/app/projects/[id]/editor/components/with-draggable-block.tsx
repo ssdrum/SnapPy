@@ -1,9 +1,9 @@
+import React from 'react';
 import useDraggableBlock from '../hooks/useDraggableBlock';
 import { Block, BlockState, BlockType, StackOptions } from '../blocks/types';
 import { useBlocks } from '../contexts/blocks-context';
 import classes from '../blocks/blocks.module.css';
 import BlockDropZone from '../blocks/block-drop-zone';
-//import BlockDropZone from '../blocks/BlockDropZone';
 
 // Base props that all draggable blocks will have
 export interface DraggableBlockProps {
@@ -51,30 +51,33 @@ export default function withDraggableBlock<T extends object>(
     return (
       // dnd-kit setup - outer container with positioning
       <div ref={setNodeRef} style={positionStyle} {...attributes}>
-        {!isWorkbenchBlock && <BlockDropZone blockId={id} position='top' />}
-
-        <div
-          className={classes.base}
-          style={{ backgroundColor, boxShadow }}
-          {...listeners}
-          onClick={() => {
-            deselectBlockAction();
-            if (!isWorkbenchBlock) {
-              selectBlockAction(id);
-            }
-          }}
-        >
-          <WrappedBlock
-            id={id}
-            isWorkbenchBlock={isWorkbenchBlock}
-            parentId={parentId}
-            {...(restProps as T)}
+        {/* Wrapper needed for absolute positioning context */}
+        <div style={{ position: 'relative' }}>
+          {!isWorkbenchBlock && <BlockDropZone blockId={id} position='top' />}
+          <div
+            className={classes.base}
+            style={{ backgroundColor, boxShadow }}
+            {...listeners}
+            onClick={() => {
+              deselectBlockAction();
+              if (!isWorkbenchBlock) {
+                selectBlockAction(id);
+              }
+            }}
           >
-            {children}
-          </WrappedBlock>
+            <WrappedBlock
+              id={id}
+              isWorkbenchBlock={isWorkbenchBlock}
+              parentId={parentId}
+              {...(restProps as T)}
+            >
+              {children}
+            </WrappedBlock>
+          </div>
+          {!isWorkbenchBlock && (
+            <BlockDropZone blockId={id} position='bottom' />
+          )}
         </div>
-
-        {!isWorkbenchBlock && <BlockDropZone blockId={id} position='bottom' />}
       </div>
     );
   };

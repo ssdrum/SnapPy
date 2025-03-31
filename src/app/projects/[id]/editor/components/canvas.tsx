@@ -1,6 +1,6 @@
 import classes from '../editor.module.css';
 import { useBlocks } from '../contexts/blocks-context';
-import { useDroppable } from '@dnd-kit/core';
+import { useDroppable, useDndMonitor } from '@dnd-kit/core';
 import BlocksRenderer from './blocks-renderer';
 import { Box, Text } from '@mantine/core';
 
@@ -14,6 +14,12 @@ export default function Canvas() {
       deselectBlockAction();
     }
   };
+
+  useDndMonitor({
+    onDragOver(event) {
+      console.log('Dragging over:', event.over?.id);
+    },
+  });
 
   return (
     <div
