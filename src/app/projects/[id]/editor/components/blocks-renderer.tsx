@@ -3,6 +3,7 @@ import { Block, BlockType, VariableBlock } from '../blocks/types';
 import Empty from '../blocks/empty';
 import Variable from '../blocks/variable';
 import { calcNextBlockStartPosition } from '../utils/utils';
+import { useBlocks } from '../contexts/blocks-context';
 
 interface BlocksRendererProps {
   blocks: Block[];
@@ -10,7 +11,7 @@ interface BlocksRendererProps {
 
 export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
   // Find the start nodes
-  const startNodes = findStartNodes(blocks);
+  const startNodes = blocks.filter((block) => block.prevBlockId === null);
 
   // Render the start nodes
   return (
@@ -28,6 +29,7 @@ const renderBlockSequence = (
   currBlock: Block,
   allBlocks: Block[]
 ): React.ReactNode => {
+  const { updateBlockAction } = useBlocks();
   const renderedBlock = renderBlock(currBlock);
 
   if (!currBlock.nextBlockId) {
@@ -43,16 +45,15 @@ const renderBlockSequence = (
     return renderedBlock;
   }
 
+  const nextBlockPosition = calcNextBlockStartPosition(currBlock);
+  updateBlockAction(nextBlock.id, {
+    coords: { x: nextBlockPosition.x, y: nextBlockPosition.y },
+  });
+
   return (
     <>
       {renderedBlock}
-      {renderBlockSequence(
-        {
-          ...nextBlock,
-          coords: calcNextBlockStartPosition(currBlock),
-        },
-        allBlocks
-      )}
+      {renderBlockSequence(nextBlock, allBlocks)}
     </>
   );
 };
@@ -110,10 +111,4 @@ const renderBlock = (block: Block) => {
       console.error(`Invalid block type in BlockRenderer: ${type}`);
       return null;
   }
-};
-
-// Find all blocks that don't have a previous block (these are starting blocks)
-const findStartNodes = (blocks: Block[]): Block[] => {
-  // Find blocks with no previous block
-  return blocks.filter((block) => block.prevBlockId === null);
 };

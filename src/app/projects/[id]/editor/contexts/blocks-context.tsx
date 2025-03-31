@@ -43,6 +43,7 @@ interface BlocksContextType {
     position: StackPosition
   ) => void;
   breakStackAction: (id: string) => void;
+  updateBlockAction: (id: string, updates: Partial<Block>) => void;
 }
 
 // Create context object
@@ -200,6 +201,13 @@ export default function BlocksProvider({
     });
   };
 
+  const updateBlockAction = (id: string, updates: Partial<Block>) => {
+    dispatch({
+      type: BlockActionEnum.UPDATE_BLOCK,
+      payload: { id, updates },
+    });
+  };
+
   const value: BlocksContextType = {
     state,
     selectBlockAction,
@@ -215,6 +223,7 @@ export default function BlocksProvider({
     addChildBlockAction,
     removeChildBlockAction,
     stackBlockAction,
+    updateBlockAction,
   };
 
   return (

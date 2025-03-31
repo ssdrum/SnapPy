@@ -83,6 +83,7 @@ export enum BlockActionEnum {
   ADD_CHILD_BLOCK = 'add child block',
   REMOVE_CHILD_BLOCK = 'remove child block',
   STACK_BLOCK = 'stack block',
+  UPDATE_BLOCK = 'update block',
 }
 
 // Action Interfaces
@@ -150,6 +151,11 @@ interface BreakStackAction {
   payload: { id: string };
 }
 
+interface UpdateBlockAction {
+  type: BlockActionEnum.UPDATE_BLOCK;
+  payload: { id: string; updates: Partial<Block> };
+}
+
 // Union type of all actions
 export type BlockAction =
   | SelectBlockAction
@@ -164,4 +170,5 @@ export type BlockAction =
   | RemoveChildBlockAction
   | StackBlockAction
   | MoveBlockAction
-  | BreakStackAction;
+  | BreakStackAction
+  | UpdateBlockAction;
