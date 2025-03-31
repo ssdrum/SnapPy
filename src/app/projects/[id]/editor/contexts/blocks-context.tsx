@@ -308,8 +308,21 @@ const b4: Block = {
   stackOptions: { top: true, bottom: true },
   parentId: null,
   prevBlockId: '2',
+  nextBlockId: '5',
+  children: [],
+};
+
+const b5: Block = {
+  id: '5',
+  type: BlockType.Variable,
+  coords: { x: 0, y: 0 },
+  isWorkbenchBlock: false,
+  state: BlockState.Idle,
+  stackOptions: { top: true, bottom: true },
+  parentId: null,
+  prevBlockId: '4',
   nextBlockId: null,
   children: [],
 };
 
-const testCanvasBlocks: Block[] = [b1, b2, b4];
+const testCanvasBlocks: Block[] = [b1, b2, b4, b5];

@@ -176,3 +176,19 @@ function getMaxDepth(block: Block): number {
 
   return maxDepth + 1;
 }
+
+export function findRoot(forest: Block[], currBlock: Block) {
+  if (!currBlock.parentId) {
+    return currBlock;
+  }
+
+  const parentBlock = findBlockById(forest, currBlock.parentId);
+  if (!parentBlock) {
+    console.error(
+      `Error in findRoot: parent block with id = ${currBlock.parentId} not found in forest`
+    );
+    return currBlock;
+  }
+
+  return findRoot(forest, parentBlock);
+}

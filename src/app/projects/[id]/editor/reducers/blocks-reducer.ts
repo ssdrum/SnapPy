@@ -8,6 +8,8 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import {
   calcNextBlockStartPosition,
+  findBlockById,
+  findRoot,
   removeBlockById,
   updateBlockById,
   validateBlockExists,
@@ -352,7 +354,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
 
       // First, remove the block from its current position in the forest
-      const newBlocks = removeBlockById(state.canvasBlocks, id);
+      let newBlocks = removeBlockById(state.canvasBlocks, id);
 
       // Then, update the target block to include the nested block in its children
       const updatedTargetBlock = {
@@ -360,10 +362,33 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         children: [...targetBlock.children, updatedNestedBlock],
       };
 
+      newBlocks = updateBlockById(newBlocks, targetId, updatedTargetBlock);
+
+      // Update positions of following blocks
+      let currentBlock = findRoot(newBlocks, updatedTargetBlock);
+      let nextBlockId = currentBlock.nextBlockId;
+      while (nextBlockId) {
+        const nextBlock = findBlockById(newBlocks, nextBlockId);
+        if (!nextBlock) {
+          break;
+        }
+
+        const updatedNextBlock = {
+          ...nextBlock,
+          coords: calcNextBlockStartPosition(currentBlock),
+        };
+
+        newBlocks = updateBlockById(newBlocks, nextBlockId, updatedNextBlock);
+
+        // Move to the next iteration
+        currentBlock = updatedNextBlock;
+        nextBlockId = currentBlock.nextBlockId;
+      }
+
       // Finally, update the forest with the modified target block
       return {
         ...state,
-        canvasBlocks: updateBlockById(newBlocks, targetId, updatedTargetBlock),
+        canvasBlocks: newBlocks,
       };
     }
 

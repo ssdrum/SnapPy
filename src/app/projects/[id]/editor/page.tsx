@@ -37,7 +37,6 @@ export default function EditorPage() {
     breakStackAction,
     state,
   } = useBlocks();
-
   const { code, handleCodeChange, error, output } = useCodeEditor();
 
   // Show a window alert when an error occurs
