@@ -128,9 +128,6 @@ export default function EditorPage() {
     // Handle drop on another block (nesting)
     if (overId.startsWith('stack')) {
       const [_, position, targetId] = overId.split('_');
-      if (activeId === targetId) {
-        return;
-      }
 
       stackBlockAction(
         activeId,

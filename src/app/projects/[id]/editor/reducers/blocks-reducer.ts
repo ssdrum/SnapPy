@@ -393,6 +393,10 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       if (!targetBlock || !blockToNest) {
         return state;
       }
+      // Avoid nesting into itself
+      if (state.dragGroupBlockIds?.has(targetId)) {
+        return state;
+      }
 
       // Create an updated version of the block to be nested
       const updatedNestedBlock = {
