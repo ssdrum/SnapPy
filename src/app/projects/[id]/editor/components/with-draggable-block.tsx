@@ -11,7 +11,7 @@ export interface DraggableBlockProps {
   top: number;
   left: number;
   blockType: BlockType;
-  state: BlockState;
+  blockState: BlockState;
   isWorkbenchBlock: boolean;
   stackOptions: StackOptions;
   parentId: string | null;
@@ -27,13 +27,14 @@ export default function withDraggableBlock<T extends object>(
       top,
       left,
       blockType,
-      state,
+      blockState,
       isWorkbenchBlock,
       parentId,
       children,
       ...restProps
     } = props;
-    const { selectBlockAction, deselectBlockAction } = useBlocks();
+
+    const { selectBlockAction, deselectBlockAction, state } = useBlocks();
 
     // Add dnd functionality
     const { attributes, listeners, setNodeRef, style } = useDraggableBlock(
@@ -41,7 +42,7 @@ export default function withDraggableBlock<T extends object>(
       isWorkbenchBlock,
       top,
       left,
-      state,
+      blockState,
       blockType
     );
 
@@ -53,7 +54,10 @@ export default function withDraggableBlock<T extends object>(
       <div ref={setNodeRef} style={positionStyle} {...attributes}>
         {/* Wrapper needed for absolute positioning context */}
         <div style={{ position: 'relative' }}>
-          {!isWorkbenchBlock && <BlockDropZone blockId={id} position='top' />}
+          {!isWorkbenchBlock && !state.dragGroupBlockIds?.has(id) && (
+            <BlockDropZone blockId={id} position='top' />
+          )}
+
           <div
             className={classes.base}
             style={{ backgroundColor, boxShadow }}
@@ -74,7 +78,8 @@ export default function withDraggableBlock<T extends object>(
               {children}
             </WrappedBlock>
           </div>
-          {!isWorkbenchBlock && (
+
+          {!isWorkbenchBlock && !state.dragGroupBlockIds?.has(id) && (
             <BlockDropZone blockId={id} position='bottom' />
           )}
         </div>

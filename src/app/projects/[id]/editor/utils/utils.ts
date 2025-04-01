@@ -226,7 +226,7 @@ export function updateSequencePositions(
   return updatedBlocks;
 }
 
-/*
+/**
  * Returns a set with the ids of all blocks connected to the given block in the
  * forest.
  * */

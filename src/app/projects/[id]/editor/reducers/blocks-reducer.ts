@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   calcNextBlockStartPosition,
   findRoot,
+  getConnectedBlockIds,
   removeBlockById,
   updateBlockById,
   updateSequencePositions,
@@ -78,10 +79,16 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         lastDelta: undefined,
       };
 
+      const newCanvasBlocks = updateBlockById(
+        state.canvasBlocks,
+        id,
+        updatedBlock
+      );
+
       return {
         ...state,
-        canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
-        draggingBlockId: id,
+        canvasBlocks: newCanvasBlocks,
+        dragGroupBlockIds: getConnectedBlockIds(newCanvasBlocks, id),
       };
     }
 
@@ -176,7 +183,9 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         const nextBlock = updatedBlocks.find(
           (b) => b.id === currentBlock.nextBlockId
         );
-        if (!nextBlock) break;
+        if (!nextBlock) {
+          break;
+        }
 
         // Calculate the next position
         const nextPosition = calcNextBlockStartPosition(currentBlock);
@@ -229,6 +238,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         ...state,
         canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
         draggingBlockId: null,
+        dragGroupBlockIds: null,
       };
     }
 
@@ -263,6 +273,45 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         workbenchBlocks: state.workbenchBlocks.map((block) =>
           block.id === id ? newWorkbenchBlock : block
         ),
+      };
+    }
+
+    case BlockActionEnum.CREATE_AND_DRAG_BLOCK: {
+      const { id } = action.payload;
+      const block = validateBlockExists(
+        state.workbenchBlocks,
+        id,
+        BlockActionEnum.CREATE_AND_DRAG_BLOCK
+      );
+      if (!block) {
+        return state;
+      }
+
+      // Create a copy for the canvas with the same ID
+      const newBlock = {
+        ...block,
+        isWorkbenchBlock: false,
+        state: BlockState.Dragging,
+        lastDelta: undefined,
+      };
+
+      // Create a replacement workbench block with a new ID
+      const newWorkbenchBlock = {
+        ...block,
+        id: uuidv4(),
+      };
+
+      return {
+        ...state,
+        // Add the block to canvas blocks
+        canvasBlocks: [...state.canvasBlocks, newBlock],
+        // Replace the original workbench block with one having a new ID
+        workbenchBlocks: state.workbenchBlocks.map((block) =>
+          block.id === id ? newWorkbenchBlock : block
+        ),
+        // Set as the dragging block
+        draggingBlockId: id,
+        dragGroupBlockIds: new Set<string>([id]), // Initially, just this block
       };
     }
 

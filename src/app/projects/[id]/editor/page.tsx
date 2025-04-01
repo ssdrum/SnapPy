@@ -30,7 +30,7 @@ export default function EditorPage() {
     moveBlockAction,
     endDragAction,
     deselectBlockAction,
-    createBlockAction,
+    createAndDragBlockAction,
     deleteBlockAction,
     addChildBlockAction,
     removeChildBlockAction,
@@ -60,28 +60,31 @@ export default function EditorPage() {
     // First de-select any previously selected block
     deselectBlockAction();
 
-    // If dragging a block from the workbench, create new canvas block
     const id = e.active.id.toString();
-    if (findBlockById(state.workbenchBlocks, id)) {
-      createBlockAction(id);
+    const isWorkbenchBlock = findBlockById(state.workbenchBlocks, id) !== null;
+
+    // If dragging a block from the workbench, create and drag
+    if (isWorkbenchBlock) {
+      createAndDragBlockAction(id);
+      return; // Exit early for workbench blocks
     }
 
-    // If dragging a nested block, remove child block from parent
+    // For existing canvas blocks:
     const draggedBlock = findBlockById(state.canvasBlocks, id);
     if (!draggedBlock) {
       return;
     }
 
+    // If dragging a nested block, remove child block from parent
     if (draggedBlock.parentId) {
       removeChildBlockAction(id, draggedBlock.parentId);
     }
 
-    // if dragging a block witha prev block, unsnap
+    // If dragging a block with a prev block, unsnap
     if (draggedBlock.prevBlockId) {
       breakStackAction(id);
     }
 
-    // If user started dragging a workbench block, create a new block
     startDragAction(id);
   };
 
@@ -126,7 +129,6 @@ export default function EditorPage() {
     if (overId.startsWith('stack')) {
       const [_, position, targetId] = overId.split('_');
       if (activeId === targetId) {
-        console.log('noooooooooooo');
         return;
       }
 

@@ -22,7 +22,7 @@ export default function useDraggableBlock(
     position:
       isWorkbenchBlock || state === BlockState.Nested ? 'static' : 'absolute',
     zIndex:
-      state === BlockState.Dragging ? '10' : !isWorkbenchBlock ? '2' : '1',
+      state === BlockState.Dragging ? '100' : !isWorkbenchBlock ? '2' : '1',
 
     backgroundColor: (() => {
       switch (blockType) {

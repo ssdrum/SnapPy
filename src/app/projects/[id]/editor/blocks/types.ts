@@ -58,6 +58,7 @@ export interface BlocksState {
   variables: string[];
   selectedBlockId: string | null;
   draggingBlockId: string | null;
+  dragGroupBlockIds: Set<string> | null;
 }
 
 // All possible block states
@@ -77,6 +78,7 @@ export enum BlockActionEnum {
   END_DRAG = 'end drag',
   BREAK_STACK = 'break stack',
   CREATE_BLOCK = 'create block',
+  CREATE_AND_DRAG_BLOCK = 'create and drag block',
   DELETE_BLOCK = 'delete block',
   CREATE_VARIABLE = 'create variable',
   CHANGE_VARIABLE_SELECTED_OPTION = 'change variable selected option',
@@ -108,6 +110,11 @@ interface EndDragAction {
 
 interface CreateBlockAction {
   type: BlockActionEnum.CREATE_BLOCK;
+  payload: { id: string };
+}
+
+interface CreateAndDragBlockAction {
+  type: BlockActionEnum.CREATE_AND_DRAG_BLOCK;
   payload: { id: string };
 }
 
@@ -163,6 +170,7 @@ export type BlockAction =
   | StartDragAction
   | EndDragAction
   | CreateBlockAction
+  | CreateAndDragBlockAction
   | DeleteBlockAction
   | CreateVariableAction
   | ChangeVariableSelectedOptionAction

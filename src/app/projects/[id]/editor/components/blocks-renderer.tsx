@@ -74,7 +74,7 @@ const renderBlock = (block: Block) => {
           blockType={type}
           isWorkbenchBlock={isWorkbenchBlock}
           stackOptions={stackOptions}
-          state={state}
+          blockState={state}
           parentId={parentId}
         >
           {children}
@@ -92,7 +92,7 @@ const renderBlock = (block: Block) => {
           blockType={type}
           isWorkbenchBlock={isWorkbenchBlock}
           stackOptions={stackOptions}
-          state={state}
+          blockState={state}
           parentId={parentId}
           selected={selected}
         >
