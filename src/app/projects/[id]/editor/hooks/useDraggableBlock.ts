@@ -21,7 +21,8 @@ export default function useDraggableBlock(
     left: isWorkbenchBlock ? 0 : left,
     position:
       isWorkbenchBlock || state === BlockState.Nested ? 'static' : 'absolute',
-    zIndex: state === BlockState.Dragging ? '10' : isWorkbenchBlock ? '2' : '1',
+    zIndex:
+      state === BlockState.Dragging ? '10' : !isWorkbenchBlock ? '2' : '1',
 
     backgroundColor: (() => {
       switch (blockType) {
@@ -40,9 +41,9 @@ export default function useDraggableBlock(
         // Yellow outline (3px) + regular bottom shadow
         return `0 0 0 3px #FFD166, 0 2px 0 rgba(0,0,0,0.2)`;
         // Regular box shadow
-      } else if (state === BlockState.Dragging) {
-        return '0 5px 10px rgba(0,0,0,0.2)';
-      }
+      } //else if (state === BlockState.Dragging) {
+      //return '0 5px 10px rgba(0,0,0,0.2)';
+      //}
     })(),
   };
 
