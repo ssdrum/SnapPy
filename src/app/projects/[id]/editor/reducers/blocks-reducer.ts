@@ -292,7 +292,6 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         ...block,
         isWorkbenchBlock: false,
         state: BlockState.Dragging,
-        lastDelta: undefined,
       };
 
       // Create a replacement workbench block with a new ID
