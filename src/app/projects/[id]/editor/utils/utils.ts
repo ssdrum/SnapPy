@@ -198,8 +198,8 @@ export function updateSequencePositions(
   startBlock: Block
 ): Block[] {
   let updatedBlocks = [...blocks];
-  let currentBlock = startBlock;
-  let nextBlockId = currentBlock.nextBlockId;
+  let currBlock = startBlock;
+  let nextBlockId = currBlock.nextBlockId;
 
   while (nextBlockId) {
     const nextBlock = findBlockById(updatedBlocks, nextBlockId);
@@ -209,7 +209,7 @@ export function updateSequencePositions(
 
     const updatedNextBlock = {
       ...nextBlock,
-      coords: calcNextBlockStartPosition(currentBlock),
+      coords: calcNextBlockStartPosition(currBlock),
     };
 
     updatedBlocks = updateBlockById(
@@ -219,9 +219,65 @@ export function updateSequencePositions(
     );
 
     // Move to the next iteration
-    currentBlock = updatedNextBlock;
-    nextBlockId = currentBlock.nextBlockId;
+    currBlock = updatedNextBlock;
+    nextBlockId = currBlock.nextBlockId;
   }
 
   return updatedBlocks;
+}
+
+/*
+ * Returns a set with the ids of all blocks connected to the given block in the
+ * forest.
+ * */
+export function getConnectedBlockIds(forest: Block[], id: string): Set<string> {
+  const idSet = new Set<string>();
+  const block = findBlockById(forest, id);
+  if (!block) {
+    return idSet;
+  }
+
+  // Find the root of the tree containing the block
+  const root = findRoot(forest, block);
+  // Add all block IDs in the tree rooted at root
+  addTreeIdsRecursive(root, idSet);
+  // Traverse block chain
+  traverseSequence(forest, root, idSet);
+  return idSet;
+}
+
+/**
+ * Helper function for getConnectedBlockIds.
+ * Recursively adds all block IDs in a tree to the set
+ */
+function addTreeIdsRecursive(block: Block, idSet: Set<string>): void {
+  // Add current block ID
+  idSet.add(block.id);
+  // Recursively process all children
+  for (const child of block.children) {
+    addTreeIdsRecursive(child, idSet);
+  }
+}
+
+/**
+ * Helper function for getConnectedBlockIds.
+ * Traverses forward through the nextBlockId chain and adds all connected blocks
+ */
+function traverseSequence(
+  forest: Block[],
+  startBlock: Block,
+  idSet: Set<string>
+): void {
+  // Traverse forward through nextBlockId chain
+  let currBlock = startBlock;
+  while (currBlock && currBlock.nextBlockId) {
+    const nextBlock = findBlockById(forest, currBlock.nextBlockId);
+    if (!nextBlock || idSet.has(nextBlock.id)) {
+      break;
+    }
+    // Add the next block and all its children
+    addTreeIdsRecursive(nextBlock, idSet);
+    // Continue traversing forward
+    currBlock = nextBlock;
+  }
 }
