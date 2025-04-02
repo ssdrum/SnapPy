@@ -1,10 +1,10 @@
 'use client';
 
 import { useContext, useEffect } from 'react';
-import classes from './editor.module.css';
 import { ProjectContext } from './contexts/project-context';
-import { Title, Paper, Group, Button, AppShellMain, Box } from '@mantine/core';
 import { DndContext } from '@dnd-kit/core';
+import { Title, Paper, Group, Button, AppShellMain, Box } from '@mantine/core';
+import classes from './editor.module.css';
 import Canvas from './components/canvas';
 import Workbench from './components/workbench';
 import SaveButton from './components/save-button';

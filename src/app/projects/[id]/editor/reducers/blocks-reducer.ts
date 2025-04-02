@@ -89,6 +89,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         ...state,
         canvasBlocks: newCanvasBlocks,
         dragGroupBlockIds: getConnectedBlockIds(newCanvasBlocks, id),
+        draggingBlockId: id,
       };
     }
 
@@ -424,6 +425,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return {
         ...state,
         canvasBlocks: newBlocks,
+        draggingBlockId: null,
       };
     }
 
@@ -476,6 +478,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return {
         ...state,
         canvasBlocks: newBlocks,
+        draggingBlockId: id,
       };
     }
 

@@ -8,11 +8,13 @@ import { findBlockById } from '../utils/utils';
 import { useBlocks } from '../contexts/blocks-context';
 import { StackPosition } from '../blocks/types';
 
+interface DragEventsHandlerProps {
+  children: React.ReactNode;
+}
+
 export default function DragEventsHandler({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}: DragEventsHandlerProps) {
   const {
     startDragAction,
     moveBlockAction,
