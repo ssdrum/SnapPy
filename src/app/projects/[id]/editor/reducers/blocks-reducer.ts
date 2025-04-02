@@ -8,6 +8,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import {
   calcNextBlockStartPosition,
+  findBlockById,
   findRoot,
   getConnectedBlockIds,
   removeBlockById,
@@ -482,6 +483,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
+    // TODO: Not proud of this... but it works!
     case BlockActionEnum.STACK_BLOCK: {
       const { id, targetId, position } = action.payload;
 
@@ -499,101 +501,161 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         return state;
       }
 
-      // Initialize the updated blocks array
+      // Copy canvas blocks
       let updatedCanvasBlocks = [...state.canvasBlocks];
-
-      // Create copies to modify
+      // Copy involved blocks
       let updatedTargetBlock = { ...targetBlock };
       let updatedBlockToStack = { ...blockToStack };
 
       // Set up connections based on position
       if (position === StackPosition.Top) {
-        // Block will be placed above target block
-        // Handle current connections first
+        // Save the reference to the target's previous block
+        const targetPrevBlockId = updatedTargetBlock.prevBlockId;
 
-        // If blockToStack already has a next block, we need to disconnect it
-        if (updatedBlockToStack.nextBlockId) {
-          // Find blockToStack's current next block
-          const currentNextBlock = updatedCanvasBlocks.find(
-            (b) => b.id === updatedBlockToStack.nextBlockId
-          );
-          if (currentNextBlock) {
-            // Update this block to disconnect from blockToStack
+        // Check if we're dealing with a single block or a chain
+        if (!updatedBlockToStack.nextBlockId) {
+          // Single block case - simpler handling
+
+          // If target has a previous block, connect it to our block
+          if (targetPrevBlockId) {
+            const updatedPrevBlock = {
+              ...findBlockById(updatedCanvasBlocks, targetPrevBlockId)!,
+            };
+            updatedPrevBlock.nextBlockId = id;
             updatedCanvasBlocks = updateBlockById(
               updatedCanvasBlocks,
-              currentNextBlock.id,
-              {
-                ...currentNextBlock,
-                prevBlockId: null,
-              }
+              targetPrevBlockId,
+              updatedPrevBlock
             );
-          }
-        }
 
-        // If targetBlock already has a previous block, we need to disconnect it
-        if (updatedTargetBlock.prevBlockId) {
-          // Find targetBlock's current previous block
-          const currentPrevBlock = updatedCanvasBlocks.find(
-            (b) => b.id === updatedTargetBlock.prevBlockId
-          );
-          if (currentPrevBlock) {
-            // Update this block to disconnect from targetBlock
+            // Connect our block back to the previous block
+            updatedBlockToStack.prevBlockId = targetPrevBlockId;
+          }
+
+          // Connect our block to the target
+          updatedBlockToStack.nextBlockId = targetId;
+
+          // Update target to point to the block that was inserted above it
+          updatedTargetBlock.prevBlockId = updatedBlockToStack.id;
+        } else {
+          // Chain case - need to find the first and last blocks in the chain
+
+          // First block is already updatedBlockToStack
+          // Find the last block in the chain
+          let lastStackBlock = updatedBlockToStack;
+          let currentBlock = updatedBlockToStack;
+
+          // Traverse the chain to find the last block
+          while (currentBlock.nextBlockId) {
+            const nextBlock = findBlockById(
+              updatedCanvasBlocks,
+              currentBlock.nextBlockId
+            );
+            if (!nextBlock || nextBlock.id === targetId) break; // Avoid loops
+            lastStackBlock = nextBlock;
+            currentBlock = nextBlock;
+          }
+
+          // If target has a previous block, connect it to the first block in our chain
+          if (targetPrevBlockId) {
+            const updatedPrevBlock = {
+              ...findBlockById(updatedCanvasBlocks, targetPrevBlockId)!,
+            };
+            updatedPrevBlock.nextBlockId = updatedBlockToStack.id;
             updatedCanvasBlocks = updateBlockById(
               updatedCanvasBlocks,
-              currentPrevBlock.id,
-              {
-                ...currentPrevBlock,
-                nextBlockId: null,
-              }
+              targetPrevBlockId,
+              updatedPrevBlock
             );
-          }
-        }
 
-        // Now connect blockToStack to targetBlock
-        updatedBlockToStack.nextBlockId = targetId;
-        updatedTargetBlock.prevBlockId = id;
+            // Connect first block in chain back to the previous block
+            updatedBlockToStack.prevBlockId = targetPrevBlockId;
+          } else {
+            // No previous block, so our chain starts fresh
+            updatedBlockToStack.prevBlockId = null;
+          }
+
+          // Connect last block in our chain to the target
+          const updatedLastBlock = {
+            ...lastStackBlock,
+            nextBlockId: targetId,
+          };
+          updatedCanvasBlocks = updateBlockById(
+            updatedCanvasBlocks,
+            lastStackBlock.id,
+            updatedLastBlock
+          );
+
+          // Update target to point to the last block in chain that was inserted above it
+          updatedTargetBlock.prevBlockId = lastStackBlock.id;
+        }
       } else {
-        // Block will be placed below target block
+        // Save the reference to the target's next block before we change it
+        const targetNextBlockId = updatedTargetBlock.nextBlockId;
 
-        // If blockToStack already has a previous block, we need to disconnect it
-        if (updatedBlockToStack.prevBlockId) {
-          // Find blockToStack's current previous block
-          const currentPrevBlock = updatedCanvasBlocks.find(
-            (b) => b.id === updatedBlockToStack.prevBlockId
-          );
-          if (currentPrevBlock) {
-            // Update this block to disconnect from blockToStack
+        // Check if we're dealing with a single block or a chain
+        if (!updatedBlockToStack.nextBlockId) {
+          // Single block case - simpler handling
+
+          // If target has a next block, connect our block to it
+          if (targetNextBlockId) {
+            // Connect the new block to what was previously the target's next block
+            updatedBlockToStack.nextBlockId = targetNextBlockId;
+
+            // Update the original next block to point back to our block
+            const updatedNextBlock = {
+              ...findBlockById(updatedCanvasBlocks, targetNextBlockId)!,
+              prevBlockId: id,
+            };
             updatedCanvasBlocks = updateBlockById(
               updatedCanvasBlocks,
-              currentPrevBlock.id,
-              {
-                ...currentPrevBlock,
-                nextBlockId: null,
-              }
+              targetNextBlockId,
+              updatedNextBlock
+            );
+          }
+        } else {
+          // Chain case - need to find the last block in the chain
+          let lastStackBlock = updatedBlockToStack;
+          let currentBlock = updatedBlockToStack;
+
+          // Traverse the chain to find the last block
+          while (currentBlock.nextBlockId) {
+            const nextBlock = findBlockById(
+              updatedCanvasBlocks,
+              currentBlock.nextBlockId
+            );
+            if (!nextBlock) break;
+            lastStackBlock = nextBlock;
+            currentBlock = nextBlock;
+          }
+
+          // If target has a next block, connect our chain's last block to it
+          if (targetNextBlockId) {
+            // Update the last block in our stack chain to point to target's next block
+            const updatedLastBlock = {
+              ...lastStackBlock,
+              nextBlockId: targetNextBlockId,
+            };
+            updatedCanvasBlocks = updateBlockById(
+              updatedCanvasBlocks,
+              lastStackBlock.id,
+              updatedLastBlock
+            );
+
+            // Update the original next block to point back to our chain's last block
+            const updatedNextBlock = {
+              ...findBlockById(updatedCanvasBlocks, targetNextBlockId)!,
+              prevBlockId: lastStackBlock.id,
+            };
+            updatedCanvasBlocks = updateBlockById(
+              updatedCanvasBlocks,
+              targetNextBlockId,
+              updatedNextBlock
             );
           }
         }
 
-        // If targetBlock already has a next block, we need to disconnect it
-        if (updatedTargetBlock.nextBlockId) {
-          // Find targetBlock's current next block
-          const currentNextBlock = updatedCanvasBlocks.find(
-            (b) => b.id === updatedTargetBlock.nextBlockId
-          );
-          if (currentNextBlock) {
-            // Update this block to disconnect from targetBlock
-            updatedCanvasBlocks = updateBlockById(
-              updatedCanvasBlocks,
-              currentNextBlock.id,
-              {
-                ...currentNextBlock,
-                prevBlockId: null,
-              }
-            );
-          }
-        }
-
-        // Now connect targetBlock to blockToStack
+        // Connect the target block to the first block in our chain
         updatedTargetBlock.nextBlockId = id;
         updatedBlockToStack.prevBlockId = targetId;
       }
