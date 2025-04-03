@@ -25,7 +25,7 @@ export enum DataType {
 
 // Main interface for all blocks. Do not export. Must be extended like examples
 // below
-interface BlockInterface {
+interface BaseBlock {
   id: string;
   type: BlockType;
   state: BlockState;
@@ -40,14 +40,14 @@ interface BlockInterface {
 }
 
 // Variable block
-export interface VariableBlock extends BlockInterface {
+export interface VariableBlock extends BaseBlock {
   type: BlockType.Variable;
   dataType: DataType;
   selected: string;
 }
 
 // Union type for all block types
-export type Block = BlockInterface | VariableBlock;
+export type Block = BaseBlock | VariableBlock;
 
 // State interface
 export interface BlocksState {
