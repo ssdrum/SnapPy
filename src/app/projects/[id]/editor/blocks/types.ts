@@ -19,13 +19,6 @@ export enum StackPosition {
   Bottom = 'bottom',
 }
 
-// All data types supported
-export enum DataType {
-  Int = 'int',
-  Bool = 'bool',
-  String = 'string',
-}
-
 export interface StackOptions {
   top: boolean;
   bottom: boolean;
@@ -50,7 +43,6 @@ interface BaseBlock {
 // Variable block
 export interface VariableBlock extends BaseBlock {
   type: BlockType.Variable;
-  dataType: DataType;
   selected: string;
 }
 
