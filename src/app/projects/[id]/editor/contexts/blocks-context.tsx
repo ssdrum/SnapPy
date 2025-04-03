@@ -45,6 +45,8 @@ interface BlocksContextType {
   ) => void;
   breakStackAction: (id: string) => void;
   updateBlockAction: (id: string, updates: Partial<Block>) => void;
+  highlightDropzoneAction: (id: string) => void;
+  clearHighlightedDropzoneAction: () => void;
 }
 
 // Create context object
@@ -72,6 +74,7 @@ export default function BlocksProvider({
     selectedBlockId: null,
     draggingBlockId: null,
     dragGroupBlockIds: null,
+    highlightedDropZoneId: null,
   };
 
   const [state, dispatch] = useReducer(BlocksReducer, initialState);
@@ -217,6 +220,19 @@ export default function BlocksProvider({
     });
   };
 
+  const highlightDropzoneAction = (id: string) => {
+    dispatch({
+      type: BlockActionEnum.HIGHLIGHT_DROPZONE,
+      payload: { id },
+    });
+  };
+
+  const clearHighlightedDropzoneAction = () => {
+    dispatch({
+      type: BlockActionEnum.CLEAR_HIGHLIGHTED_DROPZONE,
+    });
+  };
+
   const value: BlocksContextType = {
     state,
     selectBlockAction,
@@ -234,6 +250,8 @@ export default function BlocksProvider({
     removeChildBlockAction,
     stackBlockAction,
     updateBlockAction,
+    highlightDropzoneAction,
+    clearHighlightedDropzoneAction,
   };
 
   return (

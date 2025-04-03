@@ -1,14 +1,14 @@
 import { useDroppable, useDndContext } from '@dnd-kit/core';
 
-interface BlockDropZoneProps {
+interface OuterDropZoneProps {
   blockId: string;
   position: 'top' | 'bottom';
 }
 
-export default function BlockDropZone({
+export default function OuterDropZone({
   blockId,
   position,
-}: BlockDropZoneProps) {
+}: OuterDropZoneProps) {
   const { active } = useDndContext();
 
   // Check if we're dragging the current block (to prevent self-dropping)

@@ -1,6 +1,7 @@
 import {
   DragEndEvent,
   DragMoveEvent,
+  DragOverEvent,
   DragStartEvent,
   useDndMonitor,
 } from '@dnd-kit/core';
@@ -26,6 +27,8 @@ export default function DragEventsHandler({
     removeChildBlockAction,
     stackBlockAction,
     breakStackAction,
+    highlightDropzoneAction,
+    clearHighlightedDropzoneAction,
     state,
   } = useBlocks();
 
@@ -79,8 +82,8 @@ export default function DragEventsHandler({
     }
 
     // Handle drop on another block (nesting)
-    if (overId.startsWith('drop')) {
-      const targetBlock = overId.substring(5);
+    if (overId.startsWith('innerdrop')) {
+      const targetBlock = overId.substring(10);
 
       // Prevent dropping onto itself
       if (activeId === targetBlock) {
@@ -114,6 +117,22 @@ export default function DragEventsHandler({
     moveBlockAction(activeId, delta);
   };
 
+  const handleDragOver = (e: DragOverEvent) => {
+    const { over } = e;
+    if (!over) return;
+
+    // If we're dragging over an element with ID that starts with "drop", highlight the drop zone
+    const id = over.id.toString();
+    const [prefix, blockId] = id.split('_');
+    if (prefix === 'innerdrop') {
+      highlightDropzoneAction(blockId);
+    }
+
+    if (state.highlightedDropZoneId) {
+      clearHighlightedDropzoneAction();
+    }
+  };
+
   useDndMonitor({
     onDragStart(e) {
       handleDragStart(e);
@@ -123,6 +142,9 @@ export default function DragEventsHandler({
     },
     onDragEnd(e) {
       handleDragEnd(e);
+    },
+    onDragOver(e) {
+      handleDragOver(e);
     },
   });
 

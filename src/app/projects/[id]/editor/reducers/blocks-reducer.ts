@@ -427,6 +427,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         ...state,
         canvasBlocks: newBlocks,
         draggingBlockId: null,
+        highlightedDropZoneId: null,
       };
     }
 
@@ -726,6 +727,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return {
         ...state,
         canvasBlocks: updatedCanvasBlocks,
+        highlightedDropZoneId: null,
       };
     }
 
@@ -787,6 +789,16 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
           ...updates,
         }),
       };
+    }
+
+    case BlockActionEnum.HIGHLIGHT_DROPZONE: {
+      const { id } = action.payload;
+      if (state.dragGroupBlockIds?.has(id)) return state;
+      return { ...state, highlightedDropZoneId: id };
+    }
+
+    case BlockActionEnum.CLEAR_HIGHLIGHTED_DROPZONE: {
+      return { ...state, highlightedDropZoneId: null };
     }
 
     default:

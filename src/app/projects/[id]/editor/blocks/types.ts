@@ -59,6 +59,7 @@ export interface BlocksState {
   selectedBlockId: string | null;
   draggingBlockId: string | null;
   dragGroupBlockIds: Set<string> | null;
+  highlightedDropZoneId: string | null;
 }
 
 // All possible block states
@@ -86,6 +87,8 @@ export enum BlockActionEnum {
   REMOVE_CHILD_BLOCK = 'remove child block',
   STACK_BLOCK = 'stack block',
   UPDATE_BLOCK = 'update block',
+  HIGHLIGHT_DROPZONE = 'highlight dropzone',
+  CLEAR_HIGHLIGHTED_DROPZONE = 'clear highlighted dropzone',
 }
 
 // Action Interfaces
@@ -163,6 +166,15 @@ interface UpdateBlockAction {
   payload: { id: string; updates: Partial<Block> };
 }
 
+interface HighlightDropzoneAction {
+  type: BlockActionEnum.HIGHLIGHT_DROPZONE;
+  payload: { id: string };
+}
+
+interface ClearHighlightedDropzoneAction {
+  type: BlockActionEnum.CLEAR_HIGHLIGHTED_DROPZONE;
+}
+
 // Union type of all actions
 export type BlockAction =
   | SelectBlockAction
@@ -179,4 +191,6 @@ export type BlockAction =
   | StackBlockAction
   | MoveBlockAction
   | BreakStackAction
-  | UpdateBlockAction;
+  | UpdateBlockAction
+  | HighlightDropzoneAction
+  | ClearHighlightedDropzoneAction;
