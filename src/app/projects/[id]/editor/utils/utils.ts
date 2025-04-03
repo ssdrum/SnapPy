@@ -281,3 +281,30 @@ function traverseSequence(
     currBlock = nextBlock;
   }
 }
+
+export function drawConnectedBlocks(
+  canvas: Block[],
+  rootBlock: Block
+): Block[] {
+  // Copy forest
+  let newCanvas = [...canvas];
+  let currentBlock = rootBlock;
+  while (currentBlock && currentBlock.nextBlockId) {
+    const nextBlock = findBlockById(newCanvas, currentBlock.nextBlockId);
+    if (!nextBlock) break;
+
+    // Calculate the correct position based on the current block
+    const nextPosition = calcNextBlockStartPosition(currentBlock);
+
+    // Update the next block with the correctly calculated position
+    const updatedNextBlock = {
+      ...nextBlock,
+      coords: nextPosition,
+    };
+
+    newCanvas = updateBlockById(newCanvas, nextBlock.id, updatedNextBlock);
+    currentBlock = updatedNextBlock;
+  }
+
+  return newCanvas;
+}
