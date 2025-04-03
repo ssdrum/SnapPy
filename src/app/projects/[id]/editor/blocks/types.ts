@@ -53,7 +53,7 @@ export type Block = BlockInterface | VariableBlock;
 
 // State interface
 export interface BlocksState {
-  workbenchBlocks: Block[];
+  workbench: Block[];
   canvasBlocks: Block[];
   variables: string[];
   selectedBlockId: string | null;

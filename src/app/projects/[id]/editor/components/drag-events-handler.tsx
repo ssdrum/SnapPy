@@ -37,7 +37,7 @@ export default function DragEventsHandler({
     deselectBlockAction();
 
     const id = e.active.id.toString();
-    const isWorkbenchBlock = findBlockById(state.workbenchBlocks, id) !== null;
+    const isWorkbenchBlock = findBlockById(state.workbench, id) !== null;
 
     // If dragging a block from the workbench, create and drag
     if (isWorkbenchBlock) {

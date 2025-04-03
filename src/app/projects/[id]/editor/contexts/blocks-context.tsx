@@ -70,7 +70,7 @@ export default function BlocksProvider({
   variables,
 }: BlocksProviderProps) {
   const initialState: BlocksState = {
-    workbenchBlocks: workBenchBlocks,
+    workbench: workBench,
     canvasBlocks,
     variables,
     selectedBlockId: null,
@@ -179,7 +179,7 @@ export default function BlocksProvider({
 
     // Find id of variable block in the workbench
     if (!id) {
-      id = state.workbenchBlocks.find((block) => {
+      id = state.workbench.find((block) => {
         return block.type === BlockType.Variable;
       })!.id;
     }
@@ -278,7 +278,7 @@ export default function BlocksProvider({
 }
 
 // Add workbench blocks here
-const workBenchBlocks: Block[] = [
+const workBench: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.Empty,

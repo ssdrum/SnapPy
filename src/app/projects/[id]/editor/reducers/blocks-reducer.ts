@@ -240,7 +240,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     case BlockActionEnum.CREATE_BLOCK: {
       const { id } = action.payload;
       const block = validateBlockExists(
-        state.workbenchBlocks,
+        state.workbench,
         id,
         BlockActionEnum.CREATE_BLOCK
       );
@@ -265,7 +265,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         // Add the block to canvas blocks
         canvasBlocks: [...state.canvasBlocks, newBlock],
         // Replace the original workbench block with one having a new ID
-        workbenchBlocks: state.workbenchBlocks.map((block) =>
+        workbench: state.workbench.map((block) =>
           block.id === id ? newWorkbenchBlock : block
         ),
       };
@@ -274,7 +274,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     case BlockActionEnum.CREATE_AND_DRAG_BLOCK: {
       const { id } = action.payload;
       const block = validateBlockExists(
-        state.workbenchBlocks,
+        state.workbench,
         id,
         BlockActionEnum.CREATE_AND_DRAG_BLOCK
       );
@@ -300,7 +300,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         // Add the block to canvas blocks
         canvasBlocks: [...state.canvasBlocks, newBlock],
         // Replace the original workbench block with one having a new ID
-        workbenchBlocks: state.workbenchBlocks.map((block) =>
+        workbench: state.workbench.map((block) =>
           block.id === id ? newWorkbenchBlock : block
         ),
         // Set as the dragging block
@@ -336,7 +336,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       const { id, isWorkbenchBlock, selected } = action.payload;
 
       const blocksArray = isWorkbenchBlock
-        ? state.workbenchBlocks
+        ? state.workbench
         : state.canvasBlocks;
 
       const block = validateBlockExists(
@@ -358,11 +358,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       if (isWorkbenchBlock) {
         return {
           ...state,
-          workbenchBlocks: updateBlockById(
-            state.workbenchBlocks,
-            id,
-            updatedBlock
-          ),
+          workbench: updateBlockById(state.workbench, id, updatedBlock),
         };
       } else {
         return {
