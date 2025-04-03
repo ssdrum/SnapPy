@@ -1,4 +1,4 @@
-import { BlockState, BlocksState, StackPosition } from '../blocks/types';
+import { BlockState, CanvasState, StackPosition } from '../blocks/types';
 import { v4 as uuidv4 } from 'uuid';
 import {
   calcNextBlockStartPosition,
@@ -14,7 +14,7 @@ import {
 import { CanvasAction, CanvasEvent } from '../blocks/canvas-api';
 
 export default function BlocksReducer(
-  state: BlocksState,
+  state: CanvasState,
   action: CanvasAction
 ) {
   switch (action.type) {

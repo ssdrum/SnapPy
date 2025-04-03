@@ -3,7 +3,7 @@
 
 import {
   Block,
-  BlocksState,
+  CanvasState,
   BlockState,
   BlockType,
   StackPosition,
@@ -25,7 +25,7 @@ interface BlocksProviderProps {
 // interface in order to make a union with null later, as the context is initialised
 // to null.
 interface BlocksContextType {
-  state: BlocksState;
+  state: CanvasState;
   selectBlockAction: (id: string) => void;
   deselectBlockAction: () => void;
   startDragAction: (id: string) => void;
@@ -69,7 +69,7 @@ export default function BlocksProvider({
   canvas,
   variables,
 }: BlocksProviderProps) {
-  const initialState: BlocksState = {
+  const initialState: CanvasState = {
     workbench: workBench,
     canvas,
     variables,

@@ -1,12 +1,10 @@
 import { Coordinates } from '@dnd-kit/utilities';
 
-// All block types
 export enum BlockType {
   Empty = 'empty',
   Variable = 'variable',
 }
 
-// All possible block states
 export enum BlockState {
   Idle = 'idle',
   Selected = 'selected',
@@ -24,8 +22,19 @@ export interface StackOptions {
   bottom: boolean;
 }
 
-// Main interface for all blocks. Do not export. Must be extended like examples
-// below
+export interface CanvasState {
+  workbench: Block[];
+  canvas: Block[];
+  variables: string[];
+  selectedBlockId: string | null;
+  draggedBlockId: string | null;
+  draggedGroupBlockIds: Set<string> | null;
+  highlightedDropZoneId: string | null;
+}
+
+/**
+ * Main interface for all blocks
+ */
 interface BaseBlock {
   id: string;
   type: BlockType;
@@ -40,22 +49,12 @@ interface BaseBlock {
   children: Block[]; // TODO: Consider removing this property from the base interface since not all blocks use it
 }
 
-// Variable block
 export interface VariableBlock extends BaseBlock {
   type: BlockType.Variable;
   selected: string;
 }
 
-// State interface
-export interface BlocksState {
-  workbench: Block[];
-  canvas: Block[];
-  variables: string[];
-  selectedBlockId: string | null;
-  draggedBlockId: string | null;
-  draggedGroupBlockIds: Set<string> | null;
-  highlightedDropZoneId: string | null;
-}
-
-// Union type for all block types
+/**
+ * Union of all blocks
+ */
 export type Block = BaseBlock | VariableBlock;
