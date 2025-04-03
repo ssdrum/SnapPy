@@ -801,6 +801,94 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return { ...state, highlightedDropZoneId: null };
     }
 
+    case BlockActionEnum.DISPLAY_SNAP_PREVIEW: {
+      const { id, position } = action.payload;
+      let currBlock = validateBlockExists(
+        state.canvasBlocks,
+        id,
+        BlockActionEnum.DISPLAY_SNAP_PREVIEW
+      );
+      if (!currBlock) {
+        return state;
+      }
+
+      // Copy forest
+      let newBlocks = [...state.canvasBlocks];
+
+      if (
+        position === StackPosition.Top &&
+        !currBlock.prevBlockId &&
+        currBlock.nextBlockId
+      ) {
+        return state;
+      }
+      if (
+        position === StackPosition.Top &&
+        currBlock.prevBlockId &&
+        currBlock.prevBlockId
+      ) {
+        newBlocks = updateBlockById(newBlocks, id, {
+          ...currBlock,
+          coords: { ...currBlock.coords, y: currBlock.coords.y + 20 },
+        });
+      }
+
+      // Update positions of all blocks in sequence
+      while (currBlock && currBlock.nextBlockId) {
+        const nextBlock = findBlockById(newBlocks, currBlock.nextBlockId);
+        if (!nextBlock) {
+          break;
+        }
+
+        const updatedNextBlock = {
+          ...nextBlock,
+          coords: { x: nextBlock.coords.x, y: nextBlock.coords.y + 20 },
+        };
+        newBlocks = updateBlockById(newBlocks, nextBlock.id, updatedNextBlock);
+        currBlock = nextBlock;
+      }
+
+      return { ...state, canvasBlocks: newBlocks };
+    }
+
+    case BlockActionEnum.HIDE_SNAP_PREVIEW: {
+      const { id } = action.payload;
+      let rootBlock = validateBlockExists(
+        state.canvasBlocks,
+        id,
+        BlockActionEnum.HIDE_SNAP_PREVIEW
+      );
+      if (!rootBlock || !rootBlock.nextBlockId) {
+        return state;
+      }
+
+      // Copy forest
+      let newBlocks = [...state.canvasBlocks];
+
+      // Instead of just subtracting 20px, recalculate positions properly
+      let currentBlock = rootBlock;
+      while (currentBlock && currentBlock.nextBlockId) {
+        const nextBlock = findBlockById(newBlocks, currentBlock.nextBlockId);
+        if (!nextBlock) break;
+
+        // Calculate the correct position based on the current block
+        const nextPosition = calcNextBlockStartPosition(currentBlock);
+
+        // Update the next block with the correctly calculated position
+        const updatedNextBlock = {
+          ...nextBlock,
+          coords: nextPosition,
+        };
+
+        newBlocks = updateBlockById(newBlocks, nextBlock.id, updatedNextBlock);
+
+        // Move to the next block, but use the updated version
+        currentBlock = updatedNextBlock;
+      }
+
+      return { ...state, canvasBlocks: newBlocks };
+    }
+
     default:
       return state;
   }

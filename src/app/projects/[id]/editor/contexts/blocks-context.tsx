@@ -47,6 +47,8 @@ interface BlocksContextType {
   updateBlockAction: (id: string, updates: Partial<Block>) => void;
   highlightDropzoneAction: (id: string) => void;
   clearHighlightedDropzoneAction: () => void;
+  displaySnapPreviewAction: (id: string, position: StackPosition) => void;
+  hideSnapPreviewAction: (id: string) => void;
 }
 
 // Create context object
@@ -233,6 +235,20 @@ export default function BlocksProvider({
     });
   };
 
+  const displaySnapPreviewAction = (id: string, position: StackPosition) => {
+    dispatch({
+      type: BlockActionEnum.DISPLAY_SNAP_PREVIEW,
+      payload: { id, position },
+    });
+  };
+
+  const hideSnapPreviewAction = (id: string) => {
+    dispatch({
+      type: BlockActionEnum.HIDE_SNAP_PREVIEW,
+      payload: { id },
+    });
+  };
+
   const value: BlocksContextType = {
     state,
     selectBlockAction,
@@ -252,6 +268,8 @@ export default function BlocksProvider({
     updateBlockAction,
     highlightDropzoneAction,
     clearHighlightedDropzoneAction,
+    displaySnapPreviewAction,
+    hideSnapPreviewAction,
   };
 
   return (

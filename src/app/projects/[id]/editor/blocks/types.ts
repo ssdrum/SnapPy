@@ -89,6 +89,8 @@ export enum BlockActionEnum {
   UPDATE_BLOCK = 'update block',
   HIGHLIGHT_DROPZONE = 'highlight dropzone',
   CLEAR_HIGHLIGHTED_DROPZONE = 'clear highlighted dropzone',
+  DISPLAY_SNAP_PREVIEW = 'display snap preview',
+  HIDE_SNAP_PREVIEW = 'hide snap preview',
 }
 
 // Action Interfaces
@@ -175,6 +177,16 @@ interface ClearHighlightedDropzoneAction {
   type: BlockActionEnum.CLEAR_HIGHLIGHTED_DROPZONE;
 }
 
+interface DisplaySnapPreviewAction {
+  type: BlockActionEnum.DISPLAY_SNAP_PREVIEW;
+  payload: { id: string; position: StackPosition };
+}
+
+interface HideSnapPreviewAction {
+  type: BlockActionEnum.HIDE_SNAP_PREVIEW;
+  payload: { id: string };
+}
+
 // Union type of all actions
 export type BlockAction =
   | SelectBlockAction
@@ -193,4 +205,6 @@ export type BlockAction =
   | BreakStackAction
   | UpdateBlockAction
   | HighlightDropzoneAction
-  | ClearHighlightedDropzoneAction;
+  | ClearHighlightedDropzoneAction
+  | DisplaySnapPreviewAction
+  | HideSnapPreviewAction;

@@ -1,6 +1,12 @@
 import React from 'react';
 import useDraggableBlock from '../hooks/useDraggableBlock';
-import { Block, BlockState, BlockType, StackOptions } from '../blocks/types';
+import {
+  Block,
+  BlockState,
+  BlockType,
+  StackOptions,
+  StackPosition,
+} from '../blocks/types';
 import { useBlocks } from '../contexts/blocks-context';
 import classes from '../blocks/blocks.module.css';
 import OuterDropZone from './outer-drop-zone';
@@ -55,7 +61,7 @@ export default function withDraggableBlock<T extends object>(
         {/* Wrapper needed for absolute positioning context */}
         <div style={{ position: 'relative' }}>
           {!isWorkbenchBlock && !state.dragGroupBlockIds?.has(id) && (
-            <OuterDropZone blockId={id} position='top' />
+            <OuterDropZone blockId={id} position={StackPosition.Top} />
           )}
 
           <div
@@ -80,7 +86,7 @@ export default function withDraggableBlock<T extends object>(
           </div>
 
           {!isWorkbenchBlock && !state.dragGroupBlockIds?.has(id) && (
-            <OuterDropZone blockId={id} position='bottom' />
+            <OuterDropZone blockId={id} position={StackPosition.Bottom} />
           )}
         </div>
       </div>
