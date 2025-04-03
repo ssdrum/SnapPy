@@ -1,10 +1,4 @@
-import {
-  BlockState,
-  BlocksState,
-  BlockAction,
-  BlockActionEnum,
-  StackPosition,
-} from '../blocks/types';
+import { BlockState, BlocksState, StackPosition } from '../blocks/types';
 import { v4 as uuidv4 } from 'uuid';
 import {
   calcNextBlockStartPosition,
@@ -17,15 +11,19 @@ import {
   updateSequencePositions,
   validateBlockExists,
 } from '../utils/utils';
+import { CanvasAction, CanvasEvent } from '../blocks/canvas-api';
 
-export default function BlocksReducer(state: BlocksState, action: BlockAction) {
+export default function BlocksReducer(
+  state: BlocksState,
+  action: CanvasAction
+) {
   switch (action.type) {
-    case BlockActionEnum.SELECT_BLOCK: {
+    case CanvasEvent.SELECT_BLOCK: {
       const { id } = action.payload;
       const block = validateBlockExists(
         state.canvas,
         id,
-        BlockActionEnum.SELECT_BLOCK
+        CanvasEvent.SELECT_BLOCK
       );
       if (!block) return state;
 
@@ -37,14 +35,14 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
-    case BlockActionEnum.DESELECT_BLOCK: {
+    case CanvasEvent.DESELECT_BLOCK: {
       const id = state.selectedBlockId;
       if (!id) return state;
 
       const block = validateBlockExists(
         state.canvas,
         id,
-        BlockActionEnum.DESELECT_BLOCK
+        CanvasEvent.DESELECT_BLOCK
       );
       if (!block) return state;
 
@@ -56,12 +54,12 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
-    case BlockActionEnum.START_DRAG: {
+    case CanvasEvent.START_DRAG: {
       const { id } = action.payload;
       const block = validateBlockExists(
         state.canvas,
         id,
-        BlockActionEnum.START_DRAG
+        CanvasEvent.START_DRAG
       );
       if (!block) return state;
 
@@ -83,12 +81,12 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
-    case BlockActionEnum.MOVE_BLOCK: {
+    case CanvasEvent.MOVE_BLOCK: {
       const { id, delta } = action.payload;
       const block = validateBlockExists(
         state.canvas,
         id,
-        BlockActionEnum.MOVE_BLOCK
+        CanvasEvent.MOVE_BLOCK
       );
       if (!block) {
         return state;
@@ -205,17 +203,13 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
-    case BlockActionEnum.END_DRAG: {
+    case CanvasEvent.END_DRAG: {
       const id = state.draggedBlockId;
       if (!id) {
         return state;
       }
 
-      const block = validateBlockExists(
-        state.canvas,
-        id,
-        BlockActionEnum.END_DRAG
-      );
+      const block = validateBlockExists(state.canvas, id, CanvasEvent.END_DRAG);
       if (!block) {
         return state;
       }
@@ -233,12 +227,12 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
-    case BlockActionEnum.CREATE_BLOCK: {
+    case CanvasEvent.CREATE_BLOCK: {
       const { id } = action.payload;
       const block = validateBlockExists(
         state.workbench,
         id,
-        BlockActionEnum.CREATE_BLOCK
+        CanvasEvent.CREATE_BLOCK
       );
       if (!block) {
         return state;
@@ -267,12 +261,12 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
-    case BlockActionEnum.CREATE_AND_DRAG_BLOCK: {
+    case CanvasEvent.CREATE_AND_DRAG_BLOCK: {
       const { id } = action.payload;
       const block = validateBlockExists(
         state.workbench,
         id,
-        BlockActionEnum.CREATE_AND_DRAG_BLOCK
+        CanvasEvent.CREATE_AND_DRAG_BLOCK
       );
       if (!block) {
         return state;
@@ -305,13 +299,13 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
-    case BlockActionEnum.DELETE_BLOCK: {
+    case CanvasEvent.DELETE_BLOCK: {
       const { id } = action.payload;
 
       const block = validateBlockExists(
         state.canvas,
         id,
-        BlockActionEnum.DELETE_BLOCK
+        CanvasEvent.DELETE_BLOCK
       );
       if (!block) {
         return state;
@@ -323,12 +317,12 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
-    case BlockActionEnum.CREATE_VARIABLE: {
+    case CanvasEvent.CREATE_VARIABLE: {
       const { name } = action.payload;
       return { ...state, variables: [...state.variables, name] };
     }
 
-    case BlockActionEnum.CHANGE_VARIABLE_SELECTED_OPTION: {
+    case CanvasEvent.CHANGE_VARIABLE_SELECTED_OPTION: {
       const { id, isWorkbenchBlock, selected } = action.payload;
 
       const blocksArray = isWorkbenchBlock ? state.workbench : state.canvas;
@@ -336,7 +330,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       const block = validateBlockExists(
         blocksArray,
         id,
-        BlockActionEnum.CHANGE_VARIABLE_SELECTED_OPTION
+        CanvasEvent.CHANGE_VARIABLE_SELECTED_OPTION
       );
       if (!block) {
         return state;
@@ -362,17 +356,17 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       }
     }
 
-    case BlockActionEnum.ADD_CHILD_BLOCK: {
+    case CanvasEvent.ADD_CHILD_BLOCK: {
       const { id, targetId } = action.payload;
       const targetBlock = validateBlockExists(
         state.canvas,
         targetId,
-        BlockActionEnum.ADD_CHILD_BLOCK
+        CanvasEvent.ADD_CHILD_BLOCK
       );
       const blockToNest = validateBlockExists(
         state.canvas,
         id,
-        BlockActionEnum.ADD_CHILD_BLOCK
+        CanvasEvent.ADD_CHILD_BLOCK
       );
       if (!targetBlock || !blockToNest) {
         return state;
@@ -414,12 +408,12 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
-    case BlockActionEnum.REMOVE_CHILD_BLOCK: {
+    case CanvasEvent.REMOVE_CHILD_BLOCK: {
       const { id, parentId } = action.payload;
       const parentBlock = validateBlockExists(
         state.canvas,
         parentId,
-        BlockActionEnum.REMOVE_CHILD_BLOCK
+        CanvasEvent.REMOVE_CHILD_BLOCK
       );
       if (!parentBlock) {
         return state;
@@ -468,18 +462,18 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     }
 
     // TODO: Not proud of this... but it works!
-    case BlockActionEnum.STACK_BLOCK: {
+    case CanvasEvent.STACK_BLOCK: {
       const { id, targetId, position } = action.payload;
 
       const targetBlock = validateBlockExists(
         state.canvas,
         targetId,
-        BlockActionEnum.STACK_BLOCK
+        CanvasEvent.STACK_BLOCK
       );
       const blockToStack = validateBlockExists(
         state.canvas,
         id,
-        BlockActionEnum.STACK_BLOCK
+        CanvasEvent.STACK_BLOCK
       );
       if (!targetBlock || !blockToStack) {
         return state;
@@ -706,12 +700,12 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
-    case BlockActionEnum.BREAK_STACK: {
+    case CanvasEvent.BREAK_STACK: {
       const { id } = action.payload;
       const block = validateBlockExists(
         state.canvas,
         id,
-        BlockActionEnum.BREAK_STACK
+        CanvasEvent.BREAK_STACK
       );
       if (!block) return state;
 
@@ -721,7 +715,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       const prevBlock = validateBlockExists(
         state.canvas,
         prevBlockId,
-        BlockActionEnum.BREAK_STACK
+        CanvasEvent.BREAK_STACK
       );
       if (!prevBlock) return state;
 
@@ -738,12 +732,12 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return { ...state, canvas: updatedCanvas };
     }
 
-    case BlockActionEnum.UPDATE_BLOCK: {
+    case CanvasEvent.UPDATE_BLOCK: {
       const { id, updates } = action.payload;
       const block = validateBlockExists(
         state.canvas,
         id,
-        BlockActionEnum.BREAK_STACK
+        CanvasEvent.BREAK_STACK
       );
       if (!block) {
         return state;
@@ -758,22 +752,22 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
     }
 
-    case BlockActionEnum.HIGHLIGHT_DROPZONE: {
+    case CanvasEvent.HIGHLIGHT_DROPZONE: {
       const { id } = action.payload;
       if (state.draggedGroupBlockIds?.has(id)) return state;
       return { ...state, highlightedDropZoneId: id };
     }
 
-    case BlockActionEnum.CLEAR_HIGHLIGHTED_DROPZONE: {
+    case CanvasEvent.CLEAR_HIGHLIGHTED_DROPZONE: {
       return { ...state, highlightedDropZoneId: null };
     }
 
-    case BlockActionEnum.DISPLAY_SNAP_PREVIEW: {
+    case CanvasEvent.DISPLAY_SNAP_PREVIEW: {
       const { id, position } = action.payload;
       let currBlock = validateBlockExists(
         state.canvas,
         id,
-        BlockActionEnum.DISPLAY_SNAP_PREVIEW
+        CanvasEvent.DISPLAY_SNAP_PREVIEW
       );
       if (!currBlock) {
         return state;
@@ -818,12 +812,12 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return { ...state, canvas: newCanvas };
     }
 
-    case BlockActionEnum.HIDE_SNAP_PREVIEW: {
+    case CanvasEvent.HIDE_SNAP_PREVIEW: {
       const { id } = action.payload;
       let rootBlock = validateBlockExists(
         state.canvas,
         id,
-        BlockActionEnum.HIDE_SNAP_PREVIEW
+        CanvasEvent.HIDE_SNAP_PREVIEW
       );
       if (!rootBlock || !rootBlock.nextBlockId) {
         return state;
