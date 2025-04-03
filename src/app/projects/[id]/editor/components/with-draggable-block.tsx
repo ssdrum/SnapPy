@@ -60,7 +60,7 @@ export default function withDraggableBlock<T extends object>(
       <div ref={setNodeRef} style={positionStyle} {...attributes}>
         {/* Wrapper needed for absolute positioning context */}
         <div style={{ position: 'relative' }}>
-          {!isWorkbenchBlock && !state.dragGroupBlockIds?.has(id) && (
+          {!isWorkbenchBlock && !state.draggedGroupBlockIds?.has(id) && (
             <OuterDropZone blockId={id} position={StackPosition.Top} />
           )}
 
@@ -85,7 +85,7 @@ export default function withDraggableBlock<T extends object>(
             </WrappedBlock>
           </div>
 
-          {!isWorkbenchBlock && !state.dragGroupBlockIds?.has(id) && (
+          {!isWorkbenchBlock && !state.draggedGroupBlockIds?.has(id) && (
             <OuterDropZone blockId={id} position={StackPosition.Bottom} />
           )}
         </div>

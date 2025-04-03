@@ -3,8 +3,7 @@
 
 import {
   Block,
-  BlockActionEnum,
-  BlocksState,
+  CanvasState,
   BlockState,
   BlockType,
   StackPosition,
@@ -14,10 +13,11 @@ import BlocksReducer from '../reducers/blocks-reducer';
 import { Coordinates } from '@dnd-kit/core/dist/types';
 import { v4 as uuidv4 } from 'uuid';
 import { findBlockById } from '../utils/utils';
+import { CanvasEvent } from '../blocks/canvas-api';
 
 interface BlocksProviderProps {
   children: React.ReactNode;
-  canvasBlocks: Block[];
+  canvas: Block[];
   variables: string[];
 }
 
@@ -25,7 +25,7 @@ interface BlocksProviderProps {
 // interface in order to make a union with null later, as the context is initialised
 // to null.
 interface BlocksContextType {
-  state: BlocksState;
+  state: CanvasState;
   selectBlockAction: (id: string) => void;
   deselectBlockAction: () => void;
   startDragAction: (id: string) => void;
@@ -66,16 +66,16 @@ export const useBlocks = () => {
 
 export default function BlocksProvider({
   children,
-  canvasBlocks,
+  canvas,
   variables,
 }: BlocksProviderProps) {
-  const initialState: BlocksState = {
-    workbenchBlocks: workBenchBlocks,
-    canvasBlocks,
+  const initialState: CanvasState = {
+    workbench: workBench,
+    canvas,
     variables,
     selectedBlockId: null,
-    draggingBlockId: null,
-    dragGroupBlockIds: null,
+    draggedBlockId: null,
+    draggedGroupBlockIds: null,
     highlightedDropZoneId: null,
   };
 
@@ -83,7 +83,7 @@ export default function BlocksProvider({
 
   // ----------------- API to interact with blocks -------------------
   const selectBlockAction = (id: string) => {
-    const selectedBlock = findBlockById(state.canvasBlocks, id);
+    const selectedBlock = findBlockById(state.canvas, id);
     if (!selectedBlock) {
       return;
     }
@@ -96,34 +96,34 @@ export default function BlocksProvider({
     }
 
     dispatch({
-      type: BlockActionEnum.SELECT_BLOCK,
+      type: CanvasEvent.SELECT_BLOCK,
       payload: { id },
     });
   };
 
   const deselectBlockAction = () => {
     dispatch({
-      type: BlockActionEnum.DESELECT_BLOCK,
+      type: CanvasEvent.DESELECT_BLOCK,
     });
   };
 
   const startDragAction = (id: string) => {
     dispatch({
-      type: BlockActionEnum.START_DRAG,
+      type: CanvasEvent.START_DRAG,
       payload: { id },
     });
   };
 
   const moveBlockAction = (id: string, delta: Coordinates) => {
     dispatch({
-      type: BlockActionEnum.MOVE_BLOCK,
+      type: CanvasEvent.MOVE_BLOCK,
       payload: { id, delta },
     });
   };
 
   const endDragAction = (delta: Coordinates) => {
     dispatch({
-      type: BlockActionEnum.END_DRAG,
+      type: CanvasEvent.END_DRAG,
       payload: { delta },
     });
   };
@@ -131,21 +131,21 @@ export default function BlocksProvider({
   // In this case we're passing the id of the dragged workbench block
   const createBlockAction = (id: string) => {
     dispatch({
-      type: BlockActionEnum.CREATE_BLOCK,
+      type: CanvasEvent.CREATE_BLOCK,
       payload: { id },
     });
   };
 
   const createAndDragBlockAction = (id: string) => {
     dispatch({
-      type: BlockActionEnum.CREATE_AND_DRAG_BLOCK,
+      type: CanvasEvent.CREATE_AND_DRAG_BLOCK,
       payload: { id },
     });
   };
 
   const deleteBlockAction = (id: string) => {
     dispatch({
-      type: BlockActionEnum.DELETE_BLOCK,
+      type: CanvasEvent.DELETE_BLOCK,
       payload: { id },
     });
   };
@@ -157,7 +157,7 @@ export default function BlocksProvider({
     }
 
     dispatch({
-      type: BlockActionEnum.CREATE_VARIABLE,
+      type: CanvasEvent.CREATE_VARIABLE,
       payload: { name },
     });
     return true;
@@ -165,7 +165,7 @@ export default function BlocksProvider({
 
   const breakStackAction = (id: string) => {
     dispatch({
-      type: BlockActionEnum.BREAK_STACK,
+      type: CanvasEvent.BREAK_STACK,
       payload: { id },
     });
   };
@@ -179,27 +179,27 @@ export default function BlocksProvider({
 
     // Find id of variable block in the workbench
     if (!id) {
-      id = state.workbenchBlocks.find((block) => {
+      id = state.workbench.find((block) => {
         return block.type === BlockType.Variable;
       })!.id;
     }
 
     dispatch({
-      type: BlockActionEnum.CHANGE_VARIABLE_SELECTED_OPTION,
+      type: CanvasEvent.CHANGE_VARIABLE_SELECTED_OPTION,
       payload: { id, isWorkbenchBlock, selected },
     });
   };
 
   const addChildBlockAction = (id: string, targetId: string) => {
     dispatch({
-      type: BlockActionEnum.ADD_CHILD_BLOCK,
+      type: CanvasEvent.ADD_CHILD_BLOCK,
       payload: { id, targetId },
     });
   };
 
   const removeChildBlockAction = (id: string, parentId: string) => {
     dispatch({
-      type: BlockActionEnum.REMOVE_CHILD_BLOCK,
+      type: CanvasEvent.REMOVE_CHILD_BLOCK,
       payload: { id, parentId },
     });
   };
@@ -210,41 +210,41 @@ export default function BlocksProvider({
     position: StackPosition
   ) => {
     dispatch({
-      type: BlockActionEnum.STACK_BLOCK,
+      type: CanvasEvent.STACK_BLOCK,
       payload: { id, targetId, position },
     });
   };
 
   const updateBlockAction = (id: string, updates: Partial<Block>) => {
     dispatch({
-      type: BlockActionEnum.UPDATE_BLOCK,
+      type: CanvasEvent.UPDATE_BLOCK,
       payload: { id, updates },
     });
   };
 
   const highlightDropzoneAction = (id: string) => {
     dispatch({
-      type: BlockActionEnum.HIGHLIGHT_DROPZONE,
+      type: CanvasEvent.HIGHLIGHT_DROPZONE,
       payload: { id },
     });
   };
 
   const clearHighlightedDropzoneAction = () => {
     dispatch({
-      type: BlockActionEnum.CLEAR_HIGHLIGHTED_DROPZONE,
+      type: CanvasEvent.CLEAR_HIGHLIGHTED_DROPZONE,
     });
   };
 
   const displaySnapPreviewAction = (id: string, position: StackPosition) => {
     dispatch({
-      type: BlockActionEnum.DISPLAY_SNAP_PREVIEW,
+      type: CanvasEvent.DISPLAY_SNAP_PREVIEW,
       payload: { id, position },
     });
   };
 
   const hideSnapPreviewAction = (id: string) => {
     dispatch({
-      type: BlockActionEnum.HIDE_SNAP_PREVIEW,
+      type: CanvasEvent.HIDE_SNAP_PREVIEW,
       payload: { id },
     });
   };
@@ -278,7 +278,7 @@ export default function BlocksProvider({
 }
 
 // Add workbench blocks here
-const workBenchBlocks: Block[] = [
+const workBench: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.Empty,

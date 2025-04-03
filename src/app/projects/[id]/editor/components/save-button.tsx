@@ -21,7 +21,7 @@ export default function SaveButton({ projectId }: SaveButtonProps) {
 
     const { success, message, error } = await saveProject(
       projectId,
-      state.canvasBlocks,
+      state.canvas,
       state.variables
     );
 

@@ -13,7 +13,8 @@ export default function OuterDropZone({
   position,
 }: OuterDropZoneProps) {
   const { active } = useDndContext();
-  const { displaySnapPreviewAction, hideSnapPreviewAction } = useBlocks();
+  const { displaySnapPreviewAction, hideSnapPreviewAction, state } =
+    useBlocks();
 
   // Check if we're dragging the current block (to prevent self-dropping)
   const isDraggingSelf = active ? active.id === blockId : false;
@@ -28,7 +29,10 @@ export default function OuterDropZone({
 
   useEffect(() => {
     if (show) {
-      hideSnapPreviewAction(blockId); // Avoids multiple previews open at the same time
+      // Hide all previews before opening a new one
+      for (const block of state.canvas) {
+        hideSnapPreviewAction(block.id);
+      }
       displaySnapPreviewAction(blockId, position);
     } else {
       hideSnapPreviewAction(blockId);
@@ -48,7 +52,7 @@ export default function OuterDropZone({
         opacity: show ? 1 : 0,
         borderRadius: '4px',
         transition: 'opacity 0.2s ease-in',
-        zIndex: 0,
+        zIndex: -1,
       }}
     />
   );

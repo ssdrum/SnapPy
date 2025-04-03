@@ -37,12 +37,12 @@ export default async function EditorLayout({
     redirect('/projects/not-found'); // TODO: Implement not found page
   }
 
-  const canvasBlocks = parseBlocksFromDB(project.canvasBlocks);
+  const canvas = parseBlocksFromDB(project.canvas);
   const variables = parseVariablesFromDB(project.variables);
 
   return (
     <ProjectProvider project={project}>
-      <BlocksProvider canvasBlocks={canvasBlocks} variables={variables}>
+      <BlocksProvider canvas={canvas} variables={variables}>
         {children}
       </BlocksProvider>
     </ProjectProvider>

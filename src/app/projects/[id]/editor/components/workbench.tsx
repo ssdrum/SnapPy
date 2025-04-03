@@ -18,7 +18,7 @@ export default function Workbench() {
       <Stack gap='md'>
         <Button onClick={open}>Create Variable</Button>
         <Divider />
-        <BlocksRenderer blocks={state.workbenchBlocks} />
+        <BlocksRenderer blocks={state.workbench} />
       </Stack>
     </div>
   );
