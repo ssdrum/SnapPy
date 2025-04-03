@@ -74,8 +74,8 @@ export default function BlocksProvider({
     canvas,
     variables,
     selectedBlockId: null,
-    draggingBlockId: null,
-    dragGroupBlockIds: null,
+    draggedBlockId: null,
+    draggedGroupBlockIds: null,
     highlightedDropZoneId: null,
   };
 

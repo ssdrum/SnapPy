@@ -46,8 +46,6 @@ export interface VariableBlock extends BlockInterface {
   selected: string;
 }
 
-export type VariableValue = string | number | boolean | null;
-
 // Union type for all block types
 export type Block = BlockInterface | VariableBlock;
 
@@ -57,8 +55,8 @@ export interface BlocksState {
   canvas: Block[];
   variables: string[];
   selectedBlockId: string | null;
-  draggingBlockId: string | null;
-  dragGroupBlockIds: Set<string> | null;
+  draggedBlockId: string | null;
+  draggedGroupBlockIds: Set<string> | null;
   highlightedDropZoneId: string | null;
 }
 

@@ -78,8 +78,8 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return {
         ...state,
         canvas: newCanvasBlocks,
-        dragGroupBlockIds: getConnectedBlockIds(newCanvasBlocks, id),
-        draggingBlockId: id,
+        draggedGroupBlockIds: getConnectedBlockIds(newCanvasBlocks, id),
+        draggedBlockId: id,
       };
     }
 
@@ -206,7 +206,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     }
 
     case BlockActionEnum.END_DRAG: {
-      const id = state.draggingBlockId;
+      const id = state.draggedBlockId;
       if (!id) {
         return state;
       }
@@ -228,8 +228,8 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return {
         ...state,
         canvas: updateBlockById(state.canvas, id, updatedBlock),
-        draggingBlockId: null,
-        dragGroupBlockIds: null,
+        draggedBlockId: null,
+        draggedGroupBlockIds: null,
       };
     }
 
@@ -299,9 +299,9 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         workbench: state.workbench.map((block) =>
           block.id === id ? newWorkbenchBlock : block
         ),
-        // Set as the dragging block
-        draggingBlockId: id,
-        dragGroupBlockIds: new Set<string>([id]), // Initially, just this block
+        // Set as the dragged block
+        draggedBlockId: id,
+        draggedGroupBlockIds: new Set<string>([id]), // Initially, just this block
       };
     }
 
@@ -378,7 +378,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         return state;
       }
       // Avoid nesting into itself
-      if (state.dragGroupBlockIds?.has(targetId)) {
+      if (state.draggedGroupBlockIds?.has(targetId)) {
         return state;
       }
 
@@ -409,7 +409,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return {
         ...state,
         canvas: newBlocks,
-        draggingBlockId: null,
+        draggedBlockId: null,
         highlightedDropZoneId: null,
       };
     }
@@ -463,7 +463,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return {
         ...state,
         canvas: newBlocks,
-        draggingBlockId: id,
+        draggedBlockId: id,
       };
     }
 
@@ -760,7 +760,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
 
     case BlockActionEnum.HIGHLIGHT_DROPZONE: {
       const { id } = action.payload;
-      if (state.dragGroupBlockIds?.has(id)) return state;
+      if (state.draggedGroupBlockIds?.has(id)) return state;
       return { ...state, highlightedDropZoneId: id };
     }
 
