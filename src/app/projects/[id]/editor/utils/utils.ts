@@ -2,13 +2,13 @@ import { Coordinates } from '@dnd-kit/core/dist/types';
 import { Block } from '../blocks/types';
 
 /**
- * Traverses the forest recursively and returns the block with the provided id
+ * Traverses the canvas recursively and returns the block with the provided id
  * if found. Returns null if not found.
- * Note: A forest is a set of disjoint trees.
+ * Note: A canvas is a set of disjoint trees.
  * TODO: Add unit tests
  */
-export function findBlockById(forest: Block[], id: string): Block | null {
-  for (const root of forest) {
+export function findBlockById(canvas: Block[], id: string): Block | null {
+  for (const root of canvas) {
     if (root.id === id) {
       return root;
     }
@@ -25,7 +25,7 @@ export function findBlockById(forest: Block[], id: string): Block | null {
 }
 
 /**
- * Traverses the forest recursively and updates the block with the provided id
+ * Traverses the canvas recursively and updates the block with the provided id
  * with the updatedBlock.
  * TODO: Add unit tests
  */
@@ -55,7 +55,7 @@ export function updateBlockById(
 }
 
 /**
- * Removes the block with the provided id from the forest.
+ * Removes the block with the provided id from the canvas.
  */
 export function removeBlockById(blocks: Block[], id: string): Block[] {
   // First filter out any blocks that match the id at the current level
@@ -177,20 +177,20 @@ function getMaxDepth(block: Block): number {
   return maxDepth + 1;
 }
 
-export function findRoot(forest: Block[], currBlock: Block) {
+export function findRoot(canvas: Block[], currBlock: Block) {
   if (!currBlock.parentId) {
     return currBlock;
   }
 
-  const parentBlock = findBlockById(forest, currBlock.parentId);
+  const parentBlock = findBlockById(canvas, currBlock.parentId);
   if (!parentBlock) {
     console.error(
-      `Error in findRoot: parent block with id = ${currBlock.parentId} not found in forest`
+      `Error in findRoot: parent block with id = ${currBlock.parentId} not found in canvas`
     );
     return currBlock;
   }
 
-  return findRoot(forest, parentBlock);
+  return findRoot(canvas, parentBlock);
 }
 
 export function updateSequencePositions(
@@ -228,21 +228,21 @@ export function updateSequencePositions(
 
 /**
  * Returns a set with the ids of all blocks connected to the given block in the
- * forest.
+ * canvas.
  * */
-export function getConnectedBlockIds(forest: Block[], id: string): Set<string> {
+export function getConnectedBlockIds(canvas: Block[], id: string): Set<string> {
   const idSet = new Set<string>();
-  const block = findBlockById(forest, id);
+  const block = findBlockById(canvas, id);
   if (!block) {
     return idSet;
   }
 
   // Find the root of the tree containing the block
-  const root = findRoot(forest, block);
+  const root = findRoot(canvas, block);
   // Add all block IDs in the tree rooted at root
   addTreeIdsRecursive(root, idSet);
   // Traverse block chain
-  traverseSequence(forest, root, idSet);
+  traverseSequence(canvas, root, idSet);
   return idSet;
 }
 
@@ -264,14 +264,14 @@ function addTreeIdsRecursive(block: Block, idSet: Set<string>): void {
  * Traverses forward through the nextBlockId chain and adds all connected blocks
  */
 function traverseSequence(
-  forest: Block[],
+  canvas: Block[],
   startBlock: Block,
   idSet: Set<string>
 ): void {
   // Traverse forward through nextBlockId chain
   let currBlock = startBlock;
   while (currBlock && currBlock.nextBlockId) {
-    const nextBlock = findBlockById(forest, currBlock.nextBlockId);
+    const nextBlock = findBlockById(canvas, currBlock.nextBlockId);
     if (!nextBlock || idSet.has(nextBlock.id)) {
       break;
     }
