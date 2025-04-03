@@ -21,6 +21,9 @@ describe('findBlockById', () => {
         coords: { x: 0, y: 0 },
         isWorkbenchBlock: false,
         parentId: null,
+        prevBlockId: null,
+        nextBlockId: null,
+        stackOptions: { top: true, bottom: true },
         children: [],
       },
       {
@@ -30,6 +33,9 @@ describe('findBlockById', () => {
         coords: { x: 100, y: 0 },
         isWorkbenchBlock: true,
         parentId: null,
+        prevBlockId: null,
+        nextBlockId: null,
+        stackOptions: { top: true, bottom: true },
         children: [],
       },
       {
@@ -39,6 +45,9 @@ describe('findBlockById', () => {
         coords: { x: 200, y: 0 },
         isWorkbenchBlock: false,
         parentId: null,
+        prevBlockId: null,
+        nextBlockId: null,
+        stackOptions: { top: true, bottom: true },
         children: [],
       },
     ];
@@ -66,6 +75,9 @@ describe('findBlockById', () => {
         coords: { x: 0, y: 0 },
         isWorkbenchBlock: false,
         parentId: null,
+        prevBlockId: null,
+        nextBlockId: null,
+        stackOptions: { top: true, bottom: true },
         children: [
           {
             id: 'block1-1',
@@ -74,6 +86,9 @@ describe('findBlockById', () => {
             coords: { x: 10, y: 10 },
             isWorkbenchBlock: false,
             parentId: 'block1',
+            prevBlockId: null,
+            nextBlockId: null,
+            stackOptions: { top: true, bottom: true },
             children: [
               {
                 id: 'block1-1-1',
@@ -82,6 +97,9 @@ describe('findBlockById', () => {
                 coords: { x: 15, y: 15 },
                 isWorkbenchBlock: false,
                 parentId: 'block1-1',
+                prevBlockId: null,
+                nextBlockId: null,
+                stackOptions: { top: true, bottom: true },
                 children: [],
               },
             ],
@@ -95,6 +113,9 @@ describe('findBlockById', () => {
         coords: { x: 100, y: 0 },
         isWorkbenchBlock: true,
         parentId: null,
+        prevBlockId: null,
+        nextBlockId: null,
+        stackOptions: { top: true, bottom: true },
         children: [
           {
             id: 'target-block',
@@ -102,7 +123,10 @@ describe('findBlockById', () => {
             state: BlockState.Selected,
             coords: { x: 120, y: 20 },
             isWorkbenchBlock: false,
+            prevBlockId: null,
             parentId: 'block2',
+            nextBlockId: null,
+            stackOptions: { top: true, bottom: true },
             children: [],
           },
         ],

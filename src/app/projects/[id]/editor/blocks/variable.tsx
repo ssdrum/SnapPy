@@ -3,9 +3,8 @@ import withDraggableBlock from '../components/with-draggable-block';
 import { useBlocks } from '../contexts/blocks-context';
 import { resizeSelect } from '../utils/utils';
 import classes from './blocks.module.css';
-import { useDroppable } from '@dnd-kit/core';
 import { Block } from './types';
-import BlocksRenderer from '../components/blocks-renderer';
+import InnerDropZone from '../components/inner-drop-zone';
 
 interface VariableProps {
   id: string;
@@ -16,11 +15,6 @@ interface VariableProps {
 
 function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
   const { changeVariableSelectedOptionAction, state } = useBlocks();
-
-  // Set up the drop zone
-  const { setNodeRef } = useDroppable({
-    id: `drop-${id}`,
-  });
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (isWorkbenchBlock) {
@@ -54,13 +48,9 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
         ))}
       </select>
       to
-      {/* Only display children if this block has any. Display dropzone by default */}
-      <div
-        ref={children.length == 0 ? setNodeRef : undefined} // Only add droppable area if there's no children
-        className={classes.snapTarget}
-      >
-        {children && <BlocksRenderer blocks={children} />}
-      </div>
+      <InnerDropZone blockId={id} enabled={!isWorkbenchBlock}>
+        {children}
+      </InnerDropZone>
     </>
   );
 }

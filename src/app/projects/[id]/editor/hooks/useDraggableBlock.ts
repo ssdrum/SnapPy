@@ -1,5 +1,4 @@
 import { useDraggable } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
 import { BlockState, BlockType } from '../blocks/types';
 
 /**
@@ -13,18 +12,18 @@ export default function useDraggableBlock(
   state: BlockState,
   blockType: BlockType
 ) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const { attributes, listeners, setNodeRef } = useDraggable({
     id: id,
   });
 
   const style: React.CSSProperties = {
-    transform: CSS.Translate.toString(transform),
     top: isWorkbenchBlock ? 0 : top,
     left: isWorkbenchBlock ? 0 : left,
     position:
       isWorkbenchBlock || state === BlockState.Nested ? 'static' : 'absolute',
-    zIndex: state === BlockState.Dragging ? '10' : isWorkbenchBlock ? '2' : '1',
-
+    zIndex:
+      state === BlockState.Dragging ? '100' : !isWorkbenchBlock ? '2' : '1',
+    opacity: !isWorkbenchBlock && top === 0 && left === 0 ? 0 : 1,
     backgroundColor: (() => {
       switch (blockType) {
         case BlockType.Empty:
@@ -42,9 +41,9 @@ export default function useDraggableBlock(
         // Yellow outline (3px) + regular bottom shadow
         return `0 0 0 3px #FFD166, 0 2px 0 rgba(0,0,0,0.2)`;
         // Regular box shadow
-      } else if (state === BlockState.Dragging) {
-        return '0 5px 10px rgba(0,0,0,0.2)';
-      }
+      } //else if (state === BlockState.Dragging) {
+      //return '0 5px 10px rgba(0,0,0,0.2)';
+      //}
     })(),
   };
 

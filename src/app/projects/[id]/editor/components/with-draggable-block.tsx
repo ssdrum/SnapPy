@@ -1,9 +1,15 @@
-/* This HOC wraps all blocks to provide draggable functionallity */
-
+import React from 'react';
 import useDraggableBlock from '../hooks/useDraggableBlock';
-import { Block, BlockState, BlockType } from '../blocks/types';
+import {
+  Block,
+  BlockState,
+  BlockType,
+  StackOptions,
+  StackPosition,
+} from '../blocks/types';
 import { useBlocks } from '../contexts/blocks-context';
 import classes from '../blocks/blocks.module.css';
+import OuterDropZone from './outer-drop-zone';
 
 // Base props that all draggable blocks will have
 export interface DraggableBlockProps {
@@ -11,10 +17,11 @@ export interface DraggableBlockProps {
   top: number;
   left: number;
   blockType: BlockType;
-  state: BlockState;
+  blockState: BlockState;
   isWorkbenchBlock: boolean;
-  parentId?: string;
-  children?: Block[];
+  stackOptions: StackOptions;
+  parentId: string | null;
+  children: Block[];
 }
 
 export default function withDraggableBlock<T extends object>(
@@ -26,13 +33,14 @@ export default function withDraggableBlock<T extends object>(
       top,
       left,
       blockType,
-      state,
+      blockState,
       isWorkbenchBlock,
       parentId,
       children,
       ...restProps
     } = props;
-    const { selectBlockAction, deselectBlockAction } = useBlocks();
+
+    const { selectBlockAction, deselectBlockAction, state } = useBlocks();
 
     // Add dnd functionality
     const { attributes, listeners, setNodeRef, style } = useDraggableBlock(
@@ -40,33 +48,47 @@ export default function withDraggableBlock<T extends object>(
       isWorkbenchBlock,
       top,
       left,
-      state,
+      blockState,
       blockType
     );
 
+    // Split style properties
+    const { backgroundColor, boxShadow, ...positionStyle } = style;
+
     return (
-      // dnd-kit setup
-      <div
-        ref={setNodeRef}
-        className={classes.base} // Static CSS
-        style={style} // Dynamic CSS (bg color etc)
-        {...listeners}
-        {...attributes}
-        onClick={() => {
-          deselectBlockAction(); // Deselect previous selection before making new selection
-          if (!isWorkbenchBlock) {
-            selectBlockAction(id);
-          }
-        }}
-      >
-        <WrappedBlock
-          id={id}
-          isWorkbenchBlock={isWorkbenchBlock}
-          parentId={parentId}
-          {...(restProps as T)}
-        >
-          {children}
-        </WrappedBlock>
+      // dnd-kit setup - outer container with positioning
+      <div ref={setNodeRef} style={positionStyle} {...attributes}>
+        {/* Wrapper needed for absolute positioning context */}
+        <div style={{ position: 'relative' }}>
+          {!isWorkbenchBlock && !state.dragGroupBlockIds?.has(id) && (
+            <OuterDropZone blockId={id} position={StackPosition.Top} />
+          )}
+
+          <div
+            className={classes.base}
+            style={{ backgroundColor, boxShadow }}
+            {...listeners}
+            onClick={() => {
+              deselectBlockAction();
+              if (!isWorkbenchBlock) {
+                selectBlockAction(id);
+              }
+            }}
+          >
+            <WrappedBlock
+              id={id}
+              isWorkbenchBlock={isWorkbenchBlock}
+              parentId={parentId}
+              {...(restProps as T)}
+            >
+              {children}
+            </WrappedBlock>
+          </div>
+
+          {!isWorkbenchBlock && !state.dragGroupBlockIds?.has(id) && (
+            <OuterDropZone blockId={id} position={StackPosition.Bottom} />
+          )}
+        </div>
       </div>
     );
   };

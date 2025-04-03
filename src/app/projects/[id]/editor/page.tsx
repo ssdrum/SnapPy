@@ -1,11 +1,10 @@
 'use client';
 
 import { useContext, useEffect } from 'react';
-import classes from './editor.module.css';
 import { ProjectContext } from './contexts/project-context';
+import { DndContext } from '@dnd-kit/core';
 import { Title, Paper, Group, Button, AppShellMain, Box } from '@mantine/core';
-import { DndContext, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import { useBlocks } from './contexts/blocks-context';
+import classes from './editor.module.css';
 import Canvas from './components/canvas';
 import Workbench from './components/workbench';
 import SaveButton from './components/save-button';
@@ -14,21 +13,10 @@ import useCodeEditor from './hooks/use-code-editor';
 import CodeEditor from './components/code-editor';
 import OutputBox from './components/output-box';
 import { useCustomSensors } from './utils/sensors';
-import { findBlockById } from './utils/utils';
+import DragEventsHandler from './components/drag-events-handler';
 
 export default function EditorPage() {
   const { name, id } = useContext(ProjectContext)!;
-  const {
-    startDragAction,
-    endDragAction,
-    deselectBlockAction,
-    createBlockAction,
-    deleteBlockAction,
-    addChildBlockAction,
-    removeChildBlockAction,
-    state,
-  } = useBlocks();
-
   const { code, handleCodeChange, error, output } = useCodeEditor();
 
   // Show a window alert when an error occurs
@@ -45,59 +33,6 @@ export default function EditorPage() {
       distance: 5,
     },
   });
-
-  const handleDragStart = (e: DragStartEvent) => {
-    // First de-select any previously selected block
-    deselectBlockAction();
-
-    // If dragging a block from the workbench, create new canvas block
-    const id = e.active.id.toString();
-    if (findBlockById(state.workbenchBlocks, id)) {
-      createBlockAction(id);
-    }
-
-    // If dragging a nested block, remove child block from parent
-    const draggedBlock = findBlockById(state.canvasBlocks, id);
-    if (draggedBlock && draggedBlock.parentId) {
-      removeChildBlockAction(id, draggedBlock.parentId);
-    }
-
-    // If user started dragging a workbench block, create a new block
-    startDragAction(id);
-  };
-
-  const handleDragEnd = (e: DragEndEvent) => {
-    const { over, delta, active } = e;
-
-    // Exit early if not dropped on a valid target
-    if (!over) return;
-
-    const overId = over.id.toString();
-    const activeId = active.id.toString();
-
-    // Handle drop on canvas
-    if (overId === 'canvas') {
-      endDragAction(delta);
-      return;
-    }
-
-    // Handle drop on another block (nesting)
-    if (overId.startsWith('drop')) {
-      const targetBlock = overId.substring(5);
-
-      // Prevent dropping onto itself
-      if (activeId === targetBlock) {
-        endDragAction(delta);
-        return;
-      }
-
-      addChildBlockAction(activeId, targetBlock);
-      return;
-    }
-
-    // Default case - delete the block
-    deleteBlockAction(activeId);
-  };
 
   return (
     <AppShellMain className={classes.editorPageWrapper}>
@@ -118,14 +53,11 @@ export default function EditorPage() {
 
       {/* Canvas */}
       <Paper className={classes.editorWrapper} withBorder>
-        <DndContext
-          id='dnd-context'
-          sensors={sensors}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
-          <Workbench />
-          <Canvas />
+        <DndContext id='dnd-context' sensors={sensors}>
+          <DragEventsHandler>
+            <Workbench />
+            <Canvas />
+          </DragEventsHandler>
         </DndContext>
 
         <Box className={classes.codeEditorWrapper}>

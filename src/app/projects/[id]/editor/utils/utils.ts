@@ -1,3 +1,4 @@
+import { Coordinates } from '@dnd-kit/core/dist/types';
 import { Block } from '../blocks/types';
 
 /**
@@ -6,7 +7,7 @@ import { Block } from '../blocks/types';
  * Note: A forest is a set of disjoint trees.
  * TODO: Add unit tests
  */
-export const findBlockById = (forest: Block[], id: string): Block | null => {
+export function findBlockById(forest: Block[], id: string): Block | null {
   for (const root of forest) {
     if (root.id === id) {
       return root;
@@ -21,18 +22,18 @@ export const findBlockById = (forest: Block[], id: string): Block | null => {
   }
 
   return null;
-};
+}
 
 /**
  * Traverses the forest recursively and updates the block with the provided id
  * with the updatedBlock.
  * TODO: Add unit tests
  */
-export const updateBlockById = (
+export function updateBlockById(
   blocks: Block[],
   id: string,
   updatedBlock: Block
-): Block[] => {
+): Block[] {
   // Create a new array to avoid mutating the original
   return blocks.map((block) => {
     // If this is the block to update, return the updated block
@@ -51,12 +52,12 @@ export const updateBlockById = (
     // Otherwise, return the block unchanged
     return block;
   });
-};
+}
 
 /**
  * Removes the block with the provided id from the forest.
  */
-export const removeBlockById = (blocks: Block[], id: string): Block[] => {
+export function removeBlockById(blocks: Block[], id: string): Block[] {
   // First filter out any blocks that match the id at the current level
   const filteredBlocks = blocks.filter((block) => block.id !== id);
 
@@ -78,13 +79,13 @@ export const removeBlockById = (blocks: Block[], id: string): Block[] => {
     // Otherwise, return the block unchanged
     return block;
   });
-};
+}
 
-export const validateBlockExists = (
+export function validateBlockExists(
   blocks: Block[],
   id: string | null,
   actionName: string
-): Block | null => {
+): Block | null {
   if (!id) {
     return null;
   }
@@ -99,16 +100,16 @@ export const validateBlockExists = (
   }
 
   return block;
-};
+}
 
 /**
  * Resizes a select element to match the width of its selected option
  * @param selectRef React ref to the select element
  * source: https://stackoverflow.com/questions/28308103/adjust-width-of-select-element-according-to-selected-options-width
  */
-export const resizeSelect = (
+export function resizeSelect(
   selectRef: React.RefObject<HTMLSelectElement | null>
-): void => {
+): void {
   if (!selectRef.current) return;
 
   const select = selectRef.current;
@@ -139,4 +140,144 @@ export const resizeSelect = (
 
   // Clean up
   tempSelect.remove();
-};
+}
+
+// Calculates the start position for the next block in the sequence
+export function calcNextBlockStartPosition(currBlock: Block): Coordinates {
+  const nextBlockStartPosition = {
+    x: currBlock.coords.x,
+    y: currBlock.coords.y,
+  };
+
+  // Base height for every block
+  nextBlockStartPosition.y += 34.8; // TODO: Remove magic numbers
+
+  // Calculate max nesting depth and multiply by 14
+  const maxDepth = getMaxDepth(currBlock);
+  if (maxDepth > 0) {
+    nextBlockStartPosition.y += maxDepth * 14;
+  }
+
+  return nextBlockStartPosition;
+}
+
+// Recursive function that finds the max depth of a tree
+function getMaxDepth(block: Block): number {
+  if (block.children.length === 0) {
+    return 0;
+  }
+
+  // Find the maximum depth among children
+  let maxDepth = 0;
+  for (const child of block.children) {
+    const childDepth = getMaxDepth(child);
+    maxDepth = Math.max(maxDepth, childDepth);
+  }
+
+  return maxDepth + 1;
+}
+
+export function findRoot(forest: Block[], currBlock: Block) {
+  if (!currBlock.parentId) {
+    return currBlock;
+  }
+
+  const parentBlock = findBlockById(forest, currBlock.parentId);
+  if (!parentBlock) {
+    console.error(
+      `Error in findRoot: parent block with id = ${currBlock.parentId} not found in forest`
+    );
+    return currBlock;
+  }
+
+  return findRoot(forest, parentBlock);
+}
+
+export function updateSequencePositions(
+  blocks: Block[],
+  startBlock: Block
+): Block[] {
+  let updatedBlocks = [...blocks];
+  let currBlock = startBlock;
+  let nextBlockId = currBlock.nextBlockId;
+
+  while (nextBlockId) {
+    const nextBlock = findBlockById(updatedBlocks, nextBlockId);
+    if (!nextBlock) {
+      break;
+    }
+
+    const updatedNextBlock = {
+      ...nextBlock,
+      coords: calcNextBlockStartPosition(currBlock),
+    };
+
+    updatedBlocks = updateBlockById(
+      updatedBlocks,
+      nextBlockId,
+      updatedNextBlock
+    );
+
+    // Move to the next iteration
+    currBlock = updatedNextBlock;
+    nextBlockId = currBlock.nextBlockId;
+  }
+
+  return updatedBlocks;
+}
+
+/**
+ * Returns a set with the ids of all blocks connected to the given block in the
+ * forest.
+ * */
+export function getConnectedBlockIds(forest: Block[], id: string): Set<string> {
+  const idSet = new Set<string>();
+  const block = findBlockById(forest, id);
+  if (!block) {
+    return idSet;
+  }
+
+  // Find the root of the tree containing the block
+  const root = findRoot(forest, block);
+  // Add all block IDs in the tree rooted at root
+  addTreeIdsRecursive(root, idSet);
+  // Traverse block chain
+  traverseSequence(forest, root, idSet);
+  return idSet;
+}
+
+/**
+ * Helper function for getConnectedBlockIds.
+ * Recursively adds all block IDs in a tree to the set
+ */
+function addTreeIdsRecursive(block: Block, idSet: Set<string>): void {
+  // Add current block ID
+  idSet.add(block.id);
+  // Recursively process all children
+  for (const child of block.children) {
+    addTreeIdsRecursive(child, idSet);
+  }
+}
+
+/**
+ * Helper function for getConnectedBlockIds.
+ * Traverses forward through the nextBlockId chain and adds all connected blocks
+ */
+function traverseSequence(
+  forest: Block[],
+  startBlock: Block,
+  idSet: Set<string>
+): void {
+  // Traverse forward through nextBlockId chain
+  let currBlock = startBlock;
+  while (currBlock && currBlock.nextBlockId) {
+    const nextBlock = findBlockById(forest, currBlock.nextBlockId);
+    if (!nextBlock || idSet.has(nextBlock.id)) {
+      break;
+    }
+    // Add the next block and all its children
+    addTreeIdsRecursive(nextBlock, idSet);
+    // Continue traversing forward
+    currBlock = nextBlock;
+  }
+}

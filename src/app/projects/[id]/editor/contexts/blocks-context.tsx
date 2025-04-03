@@ -7,7 +7,7 @@ import {
   BlocksState,
   BlockState,
   BlockType,
-  DataType,
+  StackPosition,
 } from '../blocks/types';
 import { createContext, useContext, useReducer } from 'react';
 import BlocksReducer from '../reducers/blocks-reducer';
@@ -29,13 +29,26 @@ interface BlocksContextType {
   selectBlockAction: (id: string) => void;
   deselectBlockAction: () => void;
   startDragAction: (id: string) => void;
+  moveBlockAction: (id: string, delta: Coordinates) => void;
   endDragAction: (delta: Coordinates) => void;
   createBlockAction: (id: string) => void;
+  createAndDragBlockAction: (id: string) => void;
   deleteBlockAction: (id: string) => void;
   createVariableAction: (name: string) => boolean;
   changeVariableSelectedOptionAction: (selected: string, id?: string) => void;
-  addChildBlockAction: (id: string, target: string) => void;
+  addChildBlockAction: (id: string, targetId: string) => void;
   removeChildBlockAction: (id: string, parentId: string) => void;
+  stackBlockAction: (
+    id: string,
+    targetId: string,
+    position: StackPosition
+  ) => void;
+  breakStackAction: (id: string) => void;
+  updateBlockAction: (id: string, updates: Partial<Block>) => void;
+  highlightDropzoneAction: (id: string) => void;
+  clearHighlightedDropzoneAction: () => void;
+  displaySnapPreviewAction: (id: string, position: StackPosition) => void;
+  hideSnapPreviewAction: (id: string) => void;
 }
 
 // Create context object
@@ -62,6 +75,8 @@ export default function BlocksProvider({
     variables,
     selectedBlockId: null,
     draggingBlockId: null,
+    dragGroupBlockIds: null,
+    highlightedDropZoneId: null,
   };
 
   const [state, dispatch] = useReducer(BlocksReducer, initialState);
@@ -99,6 +114,13 @@ export default function BlocksProvider({
     });
   };
 
+  const moveBlockAction = (id: string, delta: Coordinates) => {
+    dispatch({
+      type: BlockActionEnum.MOVE_BLOCK,
+      payload: { id, delta },
+    });
+  };
+
   const endDragAction = (delta: Coordinates) => {
     dispatch({
       type: BlockActionEnum.END_DRAG,
@@ -110,6 +132,13 @@ export default function BlocksProvider({
   const createBlockAction = (id: string) => {
     dispatch({
       type: BlockActionEnum.CREATE_BLOCK,
+      payload: { id },
+    });
+  };
+
+  const createAndDragBlockAction = (id: string) => {
+    dispatch({
+      type: BlockActionEnum.CREATE_AND_DRAG_BLOCK,
       payload: { id },
     });
   };
@@ -134,6 +163,13 @@ export default function BlocksProvider({
     return true;
   };
 
+  const breakStackAction = (id: string) => {
+    dispatch({
+      type: BlockActionEnum.BREAK_STACK,
+      payload: { id },
+    });
+  };
+
   /* If no id is passed, this function will update the workbench variable block */
   const changeVariableSelectedOptionAction = (
     selected: string,
@@ -154,10 +190,10 @@ export default function BlocksProvider({
     });
   };
 
-  const addChildBlockAction = (id: string, target: string) => {
+  const addChildBlockAction = (id: string, targetId: string) => {
     dispatch({
       type: BlockActionEnum.ADD_CHILD_BLOCK,
-      payload: { id, target },
+      payload: { id, targetId },
     });
   };
 
@@ -168,18 +204,72 @@ export default function BlocksProvider({
     });
   };
 
+  const stackBlockAction = (
+    id: string,
+    targetId: string,
+    position: StackPosition
+  ) => {
+    dispatch({
+      type: BlockActionEnum.STACK_BLOCK,
+      payload: { id, targetId, position },
+    });
+  };
+
+  const updateBlockAction = (id: string, updates: Partial<Block>) => {
+    dispatch({
+      type: BlockActionEnum.UPDATE_BLOCK,
+      payload: { id, updates },
+    });
+  };
+
+  const highlightDropzoneAction = (id: string) => {
+    dispatch({
+      type: BlockActionEnum.HIGHLIGHT_DROPZONE,
+      payload: { id },
+    });
+  };
+
+  const clearHighlightedDropzoneAction = () => {
+    dispatch({
+      type: BlockActionEnum.CLEAR_HIGHLIGHTED_DROPZONE,
+    });
+  };
+
+  const displaySnapPreviewAction = (id: string, position: StackPosition) => {
+    dispatch({
+      type: BlockActionEnum.DISPLAY_SNAP_PREVIEW,
+      payload: { id, position },
+    });
+  };
+
+  const hideSnapPreviewAction = (id: string) => {
+    dispatch({
+      type: BlockActionEnum.HIDE_SNAP_PREVIEW,
+      payload: { id },
+    });
+  };
+
   const value: BlocksContextType = {
     state,
     selectBlockAction,
     deselectBlockAction,
     startDragAction,
+    moveBlockAction,
     endDragAction,
     createBlockAction,
+    createAndDragBlockAction,
+    breakStackAction,
     deleteBlockAction,
     createVariableAction,
     changeVariableSelectedOptionAction,
     addChildBlockAction,
     removeChildBlockAction,
+    stackBlockAction,
+    updateBlockAction,
+    highlightDropzoneAction,
+    clearHighlightedDropzoneAction,
+    displaySnapPreviewAction,
+    hideSnapPreviewAction,
   };
 
   return (
@@ -195,7 +285,10 @@ const workBenchBlocks: Block[] = [
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
+    stackOptions: { top: true, bottom: true },
     parentId: null,
+    prevBlockId: null,
+    nextBlockId: null,
     children: [],
   },
   {
@@ -204,9 +297,11 @@ const workBenchBlocks: Block[] = [
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
-    dataType: DataType.Int,
     selected: 'x',
+    stackOptions: { top: true, bottom: true },
     parentId: null,
+    prevBlockId: null,
+    nextBlockId: null,
     children: [],
   },
 ];
