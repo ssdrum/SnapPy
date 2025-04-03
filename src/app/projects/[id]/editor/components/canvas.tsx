@@ -21,7 +21,7 @@ export default function Canvas() {
       className={classes.canvas}
       onClick={handleCanvasClick}
     >
-      {state.canvasBlocks.length === 0 ? (
+      {state.canvas.length === 0 ? (
         <Box ta='center' pt={100} c='dimmed'>
           <Text size='xl' fw={500}>
             Drag blocks here
@@ -31,7 +31,7 @@ export default function Canvas() {
           </Text>
         </Box>
       ) : (
-        <BlocksRenderer blocks={state.canvasBlocks} />
+        <BlocksRenderer blocks={state.canvas} />
       )}
     </div>
   );

@@ -35,7 +35,7 @@ export async function createProject(name: string): Promise<Project> {
     data: {
       name: name,
       userId: user.id,
-      canvasBlocks: Prisma.JsonNull, // Set data to null as default
+      canvas: Prisma.JsonNull, // Set data to null as default
       variables: ['x'],
     },
   });
@@ -48,12 +48,10 @@ export async function createProject(name: string): Promise<Project> {
  */
 export async function updateProject(
   projectId: number,
-  canvasBlocks: Block[],
+  canvas: Block[],
   variables: string[]
 ): Promise<Project> {
-  const canvasBlocksJson: Prisma.InputJsonValue = JSON.parse(
-    JSON.stringify(canvasBlocks)
-  );
+  const canvasJson: Prisma.InputJsonValue = JSON.parse(JSON.stringify(canvas));
   const variablesJson: Prisma.InputJsonValue = JSON.parse(
     JSON.stringify(variables)
   );
@@ -61,7 +59,7 @@ export async function updateProject(
   const project = await prisma.project.update({
     where: { id: projectId },
     data: {
-      canvasBlocks: canvasBlocksJson,
+      canvas: canvasJson,
       variables: variablesJson,
     },
   });
@@ -70,15 +68,15 @@ export async function updateProject(
 }
 
 // Parses canvas blocks
-export function parseBlocksFromDB(canvasBlocks: JsonValue): Block[] {
-  if (!canvasBlocks) {
+export function parseBlocksFromDB(canvas: JsonValue): Block[] {
+  if (!canvas) {
     return [];
   }
 
   try {
-    return JSON.parse(JSON.stringify(canvasBlocks)) as Block[]; // Parse project data retreived from DB into blocks array
+    return JSON.parse(JSON.stringify(canvas)) as Block[]; // Parse project data retreived from DB into blocks array
   } catch (error) {
-    console.error('Error parsing canvasBlocks from db:', error);
+    console.error('Error parsing canvas from db:', error);
     return [];
   }
 }

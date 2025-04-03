@@ -23,7 +23,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     case BlockActionEnum.SELECT_BLOCK: {
       const { id } = action.payload;
       const block = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         id,
         BlockActionEnum.SELECT_BLOCK
       );
@@ -32,7 +32,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       const updatedBlock = { ...block, state: BlockState.Selected };
       return {
         ...state,
-        canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
+        canvas: updateBlockById(state.canvas, id, updatedBlock),
         selectedBlockId: id,
       };
     }
@@ -42,7 +42,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       if (!id) return state;
 
       const block = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         id,
         BlockActionEnum.DESELECT_BLOCK
       );
@@ -51,7 +51,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       const updatedBlock = { ...block, state: BlockState.Idle };
       return {
         ...state,
-        canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
+        canvas: updateBlockById(state.canvas, id, updatedBlock),
         selectedBlockId: null,
       };
     }
@@ -59,7 +59,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     case BlockActionEnum.START_DRAG: {
       const { id } = action.payload;
       const block = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         id,
         BlockActionEnum.START_DRAG
       );
@@ -73,15 +73,11 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         lastDelta: undefined,
       };
 
-      const newCanvasBlocks = updateBlockById(
-        state.canvasBlocks,
-        id,
-        updatedBlock
-      );
+      const newCanvasBlocks = updateBlockById(state.canvas, id, updatedBlock);
 
       return {
         ...state,
-        canvasBlocks: newCanvasBlocks,
+        canvas: newCanvasBlocks,
         dragGroupBlockIds: getConnectedBlockIds(newCanvasBlocks, id),
         draggingBlockId: id,
       };
@@ -90,7 +86,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     case BlockActionEnum.MOVE_BLOCK: {
       const { id, delta } = action.payload;
       const block = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         id,
         BlockActionEnum.MOVE_BLOCK
       );
@@ -98,7 +94,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         return state;
       }
 
-      let updatedBlocks = [...state.canvasBlocks];
+      let updatedBlocks = [...state.canvas];
 
       // For the first move after drag starts, store the original position
       if (!block.lastDelta) {
@@ -149,7 +145,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
 
         return {
           ...state,
-          canvasBlocks: updatedBlocks,
+          canvas: updatedBlocks,
         };
       }
 
@@ -205,7 +201,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
 
       return {
         ...state,
-        canvasBlocks: updatedBlocks,
+        canvas: updatedBlocks,
       };
     }
 
@@ -216,7 +212,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       }
 
       const block = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         id,
         BlockActionEnum.END_DRAG
       );
@@ -231,7 +227,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
 
       return {
         ...state,
-        canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
+        canvas: updateBlockById(state.canvas, id, updatedBlock),
         draggingBlockId: null,
         dragGroupBlockIds: null,
       };
@@ -263,7 +259,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return {
         ...state,
         // Add the block to canvas blocks
-        canvasBlocks: [...state.canvasBlocks, newBlock],
+        canvas: [...state.canvas, newBlock],
         // Replace the original workbench block with one having a new ID
         workbench: state.workbench.map((block) =>
           block.id === id ? newWorkbenchBlock : block
@@ -298,7 +294,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       return {
         ...state,
         // Add the block to canvas blocks
-        canvasBlocks: [...state.canvasBlocks, newBlock],
+        canvas: [...state.canvas, newBlock],
         // Replace the original workbench block with one having a new ID
         workbench: state.workbench.map((block) =>
           block.id === id ? newWorkbenchBlock : block
@@ -313,7 +309,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       const { id } = action.payload;
 
       const block = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         id,
         BlockActionEnum.DELETE_BLOCK
       );
@@ -323,7 +319,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
 
       return {
         ...state,
-        canvasBlocks: state.canvasBlocks.filter((block) => block.id !== id),
+        canvas: state.canvas.filter((block) => block.id !== id),
       };
     }
 
@@ -335,9 +331,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     case BlockActionEnum.CHANGE_VARIABLE_SELECTED_OPTION: {
       const { id, isWorkbenchBlock, selected } = action.payload;
 
-      const blocksArray = isWorkbenchBlock
-        ? state.workbench
-        : state.canvasBlocks;
+      const blocksArray = isWorkbenchBlock ? state.workbench : state.canvas;
 
       const block = validateBlockExists(
         blocksArray,
@@ -363,7 +357,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       } else {
         return {
           ...state,
-          canvasBlocks: updateBlockById(state.canvasBlocks, id, updatedBlock),
+          canvas: updateBlockById(state.canvas, id, updatedBlock),
         };
       }
     }
@@ -371,12 +365,12 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     case BlockActionEnum.ADD_CHILD_BLOCK: {
       const { id, targetId } = action.payload;
       const targetBlock = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         targetId,
         BlockActionEnum.ADD_CHILD_BLOCK
       );
       const blockToNest = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         id,
         BlockActionEnum.ADD_CHILD_BLOCK
       );
@@ -396,7 +390,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       };
 
       // Remove the block from its current position in the forest
-      let newBlocks = removeBlockById(state.canvasBlocks, id);
+      let newBlocks = removeBlockById(state.canvas, id);
 
       // Update the target block to include the nested block in its children
       const updatedTargetBlock = {
@@ -414,7 +408,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
 
       return {
         ...state,
-        canvasBlocks: newBlocks,
+        canvas: newBlocks,
         draggingBlockId: null,
         highlightedDropZoneId: null,
       };
@@ -423,7 +417,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     case BlockActionEnum.REMOVE_CHILD_BLOCK: {
       const { id, parentId } = action.payload;
       const parentBlock = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         parentId,
         BlockActionEnum.REMOVE_CHILD_BLOCK
       );
@@ -445,7 +439,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
 
       // Update the parent block in our forest
       let newBlocks = updateBlockById(
-        state.canvasBlocks,
+        state.canvas,
         parentId,
         updatedParentBlock
       );
@@ -468,7 +462,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
 
       return {
         ...state,
-        canvasBlocks: newBlocks,
+        canvas: newBlocks,
         draggingBlockId: id,
       };
     }
@@ -478,12 +472,12 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       const { id, targetId, position } = action.payload;
 
       const targetBlock = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         targetId,
         BlockActionEnum.STACK_BLOCK
       );
       const blockToStack = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         id,
         BlockActionEnum.STACK_BLOCK
       );
@@ -492,7 +486,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       }
 
       // Copy canvas blocks
-      let updatedCanvas = [...state.canvasBlocks];
+      let updatedCanvas = [...state.canvas];
       // Copy involved blocks
       let updatedTargetBlock = { ...targetBlock };
       let updatedBlockToStack = { ...blockToStack };
@@ -707,7 +701,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
 
       return {
         ...state,
-        canvasBlocks: updatedCanvas,
+        canvas: updatedCanvas,
         highlightedDropZoneId: null,
       };
     }
@@ -715,7 +709,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     case BlockActionEnum.BREAK_STACK: {
       const { id } = action.payload;
       const block = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         id,
         BlockActionEnum.BREAK_STACK
       );
@@ -725,7 +719,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       if (!prevBlockId) return state;
 
       const prevBlock = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         prevBlockId,
         BlockActionEnum.BREAK_STACK
       );
@@ -734,20 +728,20 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       const updatedBlock = { ...block, prevBlockId: null };
       const updatedPrevBlock = { ...prevBlock, nextBlockId: null };
 
-      let updatedCanvas = updateBlockById(state.canvasBlocks, id, updatedBlock);
+      let updatedCanvas = updateBlockById(state.canvas, id, updatedBlock);
       updatedCanvas = updateBlockById(
         updatedCanvas,
         prevBlockId,
         updatedPrevBlock
       );
 
-      return { ...state, canvasBlocks: updatedCanvas };
+      return { ...state, canvas: updatedCanvas };
     }
 
     case BlockActionEnum.UPDATE_BLOCK: {
       const { id, updates } = action.payload;
       const block = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         id,
         BlockActionEnum.BREAK_STACK
       );
@@ -757,7 +751,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
 
       return {
         ...state,
-        canvasBlocks: updateBlockById(state.canvasBlocks, id, {
+        canvas: updateBlockById(state.canvas, id, {
           ...block,
           ...updates,
         }),
@@ -777,7 +771,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
     case BlockActionEnum.DISPLAY_SNAP_PREVIEW: {
       const { id, position } = action.payload;
       let currBlock = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         id,
         BlockActionEnum.DISPLAY_SNAP_PREVIEW
       );
@@ -786,7 +780,7 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       }
 
       // Copy canvas
-      let newCanvas = [...state.canvasBlocks];
+      let newCanvas = [...state.canvas];
 
       if (
         position === StackPosition.Top &&
@@ -821,13 +815,13 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
         currBlock = nextBlock;
       }
 
-      return { ...state, canvasBlocks: newCanvas };
+      return { ...state, canvas: newCanvas };
     }
 
     case BlockActionEnum.HIDE_SNAP_PREVIEW: {
       const { id } = action.payload;
       let rootBlock = validateBlockExists(
-        state.canvasBlocks,
+        state.canvas,
         id,
         BlockActionEnum.HIDE_SNAP_PREVIEW
       );
@@ -836,8 +830,8 @@ export default function BlocksReducer(state: BlocksState, action: BlockAction) {
       }
 
       // Redraw connected blocks
-      const newCanvas = drawConnectedBlocks(state.canvasBlocks, rootBlock);
-      return { ...state, canvasBlocks: newCanvas };
+      const newCanvas = drawConnectedBlocks(state.canvas, rootBlock);
+      return { ...state, canvas: newCanvas };
     }
 
     default:

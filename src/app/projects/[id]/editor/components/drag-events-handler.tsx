@@ -46,7 +46,7 @@ export default function DragEventsHandler({
     }
 
     // For existing canvas blocks:
-    const draggedBlock = findBlockById(state.canvasBlocks, id);
+    const draggedBlock = findBlockById(state.canvas, id);
     if (!draggedBlock) {
       return;
     }

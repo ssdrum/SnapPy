@@ -17,7 +17,7 @@ import { findBlockById } from '../utils/utils';
 
 interface BlocksProviderProps {
   children: React.ReactNode;
-  canvasBlocks: Block[];
+  canvas: Block[];
   variables: string[];
 }
 
@@ -66,12 +66,12 @@ export const useBlocks = () => {
 
 export default function BlocksProvider({
   children,
-  canvasBlocks,
+  canvas,
   variables,
 }: BlocksProviderProps) {
   const initialState: BlocksState = {
     workbench: workBench,
-    canvasBlocks,
+    canvas,
     variables,
     selectedBlockId: null,
     draggingBlockId: null,
@@ -83,7 +83,7 @@ export default function BlocksProvider({
 
   // ----------------- API to interact with blocks -------------------
   const selectBlockAction = (id: string) => {
-    const selectedBlock = findBlockById(state.canvasBlocks, id);
+    const selectedBlock = findBlockById(state.canvas, id);
     if (!selectedBlock) {
       return;
     }

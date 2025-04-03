@@ -30,7 +30,7 @@ export default function OuterDropZone({
   useEffect(() => {
     if (show) {
       // Hide all previews before opening a new one
-      for (const block of state.canvasBlocks) {
+      for (const block of state.canvas) {
         hideSnapPreviewAction(block.id);
       }
       displaySnapPreviewAction(blockId, position);
