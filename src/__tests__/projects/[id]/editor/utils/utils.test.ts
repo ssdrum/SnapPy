@@ -24,7 +24,7 @@ describe('findBlockById', () => {
         prevBlockId: null,
         nextBlockId: null,
         stackOptions: { top: true, bottom: true },
-        children: [],
+        children: null,
       },
       {
         id: 'block2',
@@ -36,7 +36,7 @@ describe('findBlockById', () => {
         prevBlockId: null,
         nextBlockId: null,
         stackOptions: { top: true, bottom: true },
-        children: [],
+        children: null,
       },
       {
         id: 'block3',
@@ -48,7 +48,7 @@ describe('findBlockById', () => {
         prevBlockId: null,
         nextBlockId: null,
         stackOptions: { top: true, bottom: true },
-        children: [],
+        children: null,
       },
     ];
 
@@ -65,12 +65,12 @@ describe('findBlockById', () => {
     expect(findBlockById(nonNestedForest, 'nonexistentId')).toBeNull();
   });
 
-  test('Finds deeply nested block', () => {
-    // Create a forest with nested blocks
+  test('Finds nested blocks', () => {
+    // Create a forest with deeply nested blocks in a while block
     const nestedForest: Block[] = [
       {
         id: 'block1',
-        type: BlockType.Empty,
+        type: BlockType.While,
         state: BlockState.Idle,
         coords: { x: 0, y: 0 },
         isWorkbenchBlock: false,
@@ -78,37 +78,88 @@ describe('findBlockById', () => {
         prevBlockId: null,
         nextBlockId: null,
         stackOptions: { top: true, bottom: true },
-        children: [
-          {
-            id: 'block1-1',
-            type: BlockType.Empty,
-            state: BlockState.Idle,
-            coords: { x: 10, y: 10 },
-            isWorkbenchBlock: false,
-            parentId: 'block1',
-            prevBlockId: null,
-            nextBlockId: null,
-            stackOptions: { top: true, bottom: true },
-            children: [
-              {
-                id: 'block1-1-1',
-                type: BlockType.Empty,
-                state: BlockState.Idle,
-                coords: { x: 15, y: 15 },
-                isWorkbenchBlock: false,
-                parentId: 'block1-1',
-                prevBlockId: null,
-                nextBlockId: null,
-                stackOptions: { top: true, bottom: true },
-                children: [],
+        children: {
+          condition: [
+            {
+              id: 'condition-block',
+              type: BlockType.Variable,
+              state: BlockState.Idle,
+              coords: { x: 10, y: 10 },
+              isWorkbenchBlock: false,
+              parentId: 'block1',
+              prevBlockId: null,
+              nextBlockId: null,
+              stackOptions: { top: true, bottom: true },
+              selected: 'counter',
+              children: {
+                expression: [
+                  {
+                    id: 'condition-expression',
+                    type: BlockType.Empty,
+                    state: BlockState.Idle,
+                    coords: { x: 15, y: 15 },
+                    isWorkbenchBlock: false,
+                    stackOptions: { top: true, bottom: true },
+                    parentId: 'condition-block',
+                    prevBlockId: null,
+                    nextBlockId: null,
+                    children: null,
+                  },
+                ],
               },
-            ],
-          },
-        ],
+            },
+          ],
+          body: [
+            {
+              id: 'body-while',
+              type: BlockType.While,
+              state: BlockState.Idle,
+              coords: { x: 20, y: 20 },
+              isWorkbenchBlock: false,
+              parentId: 'block1',
+              prevBlockId: null,
+              nextBlockId: null,
+              stackOptions: { top: true, bottom: true },
+              children: {
+                condition: [],
+                body: [
+                  {
+                    id: 'inner-variable',
+                    type: BlockType.Variable,
+                    state: BlockState.Idle,
+                    coords: { x: 30, y: 30 },
+                    isWorkbenchBlock: false,
+                    parentId: 'body-while',
+                    prevBlockId: null,
+                    nextBlockId: null,
+                    stackOptions: { top: true, bottom: true },
+                    selected: 'innerVar',
+                    children: {
+                      expression: [
+                        {
+                          id: 'target-block-deep',
+                          type: BlockType.Empty,
+                          state: BlockState.Idle,
+                          coords: { x: 35, y: 35 },
+                          isWorkbenchBlock: false,
+                          stackOptions: { top: true, bottom: true },
+                          parentId: 'inner-variable',
+                          prevBlockId: null,
+                          nextBlockId: null,
+                          children: null,
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
       },
       {
         id: 'block2',
-        type: BlockType.Empty,
+        type: BlockType.Variable,
         state: BlockState.Idle,
         coords: { x: 100, y: 0 },
         isWorkbenchBlock: true,
@@ -116,42 +167,41 @@ describe('findBlockById', () => {
         prevBlockId: null,
         nextBlockId: null,
         stackOptions: { top: true, bottom: true },
-        children: [
-          {
-            id: 'target-block',
-            type: BlockType.Empty,
-            state: BlockState.Selected,
-            coords: { x: 120, y: 20 },
-            isWorkbenchBlock: false,
-            prevBlockId: null,
-            parentId: 'block2',
-            nextBlockId: null,
-            stackOptions: { top: true, bottom: true },
-            children: [],
-          },
-        ],
+        selected: 'x',
+        children: {
+          expression: [
+            {
+              id: 'target-block1',
+              type: BlockType.Empty,
+              state: BlockState.Idle,
+              coords: { x: 120, y: 20 },
+              isWorkbenchBlock: false,
+              stackOptions: { top: true, bottom: true },
+              parentId: 'block2',
+              prevBlockId: null,
+              nextBlockId: null,
+              children: null,
+            },
+          ],
+        },
       },
     ];
 
-    // Test finding a nested block by ID
-    const foundBlock = findBlockById(nestedForest, 'target-block');
-
-    // Expectations
-    expect(foundBlock).not.toBeNull();
-    expect(foundBlock).toMatchObject({
-      id: 'target-block',
-      type: BlockType.Empty,
-      state: BlockState.Selected,
-      isWorkbenchBlock: false,
-      parentId: 'block2',
-      children: [],
+    // Test finding a deeply nested block in the while block
+    const foundDeepBlock = findBlockById(nestedForest, 'target-block-deep');
+    console.log(foundDeepBlock);
+    expect(foundDeepBlock).not.toBeNull();
+    expect(foundDeepBlock).toMatchObject({
+      id: 'target-block-deep',
+      parentId: 'inner-variable',
     });
 
-    // Test finding a deeply nested block
-    const deeplyNestedBlock = findBlockById(nestedForest, 'block1-1-1');
-    expect(deeplyNestedBlock).toMatchObject({
-      id: 'block1-1-1',
-      parentId: 'block1-1',
+    // Test that the original test still works
+    const foundBlock = findBlockById(nestedForest, 'target-block1');
+    console.log(foundBlock);
+    expect(foundBlock).not.toBeNull();
+    expect(foundBlock).toMatchObject({
+      id: 'target-block1',
     });
   });
 });
