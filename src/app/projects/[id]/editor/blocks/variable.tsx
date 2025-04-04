@@ -48,7 +48,8 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
         ))}
       </select>
       <span>to</span>
-      <InnerDropZone blockId={id} enabled={!isWorkbenchBlock}>
+
+      <InnerDropZone id={`expression_${id}`} enabled={!isWorkbenchBlock}>
         {children}
       </InnerDropZone>
     </>

@@ -5,21 +5,21 @@ import BlocksRenderer from './blocks-renderer';
 import { useBlocks } from '../contexts/blocks-context';
 
 interface InnerDropZoneProps {
-  blockId: string;
+  id: string;
   children: Block[];
   enabled: boolean;
 }
 
 export default function InnerDropZone({
-  blockId,
+  id,
   children,
   enabled,
 }: InnerDropZoneProps) {
   const { state } = useBlocks();
-  const { setNodeRef } = useDroppable({
-    id: `innerdrop_${blockId}`,
-  });
+  const { setNodeRef } = useDroppable({ id });
+
   const active = children.length === 0;
+  const [_, blockId] = id.split('_');
   const highlighted = state.highlightedDropZoneId === blockId;
 
   return (

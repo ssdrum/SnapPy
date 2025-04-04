@@ -82,8 +82,8 @@ export default function DragEventsHandler({
     }
 
     // Handle drop on another block (nesting)
-    if (overId.startsWith('innerdrop')) {
-      const targetBlock = overId.substring(10);
+    if (overId.startsWith('expression')) {
+      const targetBlock = overId.substring(11);
 
       // Prevent dropping onto itself
       if (activeId === targetBlock) {
@@ -124,7 +124,7 @@ export default function DragEventsHandler({
     // If we're dragging over an element with ID that starts with "drop", highlight the drop zone
     const id = over.id.toString();
     const [prefix, blockId] = id.split('_');
-    if (prefix === 'innerdrop') {
+    if (prefix === 'expression') {
       highlightDropzoneAction(blockId);
     }
 
