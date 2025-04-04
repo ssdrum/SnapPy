@@ -2,10 +2,14 @@ import {
   Block,
   BlockState,
   BlockType,
+  EmptyBlock,
+  VariableBlock,
+  WhileBlock,
 } from '@/app/projects/[id]/editor/blocks/types';
 import {
   findBlockById,
   findRoot,
+  getConnectedBlockIds,
   getMaxDepth,
   removeBlockById,
   updateBlockById,
@@ -284,6 +288,62 @@ describe('updateBlockbyId', () => {
       const parentBlock = findBlockById(nestedCanvas, 'block1')!;
       const testBlock = findBlockById(nestedCanvas, 'target-block-deep')!;
       expect(findRoot(nestedCanvas, testBlock)).toEqual(parentBlock);
+    });
+  });
+
+  describe('getConnectedBlockIds', () => {
+    test('Returns id of single block correctly', () => {
+      expect(Array.from(getConnectedBlockIds(flatCanvas, 'block1'))).toEqual([
+        'block1',
+      ]);
+    });
+
+    test('Returns correct ids for group of connected blocks made of sequences and nested blocks', () => {
+      const testBlock1: EmptyBlock = {
+        ...block1,
+        nextBlockId: 'block2',
+      };
+      const testBlock3: EmptyBlock = {
+        ...block1,
+        id: 'block3',
+        prevBlockId: 'block2',
+      };
+      const testBlock5: EmptyBlock = {
+        ...block1,
+        id: 'block5',
+        parentId: 'block2',
+      };
+
+      // Block 4
+      const testBlock4: WhileBlock = {
+        ...block1,
+        id: 'block4',
+        type: BlockType.While,
+        parentId: 'block2',
+        children: {
+          condition: [],
+          body: [testBlock5],
+        },
+      };
+      // Block 2
+      const testBlock2: VariableBlock = {
+        ...block1,
+        id: 'block2',
+        prevBlockId: 'block1',
+        nextBlockId: 'block3',
+        type: BlockType.Variable,
+        selected: 'x',
+        children: {
+          expression: [testBlock4],
+        },
+      };
+
+      // The canvas and expected result
+      const testCanvas = [testBlock1, testBlock2, testBlock3];
+      const expectedRes = ['block1', 'block2', 'block3', 'block4', 'block5'];
+      expect(
+        Array.from(getConnectedBlockIds(testCanvas, 'block1')).sort()
+      ).toEqual(expectedRes);
     });
   });
 });

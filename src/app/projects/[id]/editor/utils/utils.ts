@@ -264,20 +264,22 @@ export function updateSequencePositions(
 /**
  * Returns a set with the ids of all blocks connected to the given block in the
  * canvas.
- * */
+ */
 export function getConnectedBlockIds(canvas: Block[], id: string): Set<string> {
   const idSet = new Set<string>();
+
   const block = findBlockById(canvas, id);
-  if (!block) {
-    return idSet;
-  }
+  if (!block) return idSet;
 
   // Find the root of the tree containing the block
   const root = findRoot(canvas, block);
+
   // Add all block IDs in the tree rooted at root
-  addTreeIdsRecursive(root, idSet);
+  addTreeIdsRecursive(root, idSet, canvas);
+
   // Traverse block chain
   traverseSequence(canvas, root, idSet);
+
   return idSet;
 }
 
@@ -285,13 +287,28 @@ export function getConnectedBlockIds(canvas: Block[], id: string): Set<string> {
  * Helper function for getConnectedBlockIds.
  * Recursively adds all block IDs in a tree to the set
  */
-function addTreeIdsRecursive(block: Block, idSet: Set<string>): void {
+function addTreeIdsRecursive(
+  block: Block,
+  idSet: Set<string>,
+  canvas: Block[]
+): void {
   // Add current block ID
   idSet.add(block.id);
-  // Recursively process all children
-  for (const child of block.children) {
-    addTreeIdsRecursive(child, idSet);
+
+  // If no children, return early
+  if (!block.children) return;
+
+  // Helper operation to add IDs from a block array
+  function addIdsOperation(blocks: Block[]): Block[] {
+    for (const child of blocks) {
+      addTreeIdsRecursive(child, idSet, canvas);
+    }
+
+    return blocks;
   }
+
+  // Process all children based on block type using the existing helper function
+  processBlockChildren(block, addIdsOperation);
 }
 
 /**
@@ -307,11 +324,11 @@ function traverseSequence(
   let currBlock = startBlock;
   while (currBlock && currBlock.nextBlockId) {
     const nextBlock = findBlockById(canvas, currBlock.nextBlockId);
-    if (!nextBlock || idSet.has(nextBlock.id)) {
-      break;
-    }
+    if (!nextBlock || idSet.has(nextBlock.id)) break;
+
     // Add the next block and all its children
-    addTreeIdsRecursive(nextBlock, idSet);
+    addTreeIdsRecursive(nextBlock, idSet, canvas);
+
     // Continue traversing forward
     currBlock = nextBlock;
   }
