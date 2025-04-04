@@ -32,7 +32,7 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
 
   return (
     <>
-      Set
+      <span>Set</span>
       <select
         ref={selectRef}
         value={selected}
@@ -47,7 +47,7 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
           </option>
         ))}
       </select>
-      to
+      <span>to</span>
       <InnerDropZone blockId={id} enabled={!isWorkbenchBlock}>
         {children}
       </InnerDropZone>
