@@ -288,7 +288,7 @@ const workBench: Block[] = [
     parentId: null,
     prevBlockId: null,
     nextBlockId: null,
-    children: [],
+    children: null,
   },
   {
     id: uuidv4(),
@@ -301,6 +301,8 @@ const workBench: Block[] = [
     parentId: null,
     prevBlockId: null,
     nextBlockId: null,
-    children: [],
+    children: {
+      expression: [],
+    },
   },
 ];

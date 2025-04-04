@@ -1,7 +1,7 @@
 import React from 'react';
 import useDraggableBlock from '../hooks/useDraggableBlock';
 import {
-  Block,
+  BlockChildren,
   BlockState,
   BlockType,
   StackOptions,
@@ -21,7 +21,7 @@ export interface DraggableBlockProps {
   isWorkbenchBlock: boolean;
   stackOptions: StackOptions;
   parentId: string | null;
-  children: Block[];
+  children: BlockChildren | null;
 }
 
 export default function withDraggableBlock<T extends object>(

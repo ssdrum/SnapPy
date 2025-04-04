@@ -33,6 +33,10 @@ export interface CanvasState {
   highlightedDropZoneId: string | null;
 }
 
+export interface BlockChildren {
+  [key: string]: Block[];
+}
+
 /**
  * Main interface for all blocks
  */
@@ -47,18 +51,23 @@ interface BaseBlock {
   parentId: string | null;
   prevBlockId: string | null;
   nextBlockId: string | null;
-  children: Block[]; // TODO: Consider removing this property from the base interface since not all blocks use it
+  children: BlockChildren | null;
 }
 
 export interface VariableBlock extends BaseBlock {
   type: BlockType.Variable;
   selected: string;
+  children: {
+    expression: [];
+  };
 }
 
 export interface WhileBlock extends BaseBlock {
   type: BlockType.While;
-  condition: Block[];
-  body: Block[];
+  children: {
+    condition: [];
+    body: [];
+  };
 }
 
 /**
