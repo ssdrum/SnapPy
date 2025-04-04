@@ -1,5 +1,5 @@
 import { Coordinates } from '@dnd-kit/core/dist/types';
-import { Block, BlockChildren, BlockType } from '../blocks/types';
+import { Block, BlockType } from '../blocks/types';
 
 /**
  * Traverses the canvas recursively and returns the block with the provided id
@@ -55,6 +55,7 @@ export function updateBlockById(
       id,
       updatedBlock
     );
+
     return newBlock;
   });
 }

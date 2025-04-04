@@ -33,10 +33,6 @@ export interface CanvasState {
   highlightedDropZoneId: string | null;
 }
 
-export interface BlockChildren {
-  [key: string]: Block[];
-}
-
 /**
  * Main interface for all blocks
  */
@@ -51,7 +47,6 @@ interface BaseBlock {
   parentId: string | null;
   prevBlockId: string | null;
   nextBlockId: string | null;
-  children: BlockChildren | null;
 }
 
 export interface EmptyBlock extends BaseBlock {
