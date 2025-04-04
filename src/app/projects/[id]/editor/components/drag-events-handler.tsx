@@ -65,7 +65,7 @@ export default function DragEventsHandler({
   };
 
   const handleDragEnd = (e: DragEndEvent) => {
-    const { over, delta, active } = e;
+    const { over, active } = e;
 
     // Exit early if not dropped on a valid target
     if (!over) {
@@ -77,7 +77,7 @@ export default function DragEventsHandler({
 
     // Handle drop on canvas
     if (overId === 'canvas') {
-      endDragAction(delta);
+      endDragAction();
       return;
     }
 
@@ -87,7 +87,7 @@ export default function DragEventsHandler({
 
       // Prevent dropping onto itself
       if (activeId === targetBlock) {
-        endDragAction(delta);
+        endDragAction();
         return;
       }
 
