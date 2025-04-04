@@ -10,7 +10,7 @@ interface VariableProps {
   id: string;
   isWorkbenchBlock: boolean;
   selected: string;
-  children: Block[];
+  children: { expression: Block[] };
 }
 
 function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
@@ -49,8 +49,12 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
       </select>
       <span>to</span>
 
-      <InnerDropZone id={`expression_${id}`} enabled={!isWorkbenchBlock}>
-        {children}
+      <InnerDropZone
+        id={`expression_${id}`}
+        enabled={!isWorkbenchBlock}
+        enableStacking={false}
+      >
+        {children.expression}
       </InnerDropZone>
     </>
   );

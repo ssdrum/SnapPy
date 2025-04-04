@@ -1,5 +1,5 @@
 import { Coordinates } from '@dnd-kit/core/dist/types';
-import { Block, BlockType } from '../blocks/types';
+import { Block, BLOCK_HEIHGT, BlockType } from '../blocks/types';
 
 /**
  * Traverses the canvas recursively and returns the block with the provided id
@@ -18,9 +18,7 @@ export function findBlockById(canvas: Block[], id: string): Block | null {
     for (const [_, children] of entries) {
       if (children.length > 0) {
         const found = findBlockById(children, id);
-        if (found) {
-          return found;
-        }
+        if (found) return found;
       }
     }
   }
@@ -124,65 +122,6 @@ export function validateBlockExists(
   }
 
   return block;
-}
-
-/**
- * Resizes a select element to match the width of its selected option
- * @param selectRef React ref to the select element
- * source: https://stackoverflow.com/questions/28308103/adjust-width-of-select-element-according-to-selected-options-width
- */
-export function resizeSelect(
-  selectRef: React.RefObject<HTMLSelectElement | null>
-): void {
-  if (!selectRef.current) return;
-
-  const select = selectRef.current;
-
-  // Create a temporary option with the same text as the selected option
-  const tempOption = document.createElement('option');
-  tempOption.textContent = select.selectedOptions[0].textContent;
-
-  // Create a temporary select and add the option to it
-  const tempSelect = document.createElement('select');
-  tempSelect.style.visibility = 'hidden';
-  tempSelect.style.position = 'fixed';
-
-  // Copy relevant styles that affect width
-  const styles = window.getComputedStyle(select);
-  tempSelect.style.fontSize = styles.fontSize;
-  tempSelect.style.fontFamily = styles.fontFamily;
-  tempSelect.style.fontWeight = styles.fontWeight;
-  tempSelect.style.padding = styles.padding;
-
-  tempSelect.appendChild(tempOption);
-
-  // Add to DOM to calculate width
-  select.parentNode?.appendChild(tempSelect);
-
-  // Set width
-  select.style.width = `${tempSelect.clientWidth}px`;
-
-  // Clean up
-  tempSelect.remove();
-}
-
-// Calculates the start position for the next block in the sequence
-export function calcNextBlockStartPosition(currBlock: Block): Coordinates {
-  const nextBlockStartPosition = {
-    x: currBlock.coords.x,
-    y: currBlock.coords.y,
-  };
-
-  // Base height for every block
-  nextBlockStartPosition.y += 34.8; // TODO: Remove magic numbers
-
-  // Calculate max nesting depth and multiply by 14
-  const maxDepth = getMaxDepth(currBlock);
-  if (maxDepth > 0) {
-    nextBlockStartPosition.y += maxDepth * 14;
-  }
-
-  return nextBlockStartPosition;
 }
 
 /**
@@ -332,6 +271,73 @@ function traverseSequence(
     // Continue traversing forward
     currBlock = nextBlock;
   }
+}
+
+/**
+ * Resizes a select element to match the width of its selected option
+ * @param selectRef React ref to the select element
+ * source: https://stackoverflow.com/questions/28308103/adjust-width-of-select-element-according-to-selected-options-width
+ */
+export function resizeSelect(
+  selectRef: React.RefObject<HTMLSelectElement | null>
+): void {
+  if (!selectRef.current) return;
+
+  const select = selectRef.current;
+
+  // Create a temporary option with the same text as the selected option
+  const tempOption = document.createElement('option');
+  tempOption.textContent = select.selectedOptions[0].textContent;
+
+  // Create a temporary select and add the option to it
+  const tempSelect = document.createElement('select');
+  tempSelect.style.visibility = 'hidden';
+  tempSelect.style.position = 'fixed';
+
+  // Copy relevant styles that affect width
+  const styles = window.getComputedStyle(select);
+  tempSelect.style.fontSize = styles.fontSize;
+  tempSelect.style.fontFamily = styles.fontFamily;
+  tempSelect.style.fontWeight = styles.fontWeight;
+  tempSelect.style.padding = styles.padding;
+
+  tempSelect.appendChild(tempOption);
+
+  // Add to DOM to calculate width
+  select.parentNode?.appendChild(tempSelect);
+
+  // Set width
+  select.style.width = `${tempSelect.clientWidth}px`;
+
+  // Clean up
+  tempSelect.remove();
+}
+
+// Calculates the start position for the next block in the sequence
+export function calcNextBlockStartPosition(currBlock: Block): Coordinates {
+  const nextBlockStartPosition = {
+    x: currBlock.coords.x,
+    y: currBlock.coords.y,
+  };
+
+  // Base height for every block
+  let currBlockHeight = BLOCK_HEIHGT;
+  switch (currBlock.type) {
+    case BlockType.While: {
+      currBlockHeight *= 2;
+      break;
+    }
+  }
+
+  nextBlockStartPosition.y += currBlockHeight;
+
+  ////Calculate max nesting depth and multiply by 14
+  //const maxDepth = getMaxDepth(currBlock);
+  //if (maxDepth > 0) {
+  //  nextBlockStartPosition.y += maxDepth * 14;
+  //}
+
+  return nextBlockStartPosition;
 }
 
 export function drawConnectedBlocks(

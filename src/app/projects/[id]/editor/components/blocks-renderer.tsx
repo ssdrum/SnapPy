@@ -1,7 +1,8 @@
 import React from 'react';
-import { Block, BlockType, VariableBlock } from '../blocks/types';
+import { Block, BlockType, VariableBlock, WhileBlock } from '../blocks/types';
 import Empty from '../blocks/empty';
 import Variable from '../blocks/variable';
+import While from '../blocks/while';
 
 interface BlocksRendererProps {
   blocks: Block[];
@@ -81,8 +82,7 @@ const renderBlock = (block: Block) => {
         </Empty>
       );
     case BlockType.Variable:
-      const variableBlock = block as VariableBlock;
-      const { selected } = variableBlock;
+      const { selected } = block;
       return (
         <Variable
           key={id}
@@ -99,6 +99,23 @@ const renderBlock = (block: Block) => {
           {children}
         </Variable>
       );
+    case BlockType.While: {
+      return (
+        <While
+          key={id}
+          id={id}
+          top={coords.y}
+          left={coords.x}
+          blockType={type}
+          isWorkbenchBlock={isWorkbenchBlock}
+          stackOptions={stackOptions}
+          blockState={state}
+          parentId={parentId}
+        >
+          {children}
+        </While>
+      );
+    }
     default:
       console.error(`Invalid block type in BlockRenderer: ${type}`);
       return null;

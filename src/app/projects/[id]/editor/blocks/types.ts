@@ -1,5 +1,7 @@
 import { Coordinates } from '@dnd-kit/utilities';
 
+export const BLOCK_HEIHGT = 34.8;
+
 export enum BlockType {
   Empty = 'empty',
   Variable = 'variable',
@@ -11,6 +13,10 @@ export enum BlockState {
   Selected = 'selected',
   Dragging = 'dragging',
   Nested = 'nested',
+}
+
+export interface BlockChildren {
+  [key: string]: Block[];
 }
 
 export enum StackPosition {

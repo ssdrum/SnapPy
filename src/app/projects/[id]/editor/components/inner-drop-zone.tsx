@@ -8,12 +8,14 @@ interface InnerDropZoneProps {
   id: string;
   children: Block[];
   enabled: boolean;
+  enableStacking: boolean;
 }
 
 export default function InnerDropZone({
   id,
   children,
   enabled,
+  enableStacking,
 }: InnerDropZoneProps) {
   const { state } = useBlocks();
   const { setNodeRef } = useDroppable({ id });
