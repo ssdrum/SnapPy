@@ -5,6 +5,7 @@ import {
 } from '@/app/projects/[id]/editor/blocks/types';
 import {
   findBlockById,
+  findRoot,
   getMaxDepth,
   removeBlockById,
   updateBlockById,
@@ -270,6 +271,19 @@ describe('updateBlockbyId', () => {
     test('Returns correct depth', () => {
       const testBlock = findBlockById(nestedCanvas, 'block1')!;
       expect(getMaxDepth(testBlock)).toBe(3);
+    });
+  });
+
+  describe('findRoot', () => {
+    test('Returns self for block with no parent', () => {
+      const testBlock = findBlockById(nestedCanvas, 'block1')!;
+      expect(findRoot(nestedCanvas, testBlock)).toEqual(testBlock);
+    });
+
+    test('Finds parent of deeply nested block correctly', () => {
+      const parentBlock = findBlockById(nestedCanvas, 'block1')!;
+      const testBlock = findBlockById(nestedCanvas, 'target-block-deep')!;
+      expect(findRoot(nestedCanvas, testBlock)).toEqual(parentBlock);
     });
   });
 });

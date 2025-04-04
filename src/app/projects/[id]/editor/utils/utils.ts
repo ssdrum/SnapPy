@@ -214,15 +214,14 @@ export function getMaxDepth(block: Block) {
 }
 
 export function findRoot(canvas: Block[], currBlock: Block) {
-  if (!currBlock.parentId) {
-    return currBlock;
-  }
+  if (!currBlock.parentId) return currBlock;
 
   const parentBlock = findBlockById(canvas, currBlock.parentId);
   if (!parentBlock) {
     console.error(
       `Error in findRoot: parent block with id = ${currBlock.parentId} not found in canvas`
     );
+
     return currBlock;
   }
 
