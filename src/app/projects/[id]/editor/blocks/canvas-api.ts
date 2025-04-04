@@ -37,7 +37,6 @@ interface StartDrag {
 }
 interface EndDrag {
   type: CanvasEvent.END_DRAG;
-  payload: { delta: Coordinates };
 }
 interface CreateBlock {
   type: CanvasEvent.CREATE_BLOCK;

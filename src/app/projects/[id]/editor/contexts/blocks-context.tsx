@@ -30,7 +30,7 @@ interface BlocksContextType {
   deselectBlockAction: () => void;
   startDragAction: (id: string) => void;
   moveBlockAction: (id: string, delta: Coordinates) => void;
-  endDragAction: (delta: Coordinates) => void;
+  endDragAction: () => void;
   createBlockAction: (id: string) => void;
   createAndDragBlockAction: (id: string) => void;
   deleteBlockAction: (id: string) => void;
@@ -121,10 +121,9 @@ export default function BlocksProvider({
     });
   };
 
-  const endDragAction = (delta: Coordinates) => {
+  const endDragAction = () => {
     dispatch({
       type: CanvasEvent.END_DRAG,
-      payload: { delta },
     });
   };
 
