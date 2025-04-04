@@ -2,15 +2,15 @@ import {
   Block,
   BlockState,
   BlockType,
-  EmptyBlock,
 } from '@/app/projects/[id]/editor/blocks/types';
 import {
   findBlockById,
+  getMaxDepth,
   removeBlockById,
   updateBlockById,
 } from '@/app/projects/[id]/editor/utils/utils';
 
-const block1: EmptyBlock = {
+const block1: Block = {
   id: 'block1',
   type: BlockType.Empty,
   state: BlockState.Idle,
@@ -259,6 +259,17 @@ describe('updateBlockbyId', () => {
       let testCanvas = [...nestedCanvas];
       testCanvas = removeBlockById(testCanvas, 'target-block-deep');
       expect(findBlockById(testCanvas, 'target-block-deep')).toBeNull();
+    });
+  });
+
+  describe('getMaxDepth', () => {
+    test('Returns 0 for block with null children', () => {
+      expect(getMaxDepth(block1)).toBe(0);
+    });
+
+    test('Returns correct depth', () => {
+      const testBlock = findBlockById(nestedCanvas, 'block1')!;
+      expect(getMaxDepth(testBlock)).toBe(3);
     });
   });
 });

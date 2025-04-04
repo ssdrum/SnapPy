@@ -185,20 +185,32 @@ export function calcNextBlockStartPosition(currBlock: Block): Coordinates {
   return nextBlockStartPosition;
 }
 
-// Recursive function that finds the max depth of a tree
-function getMaxDepth(block: Block): number {
-  if (block.children.length === 0) {
-    return 0;
+/**
+ * Recursive function that finds the max depth of a tree
+ */
+export function getMaxDepth(block: Block) {
+  if (!block.children) return 0;
+
+  let maxDepthFound = 0;
+
+  // This will be used with processBlockChildren
+  function maxDepthOperation(blocks: Block[]): Block[] {
+    if (!blocks || blocks.length === 0) return blocks;
+
+    // Calculate max depth for this array
+    for (const child of blocks) {
+      const childDepth = getMaxDepth(child);
+      maxDepthFound = Math.max(maxDepthFound, childDepth);
+    }
+
+    // Return the original blocks (required by processBlockChildren)
+    return blocks;
   }
 
-  // Find the maximum depth among children
-  let maxDepth = 0;
-  for (const child of block.children) {
-    const childDepth = getMaxDepth(child);
-    maxDepth = Math.max(maxDepth, childDepth);
-  }
+  // Process all children based on block type using the existing helper function
+  processBlockChildren(block, maxDepthOperation);
 
-  return maxDepth + 1;
+  return maxDepthFound + 1;
 }
 
 export function findRoot(canvas: Block[], currBlock: Block) {
