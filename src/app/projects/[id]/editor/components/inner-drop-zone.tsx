@@ -15,7 +15,7 @@ export default function InnerDropZone({
   id,
   children,
   enabled,
-  enableStacking,
+  //enableStacking,
 }: InnerDropZoneProps) {
   const { state } = useBlocks();
   const { setNodeRef } = useDroppable({ id });

@@ -286,8 +286,8 @@ const workBench: Block[] = [
     state: BlockState.Idle,
     stackOptions: { top: true, bottom: true },
     parentId: null,
-    prevBlockId: null,
-    nextBlockId: null,
+    prevId: null,
+    nextId: null,
     children: null,
   },
   {
@@ -299,8 +299,8 @@ const workBench: Block[] = [
     selected: 'x',
     stackOptions: { top: true, bottom: true },
     parentId: null,
-    prevBlockId: null,
-    nextBlockId: null,
+    prevId: null,
+    nextId: null,
     children: {
       expression: [],
     },
@@ -313,8 +313,8 @@ const workBench: Block[] = [
     state: BlockState.Idle,
     stackOptions: { top: true, bottom: true },
     parentId: null,
-    prevBlockId: null,
-    nextBlockId: null,
+    prevId: null,
+    nextId: null,
     children: {
       condition: [],
       body: [],

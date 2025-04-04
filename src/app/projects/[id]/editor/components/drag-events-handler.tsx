@@ -57,7 +57,7 @@ export default function DragEventsHandler({
     }
 
     // If dragging a block with a prev block, unsnap
-    if (draggedBlock.prevBlockId) {
+    if (draggedBlock.prevId) {
       breakStackAction(id);
     }
 

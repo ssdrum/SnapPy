@@ -51,8 +51,8 @@ interface BaseBlock {
   isWorkbenchBlock: boolean;
   stackOptions: StackOptions;
   parentId: string | null;
-  prevBlockId: string | null;
-  nextBlockId: string | null;
+  prevId: string | null;
+  nextId: string | null;
 }
 
 export interface EmptyBlock extends BaseBlock {

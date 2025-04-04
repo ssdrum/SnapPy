@@ -27,8 +27,8 @@ describe('BlocksReducer', () => {
     isWorkbenchBlock: false,
     stackOptions: { top: true, bottom: true },
     parentId: null,
-    prevBlockId: null,
-    nextBlockId: null,
+    prevId: null,
+    nextId: null,
     children: null,
   };
   const block2: Block = {
@@ -40,8 +40,8 @@ describe('BlocksReducer', () => {
     isWorkbenchBlock: false,
     stackOptions: { top: true, bottom: true },
     parentId: null,
-    prevBlockId: null,
-    nextBlockId: null,
+    prevId: null,
+    nextId: null,
     children: null,
   };
   const block3: Block = {
@@ -53,8 +53,8 @@ describe('BlocksReducer', () => {
     isWorkbenchBlock: false,
     stackOptions: { top: true, bottom: true },
     parentId: null,
-    prevBlockId: null,
-    nextBlockId: null,
+    prevId: null,
+    nextId: null,
     selected: 'x',
     children: {
       expression: [],
@@ -69,8 +69,8 @@ describe('BlocksReducer', () => {
     isWorkbenchBlock: true,
     stackOptions: { top: true, bottom: true },
     parentId: null,
-    prevBlockId: null,
-    nextBlockId: null,
+    prevId: null,
+    nextId: null,
     children: null,
   };
   const workbenchVar: Block = {
@@ -82,8 +82,8 @@ describe('BlocksReducer', () => {
     isWorkbenchBlock: true,
     stackOptions: { top: true, bottom: true },
     parentId: null,
-    prevBlockId: null,
-    nextBlockId: null,
+    prevId: null,
+    nextId: null,
     selected: '',
     children: {
       expression: [],
@@ -182,19 +182,19 @@ describe('BlocksReducer', () => {
     // block1 -> block2 -> block3
     const sequenceBlock1 = {
       ...block1,
-      nextBlockId: 'block2',
+      nextId: 'block2',
     };
     const block2Position = calcNextBlockStartPosition(sequenceBlock1);
     const sequenceBlock2 = {
       ...block2,
-      prevBlockId: 'block1',
-      nextBlockId: 'block3',
+      prevId: 'block1',
+      nextId: 'block3',
       coords: block2Position,
     };
     const block3Position = calcNextBlockStartPosition(sequenceBlock2);
     const sequenceBlock3 = {
       ...block3,
-      prevBlockId: 'block2',
+      prevId: 'block2',
       coords: block3Position,
     };
 

@@ -4,11 +4,11 @@ import {
   calcNextBlockStartPosition,
   drawConnectedBlocks,
   findBlockById,
-  findRoot,
+  //findRoot,
   getConnectedBlockIds,
   removeBlockById,
   updateBlockById,
-  updateSequencePositions,
+  //updateSequencePositions,
   validateBlockExists,
 } from '../utils/utils';
 import { CanvasAction, CanvasEvent } from '../blocks/canvas-api';
@@ -111,10 +111,10 @@ export default function BlocksReducer(
 
         // Now update any blocks that follow in the sequence
         let currentBlock = updatedBlock;
-        while (currentBlock.nextBlockId) {
+        while (currentBlock.nextId) {
           // Find the next block
           const nextBlock = updatedBlocks.find(
-            (b) => b.id === currentBlock.nextBlockId
+            (b) => b.id === currentBlock.nextId
           );
           if (!nextBlock) {
             break;
@@ -167,10 +167,10 @@ export default function BlocksReducer(
 
       // Now update any blocks that follow in the sequence
       let currentBlock = updatedBlock;
-      while (currentBlock.nextBlockId) {
+      while (currentBlock.nextId) {
         // Find the next block
         const nextBlock = updatedBlocks.find(
-          (b) => b.id === currentBlock.nextBlockId
+          (b) => b.id === currentBlock.nextId
         );
         if (!nextBlock) {
           break;
@@ -373,12 +373,12 @@ export default function BlocksReducer(
       // Avoid nesting into itself
       if (state.draggedGroupBlockIds?.has(targetId)) return state;
 
-      // Create an updated version of the block to be nested
-      const updatedNestedBlock = {
-        ...blockToNest,
-        state: BlockState.Nested,
-        parentId: targetId,
-      };
+      //// Create an updated version of the block to be nested
+      //const updatedNestedBlock = {
+      //  ...blockToNest,
+      //  state: BlockState.Nested,
+      //  parentId: targetId,
+      //};
 
       // Remove the block from its current position in the forest
       let newBlocks = removeBlockById(state.canvas, id);
@@ -393,7 +393,7 @@ export default function BlocksReducer(
       //
       //// Update positions of following blocks
       //const rootBlock = findRoot(newBlocks, updatedTargetBlock);
-      //if (rootBlock.nextBlockId) {
+      //if (rootBlock.nextId) {
       //  newBlocks = updateSequencePositions(newBlocks, rootBlock);
       //}
 
@@ -447,7 +447,7 @@ export default function BlocksReducer(
       //
       //  // Update positions of following blocks in the sequence if parent is part of a sequence
       //  const rootBlock = findRoot(newBlocks, updatedParentBlock);
-      //  if (rootBlock.nextBlockId) {
+      //  if (rootBlock.nextId) {
       //    newBlocks = updateSequencePositions(newBlocks, rootBlock);
       //  }
       //
@@ -486,10 +486,10 @@ export default function BlocksReducer(
       // Set up connections based on position
       if (position === StackPosition.Top) {
         // Save the reference to the target's previous block
-        const targetPrevBlockId = updatedTargetBlock.prevBlockId;
+        const targetPrevBlockId = updatedTargetBlock.prevId;
 
         // Check if we're dealing with a single block or a chain
-        if (!updatedBlockToStack.nextBlockId) {
+        if (!updatedBlockToStack.nextId) {
           // Single block case - simpler handling
 
           // If target has a previous block, connect it to our block
@@ -497,7 +497,7 @@ export default function BlocksReducer(
             const updatedPrevBlock = {
               ...findBlockById(updatedCanvas, targetPrevBlockId)!,
             };
-            updatedPrevBlock.nextBlockId = id;
+            updatedPrevBlock.nextId = id;
             updatedCanvas = updateBlockById(
               updatedCanvas,
               targetPrevBlockId,
@@ -505,14 +505,14 @@ export default function BlocksReducer(
             );
 
             // Connect our block back to the previous block
-            updatedBlockToStack.prevBlockId = targetPrevBlockId;
+            updatedBlockToStack.prevId = targetPrevBlockId;
           }
 
           // Connect our block to the target
-          updatedBlockToStack.nextBlockId = targetId;
+          updatedBlockToStack.nextId = targetId;
 
           // Update target to point to the block that was inserted above it
-          updatedTargetBlock.prevBlockId = updatedBlockToStack.id;
+          updatedTargetBlock.prevId = updatedBlockToStack.id;
         } else {
           // Chain case - need to find the first and last blocks in the chain
 
@@ -522,11 +522,8 @@ export default function BlocksReducer(
           let currentBlock = updatedBlockToStack;
 
           // Traverse the chain to find the last block
-          while (currentBlock.nextBlockId) {
-            const nextBlock = findBlockById(
-              updatedCanvas,
-              currentBlock.nextBlockId
-            );
+          while (currentBlock.nextId) {
+            const nextBlock = findBlockById(updatedCanvas, currentBlock.nextId);
             if (!nextBlock || nextBlock.id === targetId) break; // Avoid loops
             lastStackBlock = nextBlock;
             currentBlock = nextBlock;
@@ -537,7 +534,7 @@ export default function BlocksReducer(
             const updatedPrevBlock = {
               ...findBlockById(updatedCanvas, targetPrevBlockId)!,
             };
-            updatedPrevBlock.nextBlockId = updatedBlockToStack.id;
+            updatedPrevBlock.nextId = updatedBlockToStack.id;
             updatedCanvas = updateBlockById(
               updatedCanvas,
               targetPrevBlockId,
@@ -545,16 +542,16 @@ export default function BlocksReducer(
             );
 
             // Connect first block in chain back to the previous block
-            updatedBlockToStack.prevBlockId = targetPrevBlockId;
+            updatedBlockToStack.prevId = targetPrevBlockId;
           } else {
             // No previous block, so our chain starts fresh
-            updatedBlockToStack.prevBlockId = null;
+            updatedBlockToStack.prevId = null;
           }
 
           // Connect last block in our chain to the target
           const updatedLastBlock = {
             ...lastStackBlock,
-            nextBlockId: targetId,
+            nextId: targetId,
           };
           updatedCanvas = updateBlockById(
             updatedCanvas,
@@ -563,25 +560,25 @@ export default function BlocksReducer(
           );
 
           // Update target to point to the last block in chain that was inserted above it
-          updatedTargetBlock.prevBlockId = lastStackBlock.id;
+          updatedTargetBlock.prevId = lastStackBlock.id;
         }
       } else {
         // Save the reference to the target's next block before we change it
-        const targetNextBlockId = updatedTargetBlock.nextBlockId;
+        const targetNextBlockId = updatedTargetBlock.nextId;
 
         // Check if we're dealing with a single block or a chain
-        if (!updatedBlockToStack.nextBlockId) {
+        if (!updatedBlockToStack.nextId) {
           // Single block case - simpler handling
 
           // If target has a next block, connect our block to it
           if (targetNextBlockId) {
             // Connect the new block to what was previously the target's next block
-            updatedBlockToStack.nextBlockId = targetNextBlockId;
+            updatedBlockToStack.nextId = targetNextBlockId;
 
             // Update the original next block to point back to our block
             const updatedNextBlock = {
               ...findBlockById(updatedCanvas, targetNextBlockId)!,
-              prevBlockId: id,
+              prevId: id,
             };
             updatedCanvas = updateBlockById(
               updatedCanvas,
@@ -595,11 +592,8 @@ export default function BlocksReducer(
           let currentBlock = updatedBlockToStack;
 
           // Traverse the chain to find the last block
-          while (currentBlock.nextBlockId) {
-            const nextBlock = findBlockById(
-              updatedCanvas,
-              currentBlock.nextBlockId
-            );
+          while (currentBlock.nextId) {
+            const nextBlock = findBlockById(updatedCanvas, currentBlock.nextId);
             if (!nextBlock) break;
             lastStackBlock = nextBlock;
             currentBlock = nextBlock;
@@ -610,7 +604,7 @@ export default function BlocksReducer(
             // Update the last block in our stack chain to point to target's next block
             const updatedLastBlock = {
               ...lastStackBlock,
-              nextBlockId: targetNextBlockId,
+              nextId: targetNextBlockId,
             };
             updatedCanvas = updateBlockById(
               updatedCanvas,
@@ -621,7 +615,7 @@ export default function BlocksReducer(
             // Update the original next block to point back to our chain's last block
             const updatedNextBlock = {
               ...findBlockById(updatedCanvas, targetNextBlockId)!,
-              prevBlockId: lastStackBlock.id,
+              prevId: lastStackBlock.id,
             };
             updatedCanvas = updateBlockById(
               updatedCanvas,
@@ -632,8 +626,8 @@ export default function BlocksReducer(
         }
 
         // Connect the target block to the first block in our chain
-        updatedTargetBlock.nextBlockId = id;
-        updatedBlockToStack.prevBlockId = targetId;
+        updatedTargetBlock.nextId = id;
+        updatedBlockToStack.prevId = targetId;
       }
 
       // Update the target blocks
@@ -650,9 +644,9 @@ export default function BlocksReducer(
       let startBlock = updatedBlockToStack;
       if (position === StackPosition.Top) {
         // If we stacked on top, the blockToStack is the new start
-        while (startBlock.prevBlockId) {
+        while (startBlock.prevId) {
           const prevBlock = updatedCanvas.find(
-            (b) => b.id === startBlock.prevBlockId
+            (b) => b.id === startBlock.prevId
           );
           if (!prevBlock) break;
           startBlock = prevBlock;
@@ -660,9 +654,9 @@ export default function BlocksReducer(
       } else {
         // If we stacked on bottom, we need to find the start of targetBlock's sequence
         startBlock = updatedTargetBlock;
-        while (startBlock.prevBlockId) {
+        while (startBlock.prevId) {
           const prevBlock = updatedCanvas.find(
-            (b) => b.id === startBlock.prevBlockId
+            (b) => b.id === startBlock.prevId
           );
           if (!prevBlock) break;
           startBlock = prevBlock;
@@ -671,9 +665,9 @@ export default function BlocksReducer(
 
       // Now update positions for the sequence
       let currentBlock = startBlock;
-      while (currentBlock.nextBlockId) {
+      while (currentBlock.nextId) {
         const nextBlock = updatedCanvas.find(
-          (b) => b.id === currentBlock.nextBlockId
+          (b) => b.id === currentBlock.nextId
         );
         if (!nextBlock) break;
 
@@ -707,25 +701,21 @@ export default function BlocksReducer(
       );
       if (!block) return state;
 
-      const prevBlockId = block.prevBlockId;
-      if (!prevBlockId) return state;
+      const prevId = block.prevId;
+      if (!prevId) return state;
 
       const prevBlock = validateBlockExists(
         state.canvas,
-        prevBlockId,
+        prevId,
         CanvasEvent.BREAK_STACK
       );
       if (!prevBlock) return state;
 
-      const updatedBlock = { ...block, prevBlockId: null };
-      const updatedPrevBlock = { ...prevBlock, nextBlockId: null };
+      const updatedBlock = { ...block, prevId: null };
+      const updatedPrevBlock = { ...prevBlock, nextId: null };
 
       let updatedCanvas = updateBlockById(state.canvas, id, updatedBlock);
-      updatedCanvas = updateBlockById(
-        updatedCanvas,
-        prevBlockId,
-        updatedPrevBlock
-      );
+      updatedCanvas = updateBlockById(updatedCanvas, prevId, updatedPrevBlock);
 
       return { ...state, canvas: updatedCanvas };
     }
@@ -777,15 +767,15 @@ export default function BlocksReducer(
 
       if (
         position === StackPosition.Top &&
-        !currBlock.prevBlockId &&
-        currBlock.nextBlockId
+        !currBlock.prevId &&
+        currBlock.nextId
       ) {
         return state;
       }
       if (
         position === StackPosition.Top &&
-        currBlock.prevBlockId &&
-        currBlock.prevBlockId
+        currBlock.prevId &&
+        currBlock.prevId
       ) {
         newCanvas = updateBlockById(newCanvas, id, {
           ...currBlock,
@@ -794,8 +784,8 @@ export default function BlocksReducer(
       }
 
       // Update positions of all blocks in sequence
-      while (currBlock && currBlock.nextBlockId) {
-        const nextBlock = findBlockById(newCanvas, currBlock.nextBlockId);
+      while (currBlock && currBlock.nextId) {
+        const nextBlock = findBlockById(newCanvas, currBlock.nextId);
         if (!nextBlock) {
           break;
         }
@@ -818,7 +808,7 @@ export default function BlocksReducer(
         id,
         CanvasEvent.HIDE_SNAP_PREVIEW
       );
-      if (!rootBlock || !rootBlock.nextBlockId) {
+      if (!rootBlock || !rootBlock.nextId) {
         return state;
       }
 

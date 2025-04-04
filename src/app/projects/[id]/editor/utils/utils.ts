@@ -173,10 +173,10 @@ export function updateSequencePositions(
 ): Block[] {
   let updatedBlocks = [...blocks];
   let currBlock = startBlock;
-  let nextBlockId = currBlock.nextBlockId;
+  let nextId = currBlock.nextId;
 
-  while (nextBlockId) {
-    const nextBlock = findBlockById(updatedBlocks, nextBlockId);
+  while (nextId) {
+    const nextBlock = findBlockById(updatedBlocks, nextId);
     if (!nextBlock) {
       break;
     }
@@ -186,15 +186,11 @@ export function updateSequencePositions(
       coords: calcNextBlockStartPosition(currBlock),
     };
 
-    updatedBlocks = updateBlockById(
-      updatedBlocks,
-      nextBlockId,
-      updatedNextBlock
-    );
+    updatedBlocks = updateBlockById(updatedBlocks, nextId, updatedNextBlock);
 
     // Move to the next iteration
     currBlock = updatedNextBlock;
-    nextBlockId = currBlock.nextBlockId;
+    nextId = currBlock.nextId;
   }
 
   return updatedBlocks;
@@ -252,17 +248,17 @@ function addTreeIdsRecursive(
 
 /**
  * Helper function for getConnectedBlockIds.
- * Traverses forward through the nextBlockId chain and adds all connected blocks
+ * Traverses forward through the nextId chain and adds all connected blocks
  */
 function traverseSequence(
   canvas: Block[],
   startBlock: Block,
   idSet: Set<string>
 ): void {
-  // Traverse forward through nextBlockId chain
+  // Traverse forward through nextId chain
   let currBlock = startBlock;
-  while (currBlock && currBlock.nextBlockId) {
-    const nextBlock = findBlockById(canvas, currBlock.nextBlockId);
+  while (currBlock && currBlock.nextId) {
+    const nextBlock = findBlockById(canvas, currBlock.nextId);
     if (!nextBlock || idSet.has(nextBlock.id)) break;
 
     // Add the next block and all its children
@@ -347,8 +343,8 @@ export function drawConnectedBlocks(
   // Copy forest
   let newCanvas = [...canvas];
   let currentBlock = rootBlock;
-  while (currentBlock && currentBlock.nextBlockId) {
-    const nextBlock = findBlockById(newCanvas, currentBlock.nextBlockId);
+  while (currentBlock && currentBlock.nextId) {
+    const nextBlock = findBlockById(newCanvas, currentBlock.nextId);
     if (!nextBlock) break;
 
     // Calculate the correct position based on the current block

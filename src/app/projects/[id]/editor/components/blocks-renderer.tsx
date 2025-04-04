@@ -1,5 +1,5 @@
 import React from 'react';
-import { Block, BlockType, VariableBlock, WhileBlock } from '../blocks/types';
+import { Block, BlockType } from '../blocks/types';
 import Empty from '../blocks/empty';
 import Variable from '../blocks/variable';
 import While from '../blocks/while';
@@ -10,7 +10,7 @@ interface BlocksRendererProps {
 
 export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
   // Find the start nodes
-  const startNodes = blocks.filter((block) => block.prevBlockId === null);
+  const startNodes = blocks.filter((block) => block.prevId === null);
 
   // Render the start nodes
   return (
@@ -30,16 +30,14 @@ const renderBlockSequence = (
 ): React.ReactNode => {
   const renderedBlock = renderBlock(currBlock);
 
-  if (!currBlock.nextBlockId) {
+  if (!currBlock.nextId) {
     return renderedBlock;
   }
 
-  const nextBlock = allBlocks.find(
-    (block) => block.id === currBlock.nextBlockId
-  );
+  const nextBlock = allBlocks.find((block) => block.id === currBlock.nextId);
 
   if (!nextBlock) {
-    console.warn(`Next block with id ${currBlock.nextBlockId} not found`);
+    console.warn(`Next block with id ${currBlock.nextId} not found`);
     return renderedBlock;
   }
 
