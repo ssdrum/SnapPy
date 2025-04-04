@@ -54,23 +54,28 @@ interface BaseBlock {
   children: BlockChildren | null;
 }
 
+export interface EmptyBlock extends BaseBlock {
+  type: BlockType.Empty;
+  children: null;
+}
+
 export interface VariableBlock extends BaseBlock {
   type: BlockType.Variable;
   selected: string;
   children: {
-    expression: [];
+    expression: Block[];
   };
 }
 
 export interface WhileBlock extends BaseBlock {
   type: BlockType.While;
   children: {
-    condition: [];
-    body: [];
+    condition: Block[];
+    body: Block[];
   };
 }
 
 /**
  * Union of all blocks
  */
-export type Block = BaseBlock | VariableBlock | WhileBlock;
+export type Block = EmptyBlock | VariableBlock | WhileBlock;

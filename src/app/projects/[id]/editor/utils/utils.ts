@@ -1,22 +1,26 @@
 import { Coordinates } from '@dnd-kit/core/dist/types';
-import { Block } from '../blocks/types';
+import { Block, BlockChildren, BlockType } from '../blocks/types';
 
 /**
  * Traverses the canvas recursively and returns the block with the provided id
  * if found. Returns null if not found.
  * Note: A canvas is a set of disjoint trees.
- * TODO: Add unit tests
  */
 export function findBlockById(canvas: Block[], id: string): Block | null {
-  for (const root of canvas) {
-    if (root.id === id) {
-      return root;
-    }
+  for (const block of canvas) {
+    if (block.id === id) return block;
 
-    if (root.children.length > 0) {
-      const found = findBlockById(root.children, id);
-      if (found) {
-        return found;
+    // Skip if the block has no children
+    if (!block.children) continue;
+
+    // Use Object.entries() instead of for...in to avoid type issues
+    const entries = Object.entries(block.children);
+    for (const [_, children] of entries) {
+      if (children.length > 0) {
+        const found = findBlockById(children, id);
+        if (found) {
+          return found;
+        }
       }
     }
   }
@@ -27,30 +31,31 @@ export function findBlockById(canvas: Block[], id: string): Block | null {
 /**
  * Traverses the canvas recursively and updates the block with the provided id
  * with the updatedBlock.
- * TODO: Add unit tests
  */
 export function updateBlockById(
-  blocks: Block[],
+  canvas: Block[],
   id: string,
   updatedBlock: Block
 ): Block[] {
   // Create a new array to avoid mutating the original
-  return blocks.map((block) => {
+  return canvas.map((block) => {
     // If this is the block to update, return the updated block
-    if (block.id === id) {
-      return updatedBlock;
-    }
+    if (block.id === id) return updatedBlock;
 
-    // If this block has children, recursively update them
-    if (block.children.length > 0) {
-      return {
-        ...block,
-        children: updateBlockById(block.children, id, updatedBlock),
-      };
-    }
+    // If no children, return the block as is
+    if (!block.children) return block;
 
-    // Otherwise, return the block unchanged
-    return block;
+    // Create a new block with the same properties
+    const newBlock = { ...block } as Block; // TS compiler is inferring that we don't have children here so we need to cast to a full Block again
+
+    // Process children
+    newBlock.children = processBlockChildren(
+      block,
+      updateBlockById,
+      id,
+      updatedBlock
+    );
+    return newBlock;
   });
 }
 
@@ -58,27 +63,45 @@ export function updateBlockById(
  * Removes the block with the provided id from the canvas.
  */
 export function removeBlockById(blocks: Block[], id: string): Block[] {
-  // First filter out any blocks that match the id at the current level
-  const filteredBlocks = blocks.filter((block) => block.id !== id);
+  // Filter out the block with the given id at this level
+  return blocks
+    .filter((block) => block.id !== id)
+    .map((block) => {
+      // If no children, return the block as is
+      if (!block.children) return block;
 
-  // If we removed something, return the filtered array
-  if (filteredBlocks.length < blocks.length) {
-    return filteredBlocks;
-  }
+      // Create a new block with the same properties
+      const newBlock = { ...block } as Block; // TS compiler is inferring that we don't have children here so we need to cast to a full Block again
 
-  // Otherwise, map through the blocks and check children
-  return blocks.map((block) => {
-    // If this block has children, recursively check them
-    if (block.children.length > 0) {
+      // Process children
+      newBlock.children = processBlockChildren(block, removeBlockById, id);
+
+      return newBlock;
+    });
+}
+
+/**
+ * Processes children of a block based on its type by applying the provided
+ * operation function to each child array.
+ */
+function processBlockChildren(
+  block: Block,
+  operation: (blocks: Block[], ...args: any[]) => Block[],
+  ...args: any[]
+) {
+  switch (block.type) {
+    case BlockType.Variable:
       return {
-        ...block,
-        children: removeBlockById(block.children, id),
+        expression: operation(block.children.expression, ...args),
       };
-    }
-
-    // Otherwise, return the block unchanged
-    return block;
-  });
+    case BlockType.While:
+      return {
+        condition: operation(block.children.condition, ...args),
+        body: operation(block.children.body, ...args),
+      };
+    case BlockType.Empty:
+      return null;
+  }
 }
 
 export function validateBlockExists(
