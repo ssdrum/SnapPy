@@ -1,5 +1,5 @@
 import { Coordinates } from '@dnd-kit/core/dist/types';
-import { Block, BLOCK_HEIHGT, BlockType } from '../blocks/types';
+import { Block, BLOCK_HEIGHT, BlockType } from '../blocks/types';
 
 /**
  * Traverses the canvas recursively and returns the block with the provided id
@@ -327,7 +327,7 @@ export function calcNextBlockStartPosition(currBlock: Block): Coordinates {
   const nextBlockStartPosition = { ...currBlock.coords };
 
   // Base height for every block
-  let currBlockHeight = BLOCK_HEIHGT;
+  let currBlockHeight = BLOCK_HEIGHT;
   switch (currBlock.type) {
     case BlockType.While: {
       currBlockHeight *= 2;
