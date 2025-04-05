@@ -11,12 +11,10 @@ import {
   drawConnectedBlocks,
   findBlockById,
   findRoot,
-  //findRoot,
   getConnectedBlockIds,
   removeBlockById,
   updateBlockById,
   updateSequencePositions,
-  //updateSequencePositions,
   validateBlockExists,
 } from '../utils/utils';
 import { CanvasAction, CanvasEvent } from '../blocks/canvas-api';
@@ -35,10 +33,10 @@ export default function BlocksReducer(
       );
       if (!block) return state;
 
-      const updatedBlock = { ...block, state: BlockState.Selected };
+      const newBlock = { ...block, state: BlockState.Selected };
       return {
         ...state,
-        canvas: updateBlockById(state.canvas, id, updatedBlock),
+        canvas: updateBlockById(state.canvas, id, newBlock),
         selectedBlockId: id,
       };
     }
@@ -54,10 +52,10 @@ export default function BlocksReducer(
       );
       if (!block) return state;
 
-      const updatedBlock = { ...block, state: BlockState.Idle };
+      const newBlock = { ...block, state: BlockState.Idle };
       return {
         ...state,
-        canvas: updateBlockById(state.canvas, id, updatedBlock),
+        canvas: updateBlockById(state.canvas, id, newBlock),
         selectedBlockId: null,
       };
     }
@@ -71,7 +69,7 @@ export default function BlocksReducer(
       );
       if (!block) return state;
 
-      const updatedBlock = {
+      const newBlock = {
         ...block,
         state: BlockState.Dragging,
         // Reset lastDelta when starting a new drag
@@ -79,12 +77,12 @@ export default function BlocksReducer(
         lastDelta: undefined,
       };
 
-      const newCanvasBlocks = updateBlockById(state.canvas, id, updatedBlock);
+      const newCanvas = updateBlockById(state.canvas, id, newBlock);
 
       return {
         ...state,
-        canvas: newCanvasBlocks,
-        draggedGroupBlockIds: getConnectedBlockIds(newCanvasBlocks, id),
+        canvas: newCanvas,
+        draggedGroupBlockIds: getConnectedBlockIds(newCanvas, id),
         draggedBlockId: id,
       };
     }
@@ -96,16 +94,14 @@ export default function BlocksReducer(
         id,
         CanvasEvent.MOVE_BLOCK
       );
-      if (!block) {
-        return state;
-      }
+      if (!block) return state;
 
-      let updatedBlocks = [...state.canvas];
+      let newBlocks = [...state.canvas];
 
       // For the first move after drag starts, store the original position
       if (!block.lastDelta) {
         // First move in this drag session
-        const updatedBlock = {
+        const newBlock = {
           ...block,
           coords: {
             x: block.coords.x + delta.x,
@@ -115,18 +111,14 @@ export default function BlocksReducer(
         };
 
         // Update the dragged block first
-        updatedBlocks = updateBlockById(updatedBlocks, id, updatedBlock);
+        newBlocks = updateBlockById(newBlocks, id, newBlock);
 
         // Now update any blocks that follow in the sequence
-        let currentBlock = updatedBlock;
+        let currentBlock = newBlock;
         while (currentBlock.nextId) {
           // Find the next block
-          const nextBlock = updatedBlocks.find(
-            (b) => b.id === currentBlock.nextId
-          );
-          if (!nextBlock) {
-            break;
-          }
+          const nextBlock = newBlocks.find((b) => b.id === currentBlock.nextId);
+          if (!nextBlock) break;
 
           // Calculate the next position
           const nextPosition = calcNextBlockStartPosition(currentBlock);
@@ -139,8 +131,8 @@ export default function BlocksReducer(
           };
 
           // Update our working copy
-          updatedBlocks = updateBlockById(
-            updatedBlocks,
+          newBlocks = updateBlockById(
+            newBlocks,
             nextBlock.id,
             updatedNextBlock
           );
@@ -151,7 +143,7 @@ export default function BlocksReducer(
 
         return {
           ...state,
-          canvas: updatedBlocks,
+          canvas: newBlocks,
         };
       }
 
@@ -161,7 +153,7 @@ export default function BlocksReducer(
         y: delta.y - block.lastDelta.y,
       };
 
-      const updatedBlock = {
+      const newBlock = {
         ...block,
         coords: {
           x: block.coords.x + incrementalDelta.x,
@@ -171,15 +163,13 @@ export default function BlocksReducer(
       };
 
       // Update the dragged block first
-      updatedBlocks = updateBlockById(updatedBlocks, id, updatedBlock);
+      newBlocks = updateBlockById(newBlocks, id, newBlock);
 
       // Now update any blocks that follow in the sequence
-      let currentBlock = updatedBlock;
+      let currentBlock = newBlock;
       while (currentBlock.nextId) {
         // Find the next block
-        const nextBlock = updatedBlocks.find(
-          (b) => b.id === currentBlock.nextId
-        );
+        const nextBlock = newBlocks.find((b) => b.id === currentBlock.nextId);
         if (!nextBlock) {
           break;
         }
@@ -195,11 +185,7 @@ export default function BlocksReducer(
         };
 
         // Update our working copy
-        updatedBlocks = updateBlockById(
-          updatedBlocks,
-          nextBlock.id,
-          updatedNextBlock
-        );
+        newBlocks = updateBlockById(newBlocks, nextBlock.id, updatedNextBlock);
 
         // Move to the next block
         currentBlock = updatedNextBlock;
@@ -207,29 +193,24 @@ export default function BlocksReducer(
 
       return {
         ...state,
-        canvas: updatedBlocks,
+        canvas: newBlocks,
       };
     }
 
     case CanvasEvent.END_DRAG: {
       const id = state.draggedBlockId;
-      if (!id) {
-        return state;
-      }
-
+      if (!id) return state;
       const block = validateBlockExists(state.canvas, id, CanvasEvent.END_DRAG);
-      if (!block) {
-        return state;
-      }
+      if (!block) return state;
 
-      const updatedBlock = {
+      const newBlock = {
         ...block,
         state: BlockState.Idle,
       };
 
       return {
         ...state,
-        canvas: updateBlockById(state.canvas, id, updatedBlock),
+        canvas: updateBlockById(state.canvas, id, newBlock),
         draggedBlockId: null,
         draggedGroupBlockIds: null,
       };
@@ -242,9 +223,7 @@ export default function BlocksReducer(
         id,
         CanvasEvent.CREATE_BLOCK
       );
-      if (!block) {
-        return state;
-      }
+      if (!block) return state;
 
       // Create a copy for the canvas with the same ID
       const newBlock = {
@@ -276,9 +255,7 @@ export default function BlocksReducer(
         id,
         CanvasEvent.CREATE_AND_DRAG_BLOCK
       );
-      if (!block) {
-        return state;
-      }
+      if (!block) return state;
 
       // Create a copy for the canvas with the same ID
       const newBlock = {
@@ -315,9 +292,7 @@ export default function BlocksReducer(
         id,
         CanvasEvent.DELETE_BLOCK
       );
-      if (!block) {
-        return state;
-      }
+      if (!block) return state;
 
       return {
         ...state,
@@ -340,12 +315,10 @@ export default function BlocksReducer(
         id,
         CanvasEvent.CHANGE_VARIABLE_SELECTED_OPTION
       );
-      if (!block) {
-        return state;
-      }
+      if (!block) return state;
 
       // Update the block with the new selected variable option
-      const updatedBlock = {
+      const newBlock = {
         ...block,
         selected: selected,
       };
@@ -354,12 +327,12 @@ export default function BlocksReducer(
       if (isWorkbenchBlock) {
         return {
           ...state,
-          workbench: updateBlockById(state.workbench, id, updatedBlock),
+          workbench: updateBlockById(state.workbench, id, newBlock),
         };
       } else {
         return {
           ...state,
-          canvas: updateBlockById(state.canvas, id, updatedBlock),
+          canvas: updateBlockById(state.canvas, id, newBlock),
         };
       }
     }
@@ -477,15 +450,13 @@ export default function BlocksReducer(
         id,
         CanvasEvent.STACK_BLOCK
       );
-      if (!targetBlock || !blockToStack) {
-        return state;
-      }
+      if (!targetBlock || !blockToStack) return state;
 
       // Copy canvas blocks
-      let updatedCanvas = [...state.canvas];
+      let newCanvas = [...state.canvas];
       // Copy involved blocks
       let updatedTargetBlock = { ...targetBlock };
-      let updatedBlockToStack = { ...blockToStack };
+      let newBlockToStack = { ...blockToStack };
 
       // Set up connections based on position
       if (position === StackPosition.Top) {
@@ -493,41 +464,41 @@ export default function BlocksReducer(
         const targetPrevBlockId = updatedTargetBlock.prevId;
 
         // Check if we're dealing with a single block or a chain
-        if (!updatedBlockToStack.nextId) {
+        if (!newBlockToStack.nextId) {
           // Single block case - simpler handling
 
           // If target has a previous block, connect it to our block
           if (targetPrevBlockId) {
             const updatedPrevBlock = {
-              ...findBlockById(updatedCanvas, targetPrevBlockId)!,
+              ...findBlockById(newCanvas, targetPrevBlockId)!,
             };
             updatedPrevBlock.nextId = id;
-            updatedCanvas = updateBlockById(
-              updatedCanvas,
+            newCanvas = updateBlockById(
+              newCanvas,
               targetPrevBlockId,
               updatedPrevBlock
             );
 
             // Connect our block back to the previous block
-            updatedBlockToStack.prevId = targetPrevBlockId;
+            newBlockToStack.prevId = targetPrevBlockId;
           }
 
           // Connect our block to the target
-          updatedBlockToStack.nextId = targetId;
+          newBlockToStack.nextId = targetId;
 
           // Update target to point to the block that was inserted above it
-          updatedTargetBlock.prevId = updatedBlockToStack.id;
+          updatedTargetBlock.prevId = newBlockToStack.id;
         } else {
           // Chain case - need to find the first and last blocks in the chain
 
-          // First block is already updatedBlockToStack
+          // First block is already newBlockToStack
           // Find the last block in the chain
-          let lastStackBlock = updatedBlockToStack;
-          let currentBlock = updatedBlockToStack;
+          let lastStackBlock = newBlockToStack;
+          let currentBlock = newBlockToStack;
 
           // Traverse the chain to find the last block
           while (currentBlock.nextId) {
-            const nextBlock = findBlockById(updatedCanvas, currentBlock.nextId);
+            const nextBlock = findBlockById(newCanvas, currentBlock.nextId);
             if (!nextBlock || nextBlock.id === targetId) break; // Avoid loops
             lastStackBlock = nextBlock;
             currentBlock = nextBlock;
@@ -536,20 +507,20 @@ export default function BlocksReducer(
           // If target has a previous block, connect it to the first block in our chain
           if (targetPrevBlockId) {
             const updatedPrevBlock = {
-              ...findBlockById(updatedCanvas, targetPrevBlockId)!,
+              ...findBlockById(newCanvas, targetPrevBlockId)!,
             };
-            updatedPrevBlock.nextId = updatedBlockToStack.id;
-            updatedCanvas = updateBlockById(
-              updatedCanvas,
+            updatedPrevBlock.nextId = newBlockToStack.id;
+            newCanvas = updateBlockById(
+              newCanvas,
               targetPrevBlockId,
               updatedPrevBlock
             );
 
             // Connect first block in chain back to the previous block
-            updatedBlockToStack.prevId = targetPrevBlockId;
+            newBlockToStack.prevId = targetPrevBlockId;
           } else {
             // No previous block, so our chain starts fresh
-            updatedBlockToStack.prevId = null;
+            newBlockToStack.prevId = null;
           }
 
           // Connect last block in our chain to the target
@@ -557,8 +528,8 @@ export default function BlocksReducer(
             ...lastStackBlock,
             nextId: targetId,
           };
-          updatedCanvas = updateBlockById(
-            updatedCanvas,
+          newCanvas = updateBlockById(
+            newCanvas,
             lastStackBlock.id,
             updatedLastBlock
           );
@@ -571,33 +542,33 @@ export default function BlocksReducer(
         const targetNextBlockId = updatedTargetBlock.nextId;
 
         // Check if we're dealing with a single block or a chain
-        if (!updatedBlockToStack.nextId) {
+        if (!newBlockToStack.nextId) {
           // Single block case - simpler handling
 
           // If target has a next block, connect our block to it
           if (targetNextBlockId) {
             // Connect the new block to what was previously the target's next block
-            updatedBlockToStack.nextId = targetNextBlockId;
+            newBlockToStack.nextId = targetNextBlockId;
 
             // Update the original next block to point back to our block
             const updatedNextBlock = {
-              ...findBlockById(updatedCanvas, targetNextBlockId)!,
+              ...findBlockById(newCanvas, targetNextBlockId)!,
               prevId: id,
             };
-            updatedCanvas = updateBlockById(
-              updatedCanvas,
+            newCanvas = updateBlockById(
+              newCanvas,
               targetNextBlockId,
               updatedNextBlock
             );
           }
         } else {
           // Chain case - need to find the last block in the chain
-          let lastStackBlock = updatedBlockToStack;
-          let currentBlock = updatedBlockToStack;
+          let lastStackBlock = newBlockToStack;
+          let currentBlock = newBlockToStack;
 
           // Traverse the chain to find the last block
           while (currentBlock.nextId) {
-            const nextBlock = findBlockById(updatedCanvas, currentBlock.nextId);
+            const nextBlock = findBlockById(newCanvas, currentBlock.nextId);
             if (!nextBlock) break;
             lastStackBlock = nextBlock;
             currentBlock = nextBlock;
@@ -610,19 +581,19 @@ export default function BlocksReducer(
               ...lastStackBlock,
               nextId: targetNextBlockId,
             };
-            updatedCanvas = updateBlockById(
-              updatedCanvas,
+            newCanvas = updateBlockById(
+              newCanvas,
               lastStackBlock.id,
               updatedLastBlock
             );
 
             // Update the original next block to point back to our chain's last block
             const updatedNextBlock = {
-              ...findBlockById(updatedCanvas, targetNextBlockId)!,
+              ...findBlockById(newCanvas, targetNextBlockId)!,
               prevId: lastStackBlock.id,
             };
-            updatedCanvas = updateBlockById(
-              updatedCanvas,
+            newCanvas = updateBlockById(
+              newCanvas,
               targetNextBlockId,
               updatedNextBlock
             );
@@ -631,27 +602,21 @@ export default function BlocksReducer(
 
         // Connect the target block to the first block in our chain
         updatedTargetBlock.nextId = id;
-        updatedBlockToStack.prevId = targetId;
+        newBlockToStack.prevId = targetId;
       }
 
       // Update the target blocks
-      updatedCanvas = updateBlockById(
-        updatedCanvas,
-        targetId,
-        updatedTargetBlock
-      );
+      newCanvas = updateBlockById(newCanvas, targetId, updatedTargetBlock);
 
-      updatedCanvas = updateBlockById(updatedCanvas, id, updatedBlockToStack);
+      newCanvas = updateBlockById(newCanvas, id, newBlockToStack);
 
       // Update positions for the entire sequence
       // Find the start of the sequence
-      let startBlock = updatedBlockToStack;
+      let startBlock = newBlockToStack;
       if (position === StackPosition.Top) {
         // If we stacked on top, the blockToStack is the new start
         while (startBlock.prevId) {
-          const prevBlock = updatedCanvas.find(
-            (b) => b.id === startBlock.prevId
-          );
+          const prevBlock = newCanvas.find((b) => b.id === startBlock.prevId);
           if (!prevBlock) break;
           startBlock = prevBlock;
         }
@@ -659,9 +624,7 @@ export default function BlocksReducer(
         // If we stacked on bottom, we need to find the start of targetBlock's sequence
         startBlock = updatedTargetBlock;
         while (startBlock.prevId) {
-          const prevBlock = updatedCanvas.find(
-            (b) => b.id === startBlock.prevId
-          );
+          const prevBlock = newCanvas.find((b) => b.id === startBlock.prevId);
           if (!prevBlock) break;
           startBlock = prevBlock;
         }
@@ -670,14 +633,12 @@ export default function BlocksReducer(
       // Now update positions for the sequence
       let currentBlock = startBlock;
       while (currentBlock.nextId) {
-        const nextBlock = updatedCanvas.find(
-          (b) => b.id === currentBlock.nextId
-        );
+        const nextBlock = newCanvas.find((b) => b.id === currentBlock.nextId);
         if (!nextBlock) break;
 
         // Update the next block's position
         const nextPosition = calcNextBlockStartPosition(currentBlock);
-        updatedCanvas = updateBlockById(updatedCanvas, nextBlock.id, {
+        newCanvas = updateBlockById(newCanvas, nextBlock.id, {
           ...nextBlock,
           coords: nextPosition,
         });
@@ -691,7 +652,7 @@ export default function BlocksReducer(
 
       return {
         ...state,
-        canvas: updatedCanvas,
+        canvas: newCanvas,
         highlightedDropZoneId: null,
       };
     }
@@ -715,13 +676,13 @@ export default function BlocksReducer(
       );
       if (!prevBlock) return state;
 
-      const updatedBlock = { ...block, prevId: null };
+      const newBlock = { ...block, prevId: null };
       const updatedPrevBlock = { ...prevBlock, nextId: null };
 
-      let updatedCanvas = updateBlockById(state.canvas, id, updatedBlock);
-      updatedCanvas = updateBlockById(updatedCanvas, prevId, updatedPrevBlock);
+      let newCanvas = updateBlockById(state.canvas, id, newBlock);
+      newCanvas = updateBlockById(newCanvas, prevId, updatedPrevBlock);
 
-      return { ...state, canvas: updatedCanvas };
+      return { ...state, canvas: newCanvas };
     }
 
     case CanvasEvent.UPDATE_BLOCK: {
@@ -762,9 +723,7 @@ export default function BlocksReducer(
         id,
         CanvasEvent.DISPLAY_SNAP_PREVIEW
       );
-      if (!currBlock) {
-        return state;
-      }
+      if (!currBlock) return state;
 
       // Copy canvas
       let newCanvas = [...state.canvas];
@@ -790,9 +749,7 @@ export default function BlocksReducer(
       // Update positions of all blocks in sequence
       while (currBlock && currBlock.nextId) {
         const nextBlock = findBlockById(newCanvas, currBlock.nextId);
-        if (!nextBlock) {
-          break;
-        }
+        if (!nextBlock) break;
 
         const updatedNextBlock = {
           ...nextBlock,
@@ -812,9 +769,7 @@ export default function BlocksReducer(
         id,
         CanvasEvent.HIDE_SNAP_PREVIEW
       );
-      if (!rootBlock || !rootBlock.nextId) {
-        return state;
-      }
+      if (!rootBlock || !rootBlock.nextId) return state;
 
       // Redraw connected blocks
       const newCanvas = drawConnectedBlocks(state.canvas, rootBlock);
