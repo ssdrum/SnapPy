@@ -16,7 +16,14 @@ function While({ id, isWorkbenchBlock, children }: WhileProps) {
     <div
       style={{ display: 'flex', flexDirection: 'column', minWidth: '100px' }}
     >
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '8px',
+          marginBottom: '10px',
+          alignItems: 'center',
+        }}
+      >
         <span>While</span>
         <InnerDropZone
           id={`condition_${id}`}
@@ -27,7 +34,7 @@ function While({ id, isWorkbenchBlock, children }: WhileProps) {
         </InnerDropZone>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px' }}>
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
         <span>do</span>
         <InnerDropZone
           id={`body_${id}`}
