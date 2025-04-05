@@ -125,21 +125,23 @@ export function validateBlockExists(
 }
 
 /**
- * Recursive function that finds the max depth of a tree
+ * Recursive function that finds the path with greatest height in a tree
  */
-export function getMaxDepth(block: Block) {
+export function sumPathsHeights(block: Block): number {
+  // Base case: if no children, return 0 (not counting leaf nodes as they're end points)
   if (!block.children) return 0;
 
-  let maxDepthFound = 0;
+  let totalHeight = 0;
 
-  // This will be used with processBlockChildren
-  function maxDepthOperation(blocks: Block[]): Block[] {
+  // Helper function to process children and calculate height
+  function sumHeightOperation(blocks: Block[]): Block[] {
     if (!blocks || blocks.length === 0) return blocks;
 
-    // Calculate max depth for this array
+    // Sum up heights for all children in this array
     for (const child of blocks) {
-      const childDepth = getMaxDepth(child);
-      maxDepthFound = Math.max(maxDepthFound, childDepth);
+      // Add the child's height plus the sum of heights of its descendants
+      const childHeight = getBlockHeight(child) + sumPathsHeights(child);
+      totalHeight += childHeight;
     }
 
     // Return the original blocks (required by processBlockChildren)
@@ -147,9 +149,22 @@ export function getMaxDepth(block: Block) {
   }
 
   // Process all children based on block type using the existing helper function
-  processBlockChildren(block, maxDepthOperation);
+  processBlockChildren(block, sumHeightOperation);
 
-  return maxDepthFound + 1;
+  // Return the total height sum without adding the height of the starting block
+  return totalHeight;
+}
+
+// Helper function to get height based on block type
+function getBlockHeight(block: Block): number {
+  switch (block.type) {
+    case BlockType.While:
+      return 48.8;
+    case BlockType.Variable:
+    case BlockType.Empty:
+    default:
+      return 14;
+  }
 }
 
 export function findRoot(canvas: Block[], currBlock: Block) {
@@ -177,9 +192,7 @@ export function updateSequencePositions(
 
   while (nextId) {
     const nextBlock = findBlockById(updatedBlocks, nextId);
-    if (!nextBlock) {
-      break;
-    }
+    if (!nextBlock) break;
 
     const updatedNextBlock = {
       ...nextBlock,
@@ -311,10 +324,7 @@ export function resizeSelect(
 
 // Calculates the start position for the next block in the sequence
 export function calcNextBlockStartPosition(currBlock: Block): Coordinates {
-  const nextBlockStartPosition = {
-    x: currBlock.coords.x,
-    y: currBlock.coords.y,
-  };
+  const nextBlockStartPosition = { ...currBlock.coords };
 
   // Base height for every block
   let currBlockHeight = BLOCK_HEIHGT;
@@ -326,12 +336,8 @@ export function calcNextBlockStartPosition(currBlock: Block): Coordinates {
   }
 
   nextBlockStartPosition.y += currBlockHeight;
-
-  ////Calculate max nesting depth and multiply by 14
-  //const maxDepth = getMaxDepth(currBlock);
-  //if (maxDepth > 0) {
-  //  nextBlockStartPosition.y += maxDepth * 14;
-  //}
+  // Add height of nested children
+  nextBlockStartPosition.y += sumPathsHeights(currBlock);
 
   return nextBlockStartPosition;
 }

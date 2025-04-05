@@ -10,7 +10,6 @@ import {
   findBlockById,
   findRoot,
   getConnectedBlockIds,
-  getMaxDepth,
   removeBlockById,
   updateBlockById,
 } from '@/app/projects/[id]/editor/utils/utils';
@@ -264,17 +263,6 @@ describe('updateBlockbyId', () => {
       let testCanvas = [...nestedCanvas];
       testCanvas = removeBlockById(testCanvas, 'target-block-deep');
       expect(findBlockById(testCanvas, 'target-block-deep')).toBeNull();
-    });
-  });
-
-  describe('getMaxDepth', () => {
-    test('Returns 0 for block with null children', () => {
-      expect(getMaxDepth(block1)).toBe(0);
-    });
-
-    test('Returns correct depth', () => {
-      const testBlock = findBlockById(nestedCanvas, 'block1')!;
-      expect(getMaxDepth(testBlock)).toBe(3);
     });
   });
 
