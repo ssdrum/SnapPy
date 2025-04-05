@@ -11,8 +11,9 @@ import {
   drawConnectedBlocks,
   findBlockById,
   findRoot,
+  getBlocksSequence,
   getConnectedBlockIds,
-  removeBlockById,
+  removeBlocks,
   updateBlockById,
   updateSequencePositions,
   validateBlockExists,
@@ -356,40 +357,32 @@ export default function BlocksReducer(
 
       let newCanvas = [...state.canvas];
 
-      // Create sequence to be nested
-      const sequenceToNest: Block[] = [
-        { ...blockToNest, state: BlockState.Nested, parentId: targetId },
-      ];
-      let nextId = blockToNest.nextId;
-      while (nextId) {
-        let curr = findBlockById(state.canvas, nextId);
-        if (!curr) break;
+      // Find sequence
+      const sequenceToNest = getBlocksSequence(newCanvas, blockToNest);
 
-        sequenceToNest.push({
-          ...curr,
-          state: BlockState.Nested,
-          parentId: targetId,
-        });
-        nextId = curr.nextId;
+      // Update blocks in sequence
+      for (const block of sequenceToNest) {
+        block.state = BlockState.Nested;
+        block.parentId = targetId;
       }
 
       // Remove blocks in sequence from canvas
-      for (const block of sequenceToNest) {
-        newCanvas = removeBlockById(newCanvas, block.id);
-      }
+      newCanvas = removeBlocks(newCanvas, sequenceToNest);
 
-      // Update the target block to include the nested block in its children
+      // Update the target block to include the updated sequence in its children
       const newChildren: BlockChildren = { ...targetBlock.children };
       newChildren[prefix] = [...newChildren[prefix], ...sequenceToNest];
 
+      // Update target block
       const newTargetBlock = {
         ...targetBlock,
         children: newChildren,
       } as Block;
 
+      // Update canvas
       newCanvas = updateBlockById(newCanvas, targetId, newTargetBlock);
 
-      //Update positions of following blocks
+      // Update positions of following blocks
       const rootBlock = findRoot(newCanvas, newTargetBlock);
       if (rootBlock.nextId) {
         newCanvas = updateSequencePositions(newCanvas, rootBlock);
@@ -420,19 +413,23 @@ export default function BlocksReducer(
 
       let newCanvas = [...state.canvas];
 
-      newCanvas = removeBlockById(newCanvas, id);
+      // Find sequence
+      const sequenceToUnnest = getBlocksSequence(newCanvas, child);
+
+      // Update blocks in sequence
+      for (const block of sequenceToUnnest) {
+        block.state = BlockState.Idle;
+        block.parentId = null;
+      }
+
+      // Remove blocks in sequence from canvas
+      newCanvas = removeBlocks(newCanvas, sequenceToUnnest);
+
       const newParent = findBlockById(newCanvas, parentId);
       if (!newParent) return state;
 
-      // Create updated version of the child block with reset state and parentId
-      const newChild = {
-        ...child,
-        state: BlockState.Idle,
-        parentId: null,
-      };
-
-      // Add the reset child block back to the top level of the canvas
-      newCanvas = [...newCanvas, newChild];
+      // Add sequence back to the top level of the canvas
+      newCanvas = [...newCanvas, ...sequenceToUnnest];
 
       // Update positions of following blocks in the sequence if parent is part of a sequence
       const root = findRoot(newCanvas, newParent);

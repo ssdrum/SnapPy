@@ -368,3 +368,34 @@ export function drawConnectedBlocks(
 
   return newCanvas;
 }
+
+/**
+ * Helper function to remove multiple blocks from canvas
+ */
+export function removeBlocks(canvas: Block[], blocksToRemove: Block[]) {
+  let newCanvas = [...canvas];
+
+  for (const block of blocksToRemove) {
+    newCanvas = removeBlockById(newCanvas, block.id);
+  }
+
+  return newCanvas;
+}
+
+/**
+ * Returns the sequence of blocks that starts from startBlock
+ */
+export function getBlocksSequence(canvas: Block[], startBlock: Block) {
+  const sequence: Block[] = [{ ...startBlock }];
+
+  let nextId = startBlock.nextId;
+  while (nextId) {
+    let curr = findBlockById(canvas, nextId);
+    if (!curr) break;
+
+    sequence.push({ ...curr });
+    nextId = curr.nextId;
+  }
+
+  return sequence;
+}

@@ -65,6 +65,7 @@ describe('BlocksReducer', () => {
   };
   const block4: WhileBlock = {
     id: 'block4',
+    type: BlockType.While,
     state: BlockState.Idle,
     coords: { x: 400, y: 400 },
     lastDelta: undefined,
@@ -316,7 +317,7 @@ describe('BlocksReducer', () => {
     expect(child).toEqual({ ...expectedChild });
   });
 
-  test('Nests sequence of children with nested blocks correctly', () => {
+  test('Nests sequence of blocks with nested blocks correctly', () => {
     const sequenceBlock1: EmptyBlock = { ...block1, nextId: 'block2' };
     const sequenceBlock2: EmptyBlock = {
       ...block1,
@@ -345,7 +346,6 @@ describe('BlocksReducer', () => {
       ...initialCanvas,
       canvas: [sequenceBlock1, sequenceBlock2, sequenceBlock3, parent],
     };
-    //console.log(testCanvas);
 
     let newCanvas = BlocksReducer(testCanvas, {
       type: CanvasEvent.ADD_CHILD_BLOCK,
@@ -355,8 +355,6 @@ describe('BlocksReducer', () => {
         prefix: 'body',
       },
     });
-
-    console.log(newCanvas);
 
     expect(newCanvas.canvas).toEqual([
       {
@@ -371,5 +369,108 @@ describe('BlocksReducer', () => {
         },
       },
     ]);
+  });
+
+  test('Unnests sequence of blocks with nested blocks correctly', () => {
+    // Create parent first
+    const parent: WhileBlock = {
+      ...block4,
+      children: {
+        condition: [],
+        body: [],
+      },
+    };
+
+    // Setup blocks with proper state for nesting
+    const sequenceBlock1: EmptyBlock = {
+      ...block1,
+      nextId: 'block2',
+      state: BlockState.Nested,
+      parentId: 'block4',
+    };
+
+    const sequenceBlock2: EmptyBlock = {
+      ...block1,
+      id: 'block2',
+      prevId: 'block1',
+      nextId: 'block3',
+      state: BlockState.Nested,
+      parentId: 'block4',
+    };
+
+    const sequenceBlock3: VariableBlock = {
+      ...block3,
+      id: 'block3',
+      prevId: 'block2',
+      state: BlockState.Nested,
+      parentId: 'block4',
+      children: {
+        expression: [
+          {
+            ...block1,
+            id: 'block5',
+            state: BlockState.Nested,
+            parentId: 'block3',
+          },
+        ],
+      },
+    };
+
+    // Add children to parent
+    parent.children.body = [
+      { ...sequenceBlock1 },
+      { ...sequenceBlock2 },
+      { ...sequenceBlock3 },
+    ];
+
+    // Initial canvas state
+    const testCanvas: CanvasState = {
+      ...initialCanvas,
+      canvas: [parent],
+    };
+
+    // Apply the reducer
+    let newCanvas = BlocksReducer(testCanvas, {
+      type: CanvasEvent.REMOVE_CHILD_BLOCK,
+      payload: {
+        id: 'block1',
+        parentId: 'block4',
+      },
+    });
+
+    // Expected unnested blocks
+    const expectedBlock1 = {
+      ...sequenceBlock1,
+      state: BlockState.Idle,
+      parentId: null,
+    };
+
+    const expectedBlock2 = {
+      ...sequenceBlock2,
+      state: BlockState.Idle,
+      parentId: null,
+    };
+
+    const expectedBlock3 = {
+      ...sequenceBlock3,
+      state: BlockState.Idle,
+      parentId: null,
+    };
+
+    // Expected parent after unnesting
+    const expectedParent = {
+      ...parent,
+      children: {
+        condition: [],
+        body: [],
+      },
+    };
+
+    // Verify results
+    expect(newCanvas.canvas).toHaveLength(4);
+    expect(newCanvas.canvas).toContainEqual(expectedBlock1);
+    expect(newCanvas.canvas).toContainEqual(expectedBlock2);
+    expect(newCanvas.canvas).toContainEqual(expectedBlock3);
+    expect(newCanvas.canvas).toContainEqual(expectedParent);
   });
 });
