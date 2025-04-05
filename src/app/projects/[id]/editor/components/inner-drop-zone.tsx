@@ -21,7 +21,6 @@ export default function InnerDropZone({
   const { setNodeRef } = useDroppable({ id });
 
   const active = children.length === 0;
-  const [_, blockId] = id.split('_');
   const highlighted = state.highlightedDropZoneId === id;
 
   return (

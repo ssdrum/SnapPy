@@ -1,13 +1,21 @@
-import { BlockState, CanvasState, StackPosition } from '../blocks/types';
+import {
+  Block,
+  BlockChildren,
+  BlockState,
+  CanvasState,
+  StackPosition,
+} from '../blocks/types';
 import { v4 as uuidv4 } from 'uuid';
 import {
   calcNextBlockStartPosition,
   drawConnectedBlocks,
   findBlockById,
+  findRoot,
   //findRoot,
   getConnectedBlockIds,
   removeBlockById,
   updateBlockById,
+  updateSequencePositions,
   //updateSequencePositions,
   validateBlockExists,
 } from '../utils/utils';
@@ -357,7 +365,7 @@ export default function BlocksReducer(
     }
 
     case CanvasEvent.ADD_CHILD_BLOCK: {
-      const { id, targetId } = action.payload;
+      const { id, targetId, prefix } = action.payload;
       const targetBlock = validateBlockExists(
         state.canvas,
         targetId,
@@ -373,29 +381,35 @@ export default function BlocksReducer(
       // Avoid nesting into itself
       if (state.draggedGroupBlockIds?.has(targetId)) return state;
 
-      //// Create an updated version of the block to be nested
-      //const updatedNestedBlock = {
-      //  ...blockToNest,
-      //  state: BlockState.Nested,
-      //  parentId: targetId,
-      //};
+      // Create an updated version of the block to be nested
+      const updatedNestedBlock = {
+        ...blockToNest,
+        state: BlockState.Nested,
+        parentId: targetId,
+      };
 
       // Remove the block from its current position in the forest
       let newBlocks = removeBlockById(state.canvas, id);
 
-      //// Update the target block to include the nested block in its children
-      //const updatedTargetBlock = {
-      //  ...targetBlock,
-      //  children: [...targetBlock.children, updatedNestedBlock],
-      //};
-      //
-      //newBlocks = updateBlockById(newBlocks, targetId, updatedTargetBlock);
-      //
-      //// Update positions of following blocks
-      //const rootBlock = findRoot(newBlocks, updatedTargetBlock);
-      //if (rootBlock.nextId) {
-      //  newBlocks = updateSequencePositions(newBlocks, rootBlock);
-      //}
+      // Update the target block to include the nested block in its children
+      const updatedChildren: BlockChildren = { ...targetBlock.children };
+      updatedChildren[prefix] = [
+        ...updatedChildren[prefix],
+        updatedNestedBlock,
+      ];
+
+      const updatedTargetBlock = {
+        ...targetBlock,
+        children: updatedChildren,
+      } as Block;
+
+      newBlocks = updateBlockById(newBlocks, targetId, updatedTargetBlock);
+
+      //Update positions of following blocks
+      const rootBlock = findRoot(newBlocks, updatedTargetBlock);
+      if (rootBlock.nextId) {
+        newBlocks = updateSequencePositions(newBlocks, rootBlock);
+      }
 
       return {
         ...state,
@@ -406,57 +420,47 @@ export default function BlocksReducer(
     }
 
     case CanvasEvent.REMOVE_CHILD_BLOCK: {
-      //  const { id, parentId } = action.payload;
-      //  const parentBlock = validateBlockExists(
-      //    state.canvas,
-      //    parentId,
-      //    CanvasEvent.REMOVE_CHILD_BLOCK
-      //  );
-      //  if (!parentBlock) {
-      //    return state;
-      //  }
-      //
-      //  // Find the child block in the parent's children
-      //  const childBlock = parentBlock.children.find((child) => child.id === id);
-      //  if (!childBlock) {
-      //    return state;
-      //  }
-      //
-      //  // Create updated version of the parent without this child
-      //  const updatedParentBlock = {
-      //    ...parentBlock,
-      //    children: parentBlock.children.filter((child) => child.id !== id),
-      //  };
-      //
-      //  // Update the parent block in our forest
-      //  let newBlocks = updateBlockById(
-      //    state.canvas,
-      //    parentId,
-      //    updatedParentBlock
-      //  );
-      //
-      //  // Create updated version of the child block with reset state and parentId
-      //  const updatedChildBlock = {
-      //    ...childBlock,
-      //    state: BlockState.Idle,
-      //    parentId: null,
-      //  };
-      //
-      //  // Add the reset child block back to the top level of the forest
-      //  newBlocks = [...newBlocks, updatedChildBlock];
-      //
-      //  // Update positions of following blocks in the sequence if parent is part of a sequence
-      //  const rootBlock = findRoot(newBlocks, updatedParentBlock);
-      //  if (rootBlock.nextId) {
-      //    newBlocks = updateSequencePositions(newBlocks, rootBlock);
-      //  }
-      //
-      //  return {
-      //    ...state,
-      //    canvas: newBlocks,
-      //    draggedBlockId: id,
-      //  };
-      return state;
+      const { id, parentId } = action.payload;
+      const parent = validateBlockExists(
+        state.canvas,
+        parentId,
+        CanvasEvent.REMOVE_CHILD_BLOCK
+      );
+      if (!parent) return state;
+      const child = validateBlockExists(
+        state.canvas,
+        id,
+        CanvasEvent.REMOVE_CHILD_BLOCK
+      );
+      if (!child) return state;
+
+      let newCanvas = [...state.canvas];
+
+      newCanvas = removeBlockById(newCanvas, id);
+      const newParent = findBlockById(newCanvas, parentId);
+      if (!newParent) return state;
+
+      // Create updated version of the child block with reset state and parentId
+      const newChild = {
+        ...child,
+        state: BlockState.Idle,
+        parentId: null,
+      };
+
+      // Add the reset child block back to the top level of the canvas
+      newCanvas = [...newCanvas, newChild];
+
+      // Update positions of following blocks in the sequence if parent is part of a sequence
+      const root = findRoot(newCanvas, newParent);
+      if (root.nextId) {
+        newCanvas = updateSequencePositions(newCanvas, root);
+      }
+
+      return {
+        ...state,
+        canvas: newCanvas,
+        draggedBlockId: id,
+      };
     }
 
     // TODO: Not proud of this... but it works!

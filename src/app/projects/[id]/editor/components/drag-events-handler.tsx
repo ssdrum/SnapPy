@@ -47,9 +47,7 @@ export default function DragEventsHandler({
 
     // For existing canvas blocks:
     const draggedBlock = findBlockById(state.canvas, id);
-    if (!draggedBlock) {
-      return;
-    }
+    if (!draggedBlock) return;
 
     // If dragging a nested block, remove child block from parent
     if (draggedBlock.parentId) {
@@ -82,23 +80,25 @@ export default function DragEventsHandler({
     }
 
     // Handle drop on another block (nesting)
-    if (overId.startsWith('expression')) {
-      const targetBlock = overId.substring(11);
-
+    const [prefix, targetBlockId] = overId.split('_');
+    if (
+      prefix === 'expression' ||
+      prefix === 'condition' ||
+      prefix === 'body'
+    ) {
       // Prevent dropping onto itself
-      if (activeId === targetBlock) {
+      if (activeId === targetBlockId) {
         endDragAction();
         return;
       }
 
-      addChildBlockAction(activeId, targetBlock);
+      addChildBlockAction(activeId, targetBlockId, prefix);
       return;
     }
 
     // Handle drop on another block (nesting)
     if (overId.startsWith('stack')) {
       const [_, position, targetId] = overId.split('_');
-
       stackBlockAction(
         activeId,
         targetId,
@@ -123,7 +123,6 @@ export default function DragEventsHandler({
 
     // If we're dragging over an element with ID that starts with "drop", highlight the drop zone
     const id = over.id.toString();
-    console.log(id);
     const [prefix, _] = id.split('_');
     if (
       prefix === 'expression' ||

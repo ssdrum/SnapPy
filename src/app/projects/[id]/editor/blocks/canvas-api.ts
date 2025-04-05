@@ -60,7 +60,7 @@ interface ChangeVariableSelectedOption {
 }
 interface AddChildBlock {
   type: CanvasEvent.ADD_CHILD_BLOCK;
-  payload: { id: string; targetId: string };
+  payload: { id: string; targetId: string; prefix: string };
 }
 interface RemoveChildBlock {
   type: CanvasEvent.REMOVE_CHILD_BLOCK;

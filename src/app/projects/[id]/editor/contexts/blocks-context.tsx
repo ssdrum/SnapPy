@@ -36,7 +36,7 @@ interface BlocksContextType {
   deleteBlockAction: (id: string) => void;
   createVariableAction: (name: string) => boolean;
   changeVariableSelectedOptionAction: (selected: string, id?: string) => void;
-  addChildBlockAction: (id: string, targetId: string) => void;
+  addChildBlockAction: (id: string, targetId: string, prefix: string) => void;
   removeChildBlockAction: (id: string, parentId: string) => void;
   stackBlockAction: (
     id: string,
@@ -189,10 +189,14 @@ export default function BlocksProvider({
     });
   };
 
-  const addChildBlockAction = (id: string, targetId: string) => {
+  const addChildBlockAction = (
+    id: string,
+    targetId: string,
+    prefix: string
+  ) => {
     dispatch({
       type: CanvasEvent.ADD_CHILD_BLOCK,
-      payload: { id, targetId },
+      payload: { id, targetId, prefix },
     });
   };
 
