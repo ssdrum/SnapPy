@@ -354,39 +354,50 @@ export default function BlocksReducer(
       // Avoid nesting into itself
       if (state.draggedGroupBlockIds?.has(targetId)) return state;
 
-      // Create an updated version of the block to be nested
-      const updatedNestedBlock = {
-        ...blockToNest,
-        state: BlockState.Nested,
-        parentId: targetId,
-      };
+      let newCanvas = [...state.canvas];
 
-      // Remove the block from its current position in the forest
-      let newBlocks = removeBlockById(state.canvas, id);
+      // Create sequence to be nested
+      const sequenceToNest: Block[] = [
+        { ...blockToNest, state: BlockState.Nested, parentId: targetId },
+      ];
+      let nextId = blockToNest.nextId;
+      while (nextId) {
+        let curr = findBlockById(state.canvas, nextId);
+        if (!curr) break;
+
+        sequenceToNest.push({
+          ...curr,
+          state: BlockState.Nested,
+          parentId: targetId,
+        });
+        nextId = curr.nextId;
+      }
+
+      // Remove blocks in sequence from canvas
+      for (const block of sequenceToNest) {
+        newCanvas = removeBlockById(newCanvas, block.id);
+      }
 
       // Update the target block to include the nested block in its children
-      const updatedChildren: BlockChildren = { ...targetBlock.children };
-      updatedChildren[prefix] = [
-        ...updatedChildren[prefix],
-        updatedNestedBlock,
-      ];
+      const newChildren: BlockChildren = { ...targetBlock.children };
+      newChildren[prefix] = [...newChildren[prefix], ...sequenceToNest];
 
-      const updatedTargetBlock = {
+      const newTargetBlock = {
         ...targetBlock,
-        children: updatedChildren,
+        children: newChildren,
       } as Block;
 
-      newBlocks = updateBlockById(newBlocks, targetId, updatedTargetBlock);
+      newCanvas = updateBlockById(newCanvas, targetId, newTargetBlock);
 
       //Update positions of following blocks
-      const rootBlock = findRoot(newBlocks, updatedTargetBlock);
+      const rootBlock = findRoot(newCanvas, newTargetBlock);
       if (rootBlock.nextId) {
-        newBlocks = updateSequencePositions(newBlocks, rootBlock);
+        newCanvas = updateSequencePositions(newCanvas, rootBlock);
       }
 
       return {
         ...state,
-        canvas: newBlocks,
+        canvas: newCanvas,
         draggedBlockId: null,
         highlightedDropZoneId: null,
       };

@@ -3,6 +3,7 @@ import { Block, BlockType } from '../blocks/types';
 import Empty from '../blocks/empty';
 import Variable from '../blocks/variable';
 import While from '../blocks/while';
+import { findBlockById } from '../utils/utils';
 
 interface BlocksRendererProps {
   blocks: Block[];
@@ -24,17 +25,15 @@ export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
   );
 }
 
-const renderBlockSequence = (
+export const renderBlockSequence = (
   currBlock: Block,
-  allBlocks: Block[]
+  canvas: Block[]
 ): React.ReactNode => {
   const renderedBlock = renderBlock(currBlock);
 
-  if (!currBlock.nextId) {
-    return renderedBlock;
-  }
+  if (!currBlock.nextId) return renderedBlock;
 
-  const nextBlock = allBlocks.find((block) => block.id === currBlock.nextId);
+  const nextBlock = findBlockById(canvas, currBlock.nextId);
 
   if (!nextBlock) {
     console.warn(`Next block with id ${currBlock.nextId} not found`);
@@ -44,7 +43,7 @@ const renderBlockSequence = (
   return (
     <>
       {renderedBlock}
-      {renderBlockSequence(nextBlock, allBlocks)}
+      {renderBlockSequence(nextBlock, canvas)}
     </>
   );
 };

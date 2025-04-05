@@ -1,8 +1,9 @@
 import { useDroppable } from '@dnd-kit/core';
 import classes from '../blocks/blocks.module.css';
 import { Block } from '../blocks/types';
-import BlocksRenderer from './blocks-renderer';
+import BlocksRenderer, { renderBlockSequence } from './blocks-renderer';
 import { useBlocks } from '../contexts/blocks-context';
+import React from 'react';
 
 interface InnerDropZoneProps {
   id: string;
@@ -15,7 +16,7 @@ export default function InnerDropZone({
   id,
   children,
   enabled,
-  //enableStacking,
+  enableStacking,
 }: InnerDropZoneProps) {
   const { state } = useBlocks();
   const { setNodeRef } = useDroppable({ id });
@@ -31,7 +32,21 @@ export default function InnerDropZone({
         backgroundColor: highlighted ? '#FFD54F' : undefined,
       }}
     >
-      {children && <BlocksRenderer blocks={children} />}
+      {children && !enableStacking && <BlocksRenderer blocks={children} />}
+      {children &&
+        enableStacking &&
+        (() => {
+          const startNodes = children.filter((block) => block.prevId === null);
+          return (
+            <div>
+              {startNodes.map((block) => (
+                <React.Fragment key={block.id}>
+                  {renderBlockSequence(block, state.canvas)}
+                </React.Fragment>
+              ))}
+            </div>
+          );
+        })()}
     </div>
   );
 }

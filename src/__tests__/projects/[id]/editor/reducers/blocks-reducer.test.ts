@@ -10,6 +10,9 @@ import {
   CanvasState,
   BlockType,
   Block,
+  VariableBlock,
+  EmptyBlock,
+  WhileBlock,
 } from '@/app/projects/[id]/editor/blocks/types';
 import BlocksReducer from '@/app/projects/[id]/editor/reducers/blocks-reducer';
 import {
@@ -60,6 +63,21 @@ describe('BlocksReducer', () => {
       expression: [],
     },
   };
+  const block4: WhileBlock = {
+    id: 'block4',
+    state: BlockState.Idle,
+    coords: { x: 400, y: 400 },
+    lastDelta: undefined,
+    isWorkbenchBlock: false,
+    stackOptions: { top: true, bottom: true },
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    children: {
+      condition: [],
+      body: [],
+    },
+  };
   const workbench1: Block = {
     id: 'workbench1',
     type: BlockType.Empty,
@@ -89,7 +107,7 @@ describe('BlocksReducer', () => {
       expression: [],
     },
   };
-  const initialState: CanvasState = {
+  const initialCanvas: CanvasState = {
     canvas: [block1, block2, block3],
     workbench: [workbench1, workbenchVar],
     variables: ['x', 'y'],
@@ -106,10 +124,10 @@ describe('BlocksReducer', () => {
       payload: { id: 'block1' },
     };
 
-    const newState = BlocksReducer(initialState, action);
+    const newCanvas = BlocksReducer(initialCanvas, action);
 
-    expect(newState.selectedBlockId).toBe('block1');
-    expect(newState.canvas.find((b) => b.id === 'block1')!.state).toBe(
+    expect(newCanvas.selectedBlockId).toBe('block1');
+    expect(newCanvas.canvas.find((b) => b.id === 'block1')!.state).toBe(
       BlockState.Selected
     );
   });
@@ -117,9 +135,9 @@ describe('BlocksReducer', () => {
   test('DESELECT_BLOCK should mark a block as idle and set selectedBlockId to null', () => {
     // Set up a state with a selected block
     const stateWithSelectedBlock = {
-      ...initialState,
+      ...initialCanvas,
       selectedBlockId: 'block1',
-      canvas: initialState.canvas.map((block) =>
+      canvas: initialCanvas.canvas.map((block) =>
         block.id === 'block1' ? { ...block, state: BlockState.Selected } : block
       ),
     };
@@ -130,51 +148,49 @@ describe('BlocksReducer', () => {
     };
 
     // Apply the reducer
-    const newState = BlocksReducer(stateWithSelectedBlock, action);
+    const newCanvas = BlocksReducer(stateWithSelectedBlock, action);
 
     // Check that the block state is now Idle
-    const updatedBlock = newState.canvas.find(
-      (block) => block.id === 'block1'
-    )!;
+    const newBlock = newCanvas.canvas.find((block) => block.id === 'block1')!;
 
     // Assert the expected changes
-    expect(updatedBlock.state).toBe(BlockState.Idle);
-    expect(newState.selectedBlockId).toBeNull();
+    expect(newBlock.state).toBe(BlockState.Idle);
+    expect(newCanvas.selectedBlockId).toBeNull();
   });
 
   test('Move a single block to the right by 10px and down by 20px', () => {
     // Start drag
-    let newState = BlocksReducer(initialState, {
+    let newCanvas = BlocksReducer(initialCanvas, {
       type: CanvasEvent.START_DRAG,
       payload: { id: 'block1' },
     });
-    let updatedBlock = findBlockById(newState.canvas, 'block1')!;
-    expect(updatedBlock.state).toBe(BlockState.Dragging);
-    expect(newState.draggedBlockId).toBe('block1');
-    expect(Array.from(newState.draggedGroupBlockIds!)).toEqual(['block1']);
+    let newBlock = findBlockById(newCanvas.canvas, 'block1')!;
+    expect(newBlock.state).toBe(BlockState.Dragging);
+    expect(newCanvas.draggedBlockId).toBe('block1');
+    expect(Array.from(newCanvas.draggedGroupBlockIds!)).toEqual(['block1']);
 
     // Move 10px to the right and 20px down
-    newState = BlocksReducer(newState, {
+    newCanvas = BlocksReducer(newCanvas, {
       type: CanvasEvent.MOVE_BLOCK,
       payload: { id: 'block1', delta: { x: 10, y: 20 } },
     });
-    updatedBlock = findBlockById(newState.canvas, 'block1')!;
-    expect(updatedBlock.state).toBe(BlockState.Dragging);
-    expect(updatedBlock.coords.x).toBe(110);
-    expect(updatedBlock.coords.y).toBe(120);
-    expect(newState.draggedBlockId).toBe('block1');
-    expect(Array.from(newState.draggedGroupBlockIds!)).toEqual(['block1']);
+    newBlock = findBlockById(newCanvas.canvas, 'block1')!;
+    expect(newBlock.state).toBe(BlockState.Dragging);
+    expect(newBlock.coords.x).toBe(110);
+    expect(newBlock.coords.y).toBe(120);
+    expect(newCanvas.draggedBlockId).toBe('block1');
+    expect(Array.from(newCanvas.draggedGroupBlockIds!)).toEqual(['block1']);
 
     // End drag
-    newState = BlocksReducer(newState, {
+    newCanvas = BlocksReducer(newCanvas, {
       type: CanvasEvent.END_DRAG,
     });
-    updatedBlock = findBlockById(newState.canvas, 'block1')!;
-    expect(updatedBlock.state).toBe(BlockState.Idle);
-    expect(updatedBlock.coords.x).toBe(110);
-    expect(updatedBlock.coords.y).toBe(120);
-    expect(newState.draggedBlockId).toBeNull();
-    expect(newState.draggedGroupBlockIds).toBeNull();
+    newBlock = findBlockById(newCanvas.canvas, 'block1')!;
+    expect(newBlock.state).toBe(BlockState.Idle);
+    expect(newBlock.coords.x).toBe(110);
+    expect(newBlock.coords.y).toBe(120);
+    expect(newCanvas.draggedBlockId).toBeNull();
+    expect(newCanvas.draggedGroupBlockIds).toBeNull();
   });
 
   test('Move a sequence of three blocks to the right by 10px and down by 20px', () => {
@@ -199,79 +215,161 @@ describe('BlocksReducer', () => {
     };
 
     const testState: CanvasState = {
-      ...initialState,
+      ...initialCanvas,
       canvas: [sequenceBlock1, sequenceBlock2, sequenceBlock3],
     };
 
     // Start drag on the first block
-    let newState = BlocksReducer(testState, {
+    let newCanvas = BlocksReducer(testState, {
       type: CanvasEvent.START_DRAG,
       payload: { id: 'block1' },
     });
 
     // Verify dragging state is correct
-    let updatedBlock1 = findBlockById(newState.canvas, 'block1')!;
-    let updatedBlock2 = findBlockById(newState.canvas, 'block2')!;
-    let updatedBlock3 = findBlockById(newState.canvas, 'block3')!;
-    expect(updatedBlock1.state).toBe(BlockState.Dragging);
-    expect(newState.draggedBlockId).toBe('block1');
-    expect(Array.from(newState.draggedGroupBlockIds!).sort()).toEqual([
+    let newBlock1 = findBlockById(newCanvas.canvas, 'block1')!;
+    let newBlock2 = findBlockById(newCanvas.canvas, 'block2')!;
+    let newBlock3 = findBlockById(newCanvas.canvas, 'block3')!;
+    expect(newBlock1.state).toBe(BlockState.Dragging);
+    expect(newCanvas.draggedBlockId).toBe('block1');
+    expect(Array.from(newCanvas.draggedGroupBlockIds!).sort()).toEqual([
       'block1',
       'block2',
       'block3',
     ]);
 
     // Move the entire sequence
-    newState = BlocksReducer(newState, {
+    newCanvas = BlocksReducer(newCanvas, {
       type: CanvasEvent.MOVE_BLOCK,
       payload: { id: 'block1', delta: { x: 10, y: 20 } },
     });
 
     // Check that all blocks moved correctly
-    updatedBlock1 = findBlockById(newState.canvas, 'block1')!;
-    updatedBlock2 = findBlockById(newState.canvas, 'block2')!;
-    updatedBlock3 = findBlockById(newState.canvas, 'block3')!;
+    newBlock1 = findBlockById(newCanvas.canvas, 'block1')!;
+    newBlock2 = findBlockById(newCanvas.canvas, 'block2')!;
+    newBlock3 = findBlockById(newCanvas.canvas, 'block3')!;
     // First block should move by the delta
-    expect(updatedBlock1.coords.x).toBe(sequenceBlock1.coords.x + 10);
-    expect(updatedBlock1.coords.y).toBe(sequenceBlock1.coords.y + 20);
+    expect(newBlock1.coords.x).toBe(sequenceBlock1.coords.x + 10);
+    expect(newBlock1.coords.y).toBe(sequenceBlock1.coords.y + 20);
 
     // Second block should follow, maintaining same relative position
-    expect(updatedBlock2.coords.x).toBe(sequenceBlock2.coords.x + 10);
-    expect(updatedBlock2.coords.y).toBe(sequenceBlock2.coords.y + 20);
+    expect(newBlock2.coords.x).toBe(sequenceBlock2.coords.x + 10);
+    expect(newBlock2.coords.y).toBe(sequenceBlock2.coords.y + 20);
 
     // Third block should follow, maintaining same relative position
-    expect(updatedBlock3.coords.x).toBe(sequenceBlock3.coords.x + 10);
-    expect(updatedBlock3.coords.y).toBe(sequenceBlock3.coords.y + 20);
+    expect(newBlock3.coords.x).toBe(sequenceBlock3.coords.x + 10);
+    expect(newBlock3.coords.y).toBe(sequenceBlock3.coords.y + 20);
 
-    expect(updatedBlock1.state).toBe(BlockState.Dragging);
-    expect(newState.draggedBlockId).toBe('block1');
-    expect(Array.from(newState.draggedGroupBlockIds!).sort()).toEqual([
+    expect(newBlock1.state).toBe(BlockState.Dragging);
+    expect(newCanvas.draggedBlockId).toBe('block1');
+    expect(Array.from(newCanvas.draggedGroupBlockIds!).sort()).toEqual([
       'block1',
       'block2',
       'block3',
     ]);
 
     // End drag
-    newState = BlocksReducer(newState, {
+    newCanvas = BlocksReducer(newCanvas, {
       type: CanvasEvent.END_DRAG,
     });
 
     // Check that blocks returned to idle state
-    updatedBlock1 = findBlockById(newState.canvas, 'block1')!;
-    expect(updatedBlock1.state).toBe(BlockState.Idle);
+    newBlock1 = findBlockById(newCanvas.canvas, 'block1')!;
+    expect(newBlock1.state).toBe(BlockState.Idle);
 
     // Block positions should remain at the new locations
-    expect(updatedBlock1.coords.x).toBe(sequenceBlock1.coords.x + 10);
-    expect(updatedBlock1.coords.y).toBe(sequenceBlock1.coords.y + 20);
+    expect(newBlock1.coords.x).toBe(sequenceBlock1.coords.x + 10);
+    expect(newBlock1.coords.y).toBe(sequenceBlock1.coords.y + 20);
 
-    expect(updatedBlock2.coords.x).toBe(sequenceBlock2.coords.x + 10);
-    expect(updatedBlock2.coords.y).toBe(sequenceBlock2.coords.y + 20);
+    expect(newBlock2.coords.x).toBe(sequenceBlock2.coords.x + 10);
+    expect(newBlock2.coords.y).toBe(sequenceBlock2.coords.y + 20);
 
-    expect(updatedBlock3.coords.x).toBe(sequenceBlock3.coords.x + 10);
-    expect(updatedBlock3.coords.y).toBe(sequenceBlock3.coords.y + 20);
+    expect(newBlock3.coords.x).toBe(sequenceBlock3.coords.x + 10);
+    expect(newBlock3.coords.y).toBe(sequenceBlock3.coords.y + 20);
 
     // Drag state should be cleared
-    expect(newState.draggedBlockId).toBeNull();
-    expect(newState.draggedGroupBlockIds).toBeNull();
+    expect(newCanvas.draggedBlockId).toBeNull();
+    expect(newCanvas.draggedGroupBlockIds).toBeNull();
+  });
+
+  test('Adds single child correctly', () => {
+    const testCanvas: CanvasState = {
+      ...initialCanvas,
+    };
+
+    let newCanvas = BlocksReducer(testCanvas, {
+      type: CanvasEvent.ADD_CHILD_BLOCK,
+      payload: {
+        id: 'block1',
+        targetId: 'block3',
+        prefix: 'expression',
+      },
+    });
+
+    const parent = findBlockById(newCanvas.canvas, 'block3')! as VariableBlock;
+    const child = findBlockById(newCanvas.canvas, 'block1')! as EmptyBlock;
+    const expectedChild = {
+      ...block1,
+      state: BlockState.Nested,
+      parentId: 'block3',
+    };
+    expect(parent.children.expression).toEqual([{ ...expectedChild }]);
+    expect(child).toEqual({ ...expectedChild });
+  });
+
+  test('Nests sequence of children with nested blocks correctly', () => {
+    const sequenceBlock1: EmptyBlock = { ...block1, nextId: 'block2' };
+    const sequenceBlock2: EmptyBlock = {
+      ...block1,
+      id: 'block2',
+      prevId: 'block1',
+      nextId: 'block3',
+    };
+    const sequenceBlock3: VariableBlock = {
+      ...block3,
+      id: 'block3',
+      prevId: 'block2',
+      children: {
+        expression: [
+          {
+            ...block1,
+            id: 'block5',
+            state: BlockState.Nested,
+            parentId: 'block3',
+          },
+        ],
+      },
+    };
+    const parent = { ...block4 };
+
+    const testCanvas: CanvasState = {
+      ...initialCanvas,
+      canvas: [sequenceBlock1, sequenceBlock2, sequenceBlock3, parent],
+    };
+    //console.log(testCanvas);
+
+    let newCanvas = BlocksReducer(testCanvas, {
+      type: CanvasEvent.ADD_CHILD_BLOCK,
+      payload: {
+        id: 'block1',
+        targetId: 'block4',
+        prefix: 'body',
+      },
+    });
+
+    console.log(newCanvas);
+
+    expect(newCanvas.canvas).toEqual([
+      {
+        ...block4,
+        children: {
+          condition: [],
+          body: [
+            { ...sequenceBlock1, state: BlockState.Nested, parentId: 'block4' },
+            { ...sequenceBlock2, state: BlockState.Nested, parentId: 'block4' },
+            { ...sequenceBlock3, state: BlockState.Nested, parentId: 'block4' },
+          ],
+        },
+      },
+    ]);
   });
 });
