@@ -2,7 +2,7 @@
 
 import { useContext, useEffect } from 'react';
 import { ProjectContext } from './contexts/project-context';
-import { DndContext } from '@dnd-kit/core';
+import { DndContext, pointerWithin } from '@dnd-kit/core';
 import { Title, Paper, Group, Button, AppShellMain, Box } from '@mantine/core';
 import classes from './editor.module.css';
 import Canvas from './components/canvas';
@@ -53,7 +53,11 @@ export default function EditorPage() {
 
       {/* Canvas */}
       <Paper className={classes.editorWrapper} withBorder>
-        <DndContext id='dnd-context' sensors={sensors}>
+        <DndContext
+          id='dnd-context'
+          sensors={sensors}
+          collisionDetection={pointerWithin} // Might go back to default algo
+        >
           <DragEventsHandler>
             <Workbench />
             <Canvas />

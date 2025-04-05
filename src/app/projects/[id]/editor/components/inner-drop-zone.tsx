@@ -22,7 +22,7 @@ export default function InnerDropZone({
 
   const active = children.length === 0;
   const [_, blockId] = id.split('_');
-  const highlighted = state.highlightedDropZoneId === blockId;
+  const highlighted = state.highlightedDropZoneId === id;
 
   return (
     <div

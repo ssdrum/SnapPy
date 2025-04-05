@@ -123,9 +123,14 @@ export default function DragEventsHandler({
 
     // If we're dragging over an element with ID that starts with "drop", highlight the drop zone
     const id = over.id.toString();
-    const [prefix, blockId] = id.split('_');
-    if (prefix === 'expression') {
-      highlightDropzoneAction(blockId);
+    console.log(id);
+    const [prefix, _] = id.split('_');
+    if (
+      prefix === 'expression' ||
+      prefix === 'condition' ||
+      prefix === 'body'
+    ) {
+      highlightDropzoneAction(id);
     }
 
     if (state.highlightedDropZoneId) {
