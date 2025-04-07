@@ -2,55 +2,64 @@ import Empty from '../blocks/empty';
 import { Block } from '../blocks/types';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
+import { getBlocksSequence } from '../utils/utils';
 
-interface DraggableBlockProps {
-  block: Block;
+interface CanvasBlocksRendererProps {
+  canvas: Block[];
 }
 
-function DraggableBlock({ block }: DraggableBlockProps) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: block.id,
-  });
+export default function CanvasBlocksRenderer({
+  canvas,
+}: CanvasBlocksRendererProps) {
+  const startBlocks = canvas.filter((block) => block.prevId === null);
 
-  const getPosition = () => (block.isWorkbenchBlock ? 'static' : 'absolute');
+  return (
+    <>
+      {startBlocks.map((block) => {
+        return (
+          <SequenceWrapper
+            key={block.id}
+            sequence={getBlocksSequence(block, canvas)}
+          />
+        );
+      })}
+    </>
+  );
+}
+
+interface SequenceWrapperProps {
+  sequence: Block[];
+}
+
+function SequenceWrapper({ sequence }: SequenceWrapperProps) {
+  const startBlock = sequence[0];
+  const { id, coords } = startBlock;
+
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: id,
+  });
 
   const style: React.CSSProperties = {
     transform: CSS.Translate.toString(transform),
-    position: getPosition(),
-    top: block.coords.y,
-    left: block.coords.x,
+    position: 'absolute',
+    top: coords.y,
+    left: coords.x,
   };
 
   return (
     <div
-      key={block.id}
+      key={`sequence_${id}`} // id of a sequence is always 'sequence_' + start block id
       ref={setNodeRef}
       style={style}
       {...listeners}
       {...attributes}
     >
-      {renderBlock(block)}
+      {sequence.map((block) => renderBlock(block))}
     </div>
   );
 }
 
-interface BlocksRendererProps {
-  blocks: Block[];
-}
-
-export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
-  const startBlocks = blocks.filter((block) => block.prevId === null);
-
-  return (
-    <>
-      {startBlocks.map((block) => (
-        <DraggableBlock key={block.id} block={block} />
-      ))}
-    </>
-  );
-}
-
-const renderBlock = (block: Block) => {
+export const renderBlock = (block: Block) => {
   switch (block.type) {
     default:
       return <Empty key={block.id} />;

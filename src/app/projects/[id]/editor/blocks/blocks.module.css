@@ -10,10 +10,17 @@
   padding: 5px 12px;
   border-radius: 3px;
   transition: box-shadow 0.15s ease;
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
-  background-color: red;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-color: salmon;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  margin-bottom: -1px; /* Negative margin to overlap borders */
+}
+
+/* Top border only on first element */
+.base:first-child {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .select {

@@ -1,7 +1,7 @@
 import { useDisclosure } from '@mantine/hooks';
 import { useBlocks } from '../contexts/blocks-context';
 import classes from '../editor.module.css';
-import BlocksRenderer from './blocks-renderer';
+import { renderBlock } from './blocks-renderer';
 import { Divider, Stack, Button } from '@mantine/core';
 import CreateVariableModal from './create-variable-modal';
 import { useDroppable } from '@dnd-kit/core';
@@ -18,7 +18,7 @@ export default function Workbench() {
       <Stack gap='md'>
         <Button onClick={open}>Create Variable</Button>
         <Divider />
-        <BlocksRenderer blocks={state.workbench} />
+        {state.workbench.map((block) => renderBlock(block))}
       </Stack>
     </div>
   );

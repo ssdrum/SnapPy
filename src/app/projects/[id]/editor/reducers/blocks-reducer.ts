@@ -250,7 +250,7 @@ export default function BlocksReducer(
       let newCanvas = [...state.canvas];
 
       // Find sequence
-      const sequenceToNest = getBlocksSequence(newCanvas, blockToNest);
+      const sequenceToNest = getBlocksSequence(blockToNest, newCanvas);
 
       // Update blocks in sequence
       for (const block of sequenceToNest) {
@@ -306,7 +306,7 @@ export default function BlocksReducer(
       let newCanvas = [...state.canvas];
 
       // Find sequence
-      const sequenceToUnnest = getBlocksSequence(newCanvas, child);
+      const sequenceToUnnest = getBlocksSequence(child, newCanvas);
 
       // Update blocks in sequence
       for (const block of sequenceToUnnest) {

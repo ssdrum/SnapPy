@@ -385,7 +385,7 @@ export function removeBlocks(canvas: Block[], blocksToRemove: Block[]) {
 /**
  * Returns the sequence of blocks that starts from startBlock
  */
-export function getBlocksSequence(canvas: Block[], startBlock: Block) {
+export function getBlocksSequence(startBlock: Block, canvas: Block[]) {
   const sequence: Block[] = [{ ...startBlock }];
 
   let nextId = startBlock.nextId;

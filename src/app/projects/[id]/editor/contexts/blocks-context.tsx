@@ -65,12 +65,12 @@ export const useBlocks = () => {
 
 export default function BlocksProvider({
   children,
-  canvas,
+  //canvas,
   variables,
 }: BlocksProviderProps) {
   const initialState: CanvasState = {
     workbench: workBench,
-    canvas: canvas,
+    canvas: testCanvas,
     variables,
     selectedBlockId: null,
     draggedBlockId: null,
@@ -316,4 +316,43 @@ const workBench: Block[] = [
   //    body: [],
   //  },
   //},
+];
+
+const testCanvas: Block[] = [
+  {
+    id: 'block1',
+    type: BlockType.Empty,
+    coords: { x: 300, y: 300 },
+    isWorkbenchBlock: false,
+    state: BlockState.Idle,
+    stackOptions: { top: true, bottom: true },
+    parentId: null,
+    prevId: null,
+    nextId: 'block2',
+    children: null,
+  },
+  {
+    id: 'block2',
+    type: BlockType.Empty,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: false,
+    state: BlockState.Idle,
+    stackOptions: { top: true, bottom: true },
+    parentId: null,
+    prevId: 'block1',
+    nextId: 'block3',
+    children: null,
+  },
+  {
+    id: 'block3',
+    type: BlockType.Empty,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: false,
+    state: BlockState.Idle,
+    stackOptions: { top: true, bottom: true },
+    parentId: null,
+    prevId: 'block2',
+    nextId: null,
+    children: null,
+  },
 ];

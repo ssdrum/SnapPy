@@ -1,7 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import classes from '../blocks/blocks.module.css';
 import { Block } from '../blocks/types';
-import BlocksRenderer from './blocks-renderer';
+//import BlocksRenderer from './blocks-renderer';
 import { useBlocks } from '../contexts/blocks-context';
 import React from 'react';
 
@@ -32,7 +32,7 @@ export default function InnerDropZone({
         backgroundColor: highlighted ? '#FFD54F' : undefined,
       }}
     >
-      {children && !enableStacking && <BlocksRenderer blocks={children} />}
+      {/*children && !enableStacking && <BlocksRenderer blocks={children} />*/}
       {children &&
         enableStacking &&
         (() => {
