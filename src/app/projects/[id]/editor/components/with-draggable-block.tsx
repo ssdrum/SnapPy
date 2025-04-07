@@ -49,6 +49,7 @@ export default function withDraggableBlock<T extends object>(
       top,
       left,
       blockState,
+      state.draggedGroupBlockIds,
       blockType
     );
 
