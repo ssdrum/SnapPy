@@ -1,7 +1,7 @@
-import withDraggableBlock from '../components/with-draggable-block';
+import classes from '../blocks/blocks.module.css';
 
 function Empty() {
-  return <div>Empty Block</div>;
+  return <div className={classes.base}>Empty Block</div>;
 }
 
-export default withDraggableBlock(Empty);
+export default Empty;

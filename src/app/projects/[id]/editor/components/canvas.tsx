@@ -30,9 +30,8 @@ export default function Canvas() {
             Drag blocks from the left panel to start building
           </Text>
         </Box>
-      ) : (
-        <BlocksRenderer blocks={state.canvas} />
-      )}
+      ) : //<BlocksRenderer blocks={state.canvas} />
+      null}
     </div>
   );
 }
