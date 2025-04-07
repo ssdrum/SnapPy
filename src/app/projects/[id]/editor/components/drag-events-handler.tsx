@@ -45,21 +45,21 @@ export default function DragEventsHandler({
       return; // Exit early for workbench blocks
     }
 
-    // For existing canvas blocks:
-    const draggedBlock = findBlockById(state.canvas, id);
-    if (!draggedBlock) return;
-
-    // If dragging a nested block, remove child block from parent
-    if (draggedBlock.parentId) {
-      removeChildBlockAction(id, draggedBlock.parentId);
-    }
-
-    // If dragging a block with a prev block, unsnap
-    if (draggedBlock.prevId) {
-      breakStackAction(id);
-    }
-
-    startDragAction(id);
+    //// For existing canvas blocks:
+    //const draggedBlock = findBlockById(state.canvas, id);
+    //if (!draggedBlock) return;
+    //
+    //// If dragging a nested block, remove child block from parent
+    //if (draggedBlock.parentId) {
+    //  removeChildBlockAction(id, draggedBlock.parentId);
+    //}
+    //
+    //// If dragging a block with a prev block, unsnap
+    //if (draggedBlock.prevId) {
+    //  breakStackAction(id);
+    //}
+    //
+    //startDragAction(id);
   };
 
   const handleDragEnd = (e: DragEndEvent) => {
@@ -142,13 +142,13 @@ export default function DragEventsHandler({
       handleDragStart(e);
     },
     onDragMove(e) {
-      handleDragMove(e);
+      //handleDragMove(e);
     },
     onDragEnd(e) {
-      handleDragEnd(e);
+      //handleDragEnd(e);
     },
     onDragOver(e) {
-      handleDragOver(e);
+      //handleDragOver(e);
     },
   });
 

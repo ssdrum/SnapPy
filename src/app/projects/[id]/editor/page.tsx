@@ -53,11 +53,7 @@ export default function EditorPage() {
 
       {/* Canvas */}
       <Paper className={classes.editorWrapper} withBorder>
-        <DndContext
-          id='dnd-context'
-          sensors={sensors}
-          collisionDetection={pointerWithin} // Might go back to default algo
-        >
+        <DndContext id='dnd-context' sensors={sensors}>
           <DragEventsHandler>
             <Workbench />
             <Canvas />
