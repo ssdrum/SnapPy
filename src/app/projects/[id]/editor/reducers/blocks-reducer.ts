@@ -88,117 +88,8 @@ export default function BlocksReducer(
       };
     }
 
-    case CanvasEvent.MOVE_BLOCK: {
-      const { id, delta } = action.payload;
-      const block = validateBlockExists(
-        state.canvas,
-        id,
-        CanvasEvent.MOVE_BLOCK
-      );
-      if (!block) return state;
-
-      let newBlocks = [...state.canvas];
-
-      // For the first move after drag starts, store the original position
-      if (!block.lastDelta) {
-        // First move in this drag session
-        const newBlock = {
-          ...block,
-          coords: {
-            x: block.coords.x + delta.x,
-            y: block.coords.y + delta.y,
-          },
-          lastDelta: { ...delta },
-        };
-
-        // Update the dragged block first
-        newBlocks = updateBlockById(newBlocks, id, newBlock);
-
-        // Now update any blocks that follow in the sequence
-        let currentBlock = newBlock;
-        while (currentBlock.nextId) {
-          // Find the next block
-          const nextBlock = newBlocks.find((b) => b.id === currentBlock.nextId);
-          if (!nextBlock) break;
-
-          // Calculate the next position
-          const nextPosition = calcNextBlockStartPosition(currentBlock);
-
-          // Update the next block
-          const updatedNextBlock = {
-            ...nextBlock,
-            coords: nextPosition,
-            lastDelta: { x: 0, y: 0 },
-          };
-
-          // Update our working copy
-          newBlocks = updateBlockById(
-            newBlocks,
-            nextBlock.id,
-            updatedNextBlock
-          );
-
-          // Move to the next block
-          currentBlock = updatedNextBlock;
-        }
-
-        return {
-          ...state,
-          canvas: newBlocks,
-        };
-      }
-
-      // For subsequent moves, calculate the incremental change since last move
-      const incrementalDelta = {
-        x: delta.x - block.lastDelta.x,
-        y: delta.y - block.lastDelta.y,
-      };
-
-      const newBlock = {
-        ...block,
-        coords: {
-          x: block.coords.x + incrementalDelta.x,
-          y: block.coords.y + incrementalDelta.y,
-        },
-        lastDelta: { ...delta },
-      };
-
-      // Update the dragged block first
-      newBlocks = updateBlockById(newBlocks, id, newBlock);
-
-      // Now update any blocks that follow in the sequence
-      let currentBlock = newBlock;
-      while (currentBlock.nextId) {
-        // Find the next block
-        const nextBlock = newBlocks.find((b) => b.id === currentBlock.nextId);
-        if (!nextBlock) {
-          break;
-        }
-
-        // Calculate the next position
-        const nextPosition = calcNextBlockStartPosition(currentBlock);
-
-        // Update the next block
-        const updatedNextBlock = {
-          ...nextBlock,
-          coords: nextPosition,
-          lastDelta: { x: 0, y: 0 },
-        };
-
-        // Update our working copy
-        newBlocks = updateBlockById(newBlocks, nextBlock.id, updatedNextBlock);
-
-        // Move to the next block
-        currentBlock = updatedNextBlock;
-      }
-
-      return {
-        ...state,
-        canvas: newBlocks,
-      };
-    }
-
     case CanvasEvent.END_DRAG: {
+      const { delta } = action.payload;
       const id = state.draggedBlockId;
       if (!id) return state;
       const block = validateBlockExists(state.canvas, id, CanvasEvent.END_DRAG);
@@ -207,6 +98,7 @@ export default function BlocksReducer(
       const newBlock = {
         ...block,
         state: BlockState.Idle,
+        coords: { x: block.coords.x + delta.x, y: block.coords.y + delta.y },
       };
 
       return {

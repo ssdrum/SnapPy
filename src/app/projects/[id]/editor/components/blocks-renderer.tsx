@@ -3,18 +3,22 @@ import { Block } from '../blocks/types';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 
-interface BlocksRendererProps {
-  blocks: Block[];
+interface DraggableBlockProps {
+  block: Block;
 }
 
-function DraggableBlock({ block }: { block: Block }) {
+function DraggableBlock({ block }: DraggableBlockProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: block.id,
   });
 
+  const getPosition = () => (block.isWorkbenchBlock ? 'static' : 'absolute');
+
   const style: React.CSSProperties = {
     transform: CSS.Translate.toString(transform),
-    position: block.isWorkbenchBlock ? 'static' : 'absolute',
+    position: getPosition(),
+    top: block.coords.y,
+    left: block.coords.x,
   };
 
   return (
@@ -28,6 +32,10 @@ function DraggableBlock({ block }: { block: Block }) {
       {renderBlock(block)}
     </div>
   );
+}
+
+interface BlocksRendererProps {
+  blocks: Block[];
 }
 
 export default function BlocksRenderer({ blocks }: BlocksRendererProps) {

@@ -1,13 +1,12 @@
 import {
   DragEndEvent,
-  DragMoveEvent,
-  DragOverEvent,
+  //DragOverEvent,
   DragStartEvent,
   useDndMonitor,
 } from '@dnd-kit/core';
 import { findBlockById } from '../utils/utils';
 import { useBlocks } from '../contexts/blocks-context';
-import { StackPosition } from '../blocks/types';
+//import { StackPosition } from '../blocks/types';
 
 interface DragEventsHandlerProps {
   children: React.ReactNode;
@@ -18,17 +17,16 @@ export default function DragEventsHandler({
 }: DragEventsHandlerProps) {
   const {
     startDragAction,
-    moveBlockAction,
     endDragAction,
     deselectBlockAction,
     createAndDragBlockAction,
     deleteBlockAction,
-    addChildBlockAction,
-    removeChildBlockAction,
-    stackBlockAction,
-    breakStackAction,
-    highlightDropzoneAction,
-    clearHighlightedDropzoneAction,
+    //addChildBlockAction,
+    //removeChildBlockAction,
+    //stackBlockAction,
+    //breakStackAction,
+    //highlightDropzoneAction,
+    //clearHighlightedDropzoneAction,
     state,
   } = useBlocks();
 
@@ -45,9 +43,9 @@ export default function DragEventsHandler({
       return; // Exit early for workbench blocks
     }
 
-    //// For existing canvas blocks:
-    //const draggedBlock = findBlockById(state.canvas, id);
-    //if (!draggedBlock) return;
+    // For existing canvas blocks:
+    const draggedBlock = findBlockById(state.canvas, id);
+    if (!draggedBlock) return;
     //
     //// If dragging a nested block, remove child block from parent
     //if (draggedBlock.parentId) {
@@ -59,11 +57,11 @@ export default function DragEventsHandler({
     //  breakStackAction(id);
     //}
     //
-    //startDragAction(id);
+    startDragAction(id);
   };
 
   const handleDragEnd = (e: DragEndEvent) => {
-    const { over, active } = e;
+    const { over, active, delta } = e;
 
     // Exit early if not dropped on a valid target
     if (!over) {
@@ -75,81 +73,72 @@ export default function DragEventsHandler({
 
     // Handle drop on canvas
     if (overId === 'canvas') {
-      endDragAction();
+      endDragAction(delta);
       return;
     }
 
-    // Handle drop on another block (nesting)
-    const [prefix, targetBlockId] = overId.split('_');
-    if (
-      prefix === 'expression' ||
-      prefix === 'condition' ||
-      prefix === 'body'
-    ) {
-      // Prevent dropping onto itself
-      if (activeId === targetBlockId) {
-        endDragAction();
-        return;
-      }
-
-      addChildBlockAction(activeId, targetBlockId, prefix);
-      return;
-    }
-
-    // Handle drop on another block (nesting)
-    if (overId.startsWith('stack')) {
-      const [_, position, targetId] = overId.split('_');
-      stackBlockAction(
-        activeId,
-        targetId,
-        position === 'top' ? StackPosition.Top : StackPosition.Bottom
-      );
-      return;
-    }
-
+    //  // Handle drop on another block (nesting)
+    //  const [prefix, targetBlockId] = overId.split('_');
+    //  if (
+    //    prefix === 'expression' ||
+    //    prefix === 'condition' ||
+    //    prefix === 'body'
+    //  ) {
+    //    // Prevent dropping onto itself
+    //    if (activeId === targetBlockId) {
+    //      endDragAction();
+    //      return;
+    //    }
+    //
+    //    addChildBlockAction(activeId, targetBlockId, prefix);
+    //    return;
+    //  }
+    //
+    //  // Handle drop on another block (nesting)
+    //  if (overId.startsWith('stack')) {
+    //    const [_, position, targetId] = overId.split('_');
+    //    stackBlockAction(
+    //      activeId,
+    //      targetId,
+    //      position === 'top' ? StackPosition.Top : StackPosition.Bottom
+    //    );
+    //    return;
+    //  }
+    //
     // Default case - delete the block
     deleteBlockAction(activeId);
   };
 
-  const handleDragMove = (e: DragMoveEvent) => {
-    const { delta, active } = e;
-    const activeId = active.id.toString();
-    moveBlockAction(activeId, delta);
-  };
-
-  const handleDragOver = (e: DragOverEvent) => {
-    const { over } = e;
-    if (!over) return;
-
-    // If we're dragging over an element with ID that starts with "drop", highlight the drop zone
-    const id = over.id.toString();
-    const [prefix, _] = id.split('_');
-    if (
-      prefix === 'expression' ||
-      prefix === 'condition' ||
-      prefix === 'body'
-    ) {
-      highlightDropzoneAction(id);
-    }
-
-    if (state.highlightedDropZoneId) {
-      clearHighlightedDropzoneAction();
-    }
-  };
+  //const handleDragOver = (e: DragOverEvent) => {
+  //  const { over } = e;
+  //  if (!over) return;
+  //
+  //  // If we're dragging over an element with ID that starts with "drop", highlight the drop zone
+  //  const id = over.id.toString();
+  //  const [prefix, _] = id.split('_');
+  //  if (
+  //    prefix === 'expression' ||
+  //    prefix === 'condition' ||
+  //    prefix === 'body'
+  //  ) {
+  //    highlightDropzoneAction(id);
+  //  }
+  //
+  //  if (state.highlightedDropZoneId) {
+  //    clearHighlightedDropzoneAction();
+  //  }
+  //};
 
   useDndMonitor({
     onDragStart(e) {
       handleDragStart(e);
     },
-    onDragMove(e) {
-      //handleDragMove(e);
-    },
     onDragEnd(e) {
-      //handleDragEnd(e);
+      handleDragEnd(e);
     },
-    onDragOver(e) {
-      //handleDragOver(e);
-    },
+    //onDragOver(e) {
+    //  //handleDragOver(e);
+    //},
   });
 
   return <>{children}</>;

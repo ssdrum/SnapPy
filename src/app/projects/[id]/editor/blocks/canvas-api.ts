@@ -6,7 +6,6 @@ export enum CanvasEvent {
   SELECT_BLOCK = 'select block',
   DESELECT_BLOCK = 'deselect block',
   START_DRAG = 'start drag',
-  MOVE_BLOCK = 'move block',
   END_DRAG = 'end drag',
   BREAK_STACK = 'break stack',
   CREATE_BLOCK = 'create block',
@@ -37,6 +36,7 @@ interface StartDrag {
 }
 interface EndDrag {
   type: CanvasEvent.END_DRAG;
+  payload: { delta: Coordinates };
 }
 interface CreateBlock {
   type: CanvasEvent.CREATE_BLOCK;
@@ -69,10 +69,6 @@ interface RemoveChildBlock {
 interface StackBlock {
   type: CanvasEvent.STACK_BLOCK;
   payload: { id: string; targetId: string; position: StackPosition };
-}
-interface MoveBlock {
-  type: CanvasEvent.MOVE_BLOCK;
-  payload: { id: string; delta: Coordinates };
 }
 interface BreakStack {
   type: CanvasEvent.BREAK_STACK;
@@ -111,7 +107,6 @@ export type CanvasAction =
   | AddChildBlock
   | RemoveChildBlock
   | StackBlock
-  | MoveBlock
   | BreakStack
   | UpdateBlock
   | HighlightDropzone

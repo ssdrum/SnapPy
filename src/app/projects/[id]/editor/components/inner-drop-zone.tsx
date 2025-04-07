@@ -1,7 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import classes from '../blocks/blocks.module.css';
 import { Block } from '../blocks/types';
-import BlocksRenderer, { renderBlockSequence } from './blocks-renderer';
+import BlocksRenderer from './blocks-renderer';
 import { useBlocks } from '../contexts/blocks-context';
 import React from 'react';
 
@@ -41,7 +41,7 @@ export default function InnerDropZone({
             <div>
               {startNodes.map((block) => (
                 <React.Fragment key={block.id}>
-                  {renderBlockSequence(block, state.canvas)}
+                  {/*renderBlockSequence(block, state.canvas)*/}
                 </React.Fragment>
               ))}
             </div>

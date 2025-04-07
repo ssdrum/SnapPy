@@ -2,7 +2,7 @@
 
 import { useContext, useEffect } from 'react';
 import { ProjectContext } from './contexts/project-context';
-import { DndContext, pointerWithin } from '@dnd-kit/core';
+import { DndContext } from '@dnd-kit/core';
 import { Title, Paper, Group, Button, AppShellMain, Box } from '@mantine/core';
 import classes from './editor.module.css';
 import Canvas from './components/canvas';
