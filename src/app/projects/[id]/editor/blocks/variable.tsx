@@ -1,9 +1,8 @@
 import React, { useRef, useEffect } from 'react';
-import withDraggableBlock from '../components/with-draggable-block';
+import { Block } from './types';
 import { useBlocks } from '../contexts/blocks-context';
 import { resizeSelect } from '../utils/utils';
 import classes from './blocks.module.css';
-import { Block } from './types';
 import InnerDropZone from '../components/inner-drop-zone';
 
 interface VariableProps {
@@ -31,7 +30,12 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
   }, [selected, state.variables]);
 
   return (
-    <>
+    <div
+      className={classes.base}
+      style={{
+        backgroundColor: '#9966FF',
+      }}
+    >
       <span>Set</span>
       <select
         ref={selectRef}
@@ -56,8 +60,8 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
       >
         {children.expression}
       </InnerDropZone>
-    </>
+    </div>
   );
 }
 
-export default withDraggableBlock(Variable);
+export default Variable;
