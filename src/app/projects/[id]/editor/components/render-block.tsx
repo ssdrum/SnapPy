@@ -1,20 +1,28 @@
 import { Block, BlockType } from '../blocks/types';
 import Variable from '../blocks/variable';
 import Empty from '../blocks/empty';
+import While from '../blocks/while';
 
 export default function renderBlock(block: Block) {
+  const { id, isWorkbenchBlock } = block;
+
   switch (block.type) {
     case BlockType.Variable:
-      const { id, isWorkbenchBlock, selected, children } = block;
       return (
         <Variable
           key={id}
           id={id}
           isWorkbenchBlock={isWorkbenchBlock}
-          selected={selected}
+          selected={block.selected}
         >
-          {children}
+          {block.children}
         </Variable>
+      );
+    case BlockType.While:
+      return (
+        <While key={id} id={id} isWorkbenchBlock={isWorkbenchBlock}>
+          {block.children}
+        </While>
       );
     default:
       return <Empty key={block.id} />;
