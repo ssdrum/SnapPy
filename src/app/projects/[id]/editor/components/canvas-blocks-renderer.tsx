@@ -3,6 +3,7 @@ import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { getBlocksSequence } from '../utils/utils';
 import renderBlock from './render-block';
+import { useBlocks } from '../contexts/blocks-context';
 
 interface CanvasBlocksRendererProps {
   canvas: Block[];
@@ -34,6 +35,7 @@ interface SequenceWrapperProps {
 function SequenceWrapper({ sequence }: SequenceWrapperProps) {
   const startBlock = sequence[0];
   const { id, coords } = startBlock;
+  const { state } = useBlocks();
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
@@ -44,6 +46,7 @@ function SequenceWrapper({ sequence }: SequenceWrapperProps) {
     position: 'absolute',
     top: coords.y,
     left: coords.x,
+    zIndex: state.draggedGroupBlockIds?.has(id) ? 10 : 1,
   };
 
   return (

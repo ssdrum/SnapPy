@@ -4,6 +4,7 @@ import { useBlocks } from '../contexts/blocks-context';
 import { resizeSelect } from '../utils/utils';
 import classes from './blocks.module.css';
 import InnerDropZone from '../components/inner-drop-zone';
+import withBlock from '../components/with-block';
 
 interface VariableProps {
   id: string;
@@ -30,12 +31,7 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
   }, [selected, state.variables]);
 
   return (
-    <div
-      className={classes.base}
-      style={{
-        backgroundColor: '#9966FF',
-      }}
-    >
+    <>
       <span>Set</span>
       <select
         ref={selectRef}
@@ -60,8 +56,8 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
       >
         {children.expression}
       </InnerDropZone>
-    </div>
+    </>
   );
 }
 
-export default Variable;
+export default withBlock(Variable);

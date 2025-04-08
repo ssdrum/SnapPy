@@ -1,6 +1,6 @@
 import InnerDropZone from '../components/inner-drop-zone';
 import { Block } from './types';
-import classes from './blocks.module.css';
+import withBlock from '../components/with-block';
 
 interface WhileProps {
   id: string;
@@ -13,15 +13,7 @@ interface WhileProps {
 
 function While({ id, isWorkbenchBlock, children }: WhileProps) {
   return (
-    <div
-      className={classes.base}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        minWidth: '100px',
-        backgroundColor: '#FF8C1A',
-      }}
-    >
+    <div style={{ minWidth: '100px' }}>
       <div
         style={{
           display: 'flex',
@@ -54,4 +46,4 @@ function While({ id, isWorkbenchBlock, children }: WhileProps) {
   );
 }
 
-export default While;
+export default withBlock(While);

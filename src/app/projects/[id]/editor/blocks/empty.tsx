@@ -1,16 +1,7 @@
-import classes from '../blocks/blocks.module.css';
+import withBlock from '../components/with-block';
 
 function Empty() {
-  return (
-    <div
-      className={classes.base}
-      style={{
-        backgroundColor: '#4C97FF',
-      }}
-    >
-      Empty Block
-    </div>
-  );
+  return <span>Empty Block</span>;
 }
 
-export default Empty;
+export default withBlock(Empty);
