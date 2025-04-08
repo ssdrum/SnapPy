@@ -1,17 +1,17 @@
-import InnerDropZone from '../components/inner-drop-zone';
-import { Block } from './types';
+//import InnerDropZone from '../components/inner-drop-zone';
+//import { Block } from './types';
 import withBlock from '../components/with-block';
 
-interface WhileProps {
-  id: string;
-  isWorkbenchBlock: boolean;
-  children: {
-    condition: Block[];
-    body: Block[];
-  };
-}
+//interface WhileProps {
+//  id: string;
+//  isWorkbenchBlock: boolean;
+//  children: {
+//    condition: Block[];
+//    body: Block[];
+//  };
+//}
 
-function While({ id, isWorkbenchBlock, children }: WhileProps) {
+function While() {
   return (
     <div style={{ minWidth: '100px' }}>
       <div
@@ -23,24 +23,24 @@ function While({ id, isWorkbenchBlock, children }: WhileProps) {
         }}
       >
         <span>While</span>
-        <InnerDropZone
+        {/*<InnerDropZone
           id={`condition_${id}`}
           enabled={!isWorkbenchBlock}
           enableStacking={false}
         >
           {children.condition}
-        </InnerDropZone>
+        </InnerDropZone>*/}
       </div>
 
       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
         <span>do</span>
-        <InnerDropZone
+        {/* <InnerDropZone
           id={`body_${id}`}
           enabled={!isWorkbenchBlock}
           enableStacking={true}
         >
           {children.body}
-        </InnerDropZone>
+        </InnerDropZone> */}
       </div>
     </div>
   );

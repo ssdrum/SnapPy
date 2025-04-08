@@ -6,7 +6,7 @@ import {
   CanvasState,
   BlockState,
   BlockType,
-  StackPosition,
+  OuterDropzonePosition,
 } from '../blocks/types';
 import { createContext, useContext, useReducer } from 'react';
 import BlocksReducer from '../reducers/blocks-reducer';
@@ -40,14 +40,12 @@ interface BlocksContextType {
   stackBlockAction: (
     id: string,
     targetId: string,
-    position: StackPosition
+    position: OuterDropzonePosition
   ) => void;
   breakStackAction: (id: string) => void;
   updateBlockAction: (id: string, updates: Partial<Block>) => void;
   highlightDropzoneAction: (id: string) => void;
   clearHighlightedDropzoneAction: () => void;
-  displaySnapPreviewAction: (id: string, position: StackPosition) => void;
-  hideSnapPreviewAction: (id: string) => void;
 }
 
 // Create context object
@@ -203,7 +201,7 @@ export default function BlocksProvider({
   const stackBlockAction = (
     id: string,
     targetId: string,
-    position: StackPosition
+    position: OuterDropzonePosition
   ) => {
     dispatch({
       type: CanvasEvent.STACK_BLOCK,
@@ -231,20 +229,6 @@ export default function BlocksProvider({
     });
   };
 
-  const displaySnapPreviewAction = (id: string, position: StackPosition) => {
-    dispatch({
-      type: CanvasEvent.DISPLAY_SNAP_PREVIEW,
-      payload: { id, position },
-    });
-  };
-
-  const hideSnapPreviewAction = (id: string) => {
-    dispatch({
-      type: CanvasEvent.HIDE_SNAP_PREVIEW,
-      payload: { id },
-    });
-  };
-
   const value: BlocksContextType = {
     state,
     selectBlockAction,
@@ -263,8 +247,6 @@ export default function BlocksProvider({
     updateBlockAction,
     highlightDropzoneAction,
     clearHighlightedDropzoneAction,
-    displaySnapPreviewAction,
-    hideSnapPreviewAction,
   };
 
   return (
@@ -317,42 +299,3 @@ const workBench: Block[] = [
     },
   },
 ];
-
-//const testCanvas: Block[] = [
-//  {
-//    id: 'block1',
-//    type: BlockType.Empty,
-//    coords: { x: 300, y: 300 },
-//    isWorkbenchBlock: false,
-//    state: BlockState.Idle,
-//    stackOptions: { top: true, bottom: true },
-//    parentId: null,
-//    prevId: null,
-//    nextId: 'block2',
-//    children: null,
-//  },
-//  {
-//    id: 'block2',
-//    type: BlockType.Empty,
-//    coords: { x: 0, y: 0 },
-//    isWorkbenchBlock: false,
-//    state: BlockState.Idle,
-//    stackOptions: { top: true, bottom: true },
-//    parentId: null,
-//    prevId: 'block1',
-//    nextId: 'block3',
-//    children: null,
-//  },
-//  {
-//    id: 'block3',
-//    type: BlockType.Empty,
-//    coords: { x: 0, y: 0 },
-//    isWorkbenchBlock: false,
-//    state: BlockState.Idle,
-//    stackOptions: { top: true, bottom: true },
-//    parentId: null,
-//    prevId: 'block2',
-//    nextId: null,
-//    children: null,
-//  },
-//];

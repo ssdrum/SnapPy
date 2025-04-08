@@ -19,7 +19,7 @@ export interface BlockChildren {
   [key: string]: Block[];
 }
 
-export enum StackPosition {
+export enum OuterDropzonePosition {
   Top = 'top',
   Bottom = 'bottom',
 }

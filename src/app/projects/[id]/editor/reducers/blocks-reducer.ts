@@ -3,12 +3,10 @@ import {
   BlockChildren,
   BlockState,
   CanvasState,
-  StackPosition,
+  OuterDropzonePosition,
 } from '../blocks/types';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  calcNextBlockStartPosition,
-  drawConnectedBlocks,
   findBlockById,
   findRoot,
   getBlocksSequence,
@@ -336,10 +334,8 @@ export default function BlocksReducer(
       };
     }
 
-    // TODO: Not proud of this... but it works!
     case CanvasEvent.STACK_BLOCK: {
       const { id, targetId, position } = action.payload;
-
       const targetBlock = validateBlockExists(
         state.canvas,
         targetId,
@@ -354,206 +350,44 @@ export default function BlocksReducer(
 
       // Copy canvas blocks
       let newCanvas = [...state.canvas];
+
       // Copy involved blocks
-      let updatedTargetBlock = { ...targetBlock };
+      let newTargetBlock = { ...targetBlock };
       let newBlockToStack = { ...blockToStack };
 
-      // Set up connections based on position
-      if (position === StackPosition.Top) {
-        // Save the reference to the target's previous block
-        const targetPrevBlockId = updatedTargetBlock.prevId;
+      if (position === OuterDropzonePosition.Top) {
+        // Stacking above the target block
+        newBlockToStack.nextId = targetBlock.id;
+        newTargetBlock.prevId = blockToStack.id;
 
-        // Check if we're dealing with a single block or a chain
-        if (!newBlockToStack.nextId) {
-          // Single block case - simpler handling
-
-          // If target has a previous block, connect it to our block
-          if (targetPrevBlockId) {
-            const updatedPrevBlock = {
-              ...findBlockById(newCanvas, targetPrevBlockId)!,
-            };
-            updatedPrevBlock.nextId = id;
-            newCanvas = updateBlockById(
-              newCanvas,
-              targetPrevBlockId,
-              updatedPrevBlock
-            );
-
-            // Connect our block back to the previous block
-            newBlockToStack.prevId = targetPrevBlockId;
-          }
-
-          // Connect our block to the target
-          newBlockToStack.nextId = targetId;
-
-          // Update target to point to the block that was inserted above it
-          updatedTargetBlock.prevId = newBlockToStack.id;
+        if (targetBlock.prevId) {
+          const newTargetPrev = findBlockById(state.canvas, targetBlock.prevId);
+          if (!newTargetPrev) return state; // TODO: Handle this better
+          newTargetPrev.nextId = blockToStack.id;
+          newBlockToStack.prevId = targetBlock.prevId;
         } else {
-          // Chain case - need to find the first and last blocks in the chain
-
-          // First block is already newBlockToStack
-          // Find the last block in the chain
-          let lastStackBlock = newBlockToStack;
-          let currentBlock = newBlockToStack;
-
-          // Traverse the chain to find the last block
-          while (currentBlock.nextId) {
-            const nextBlock = findBlockById(newCanvas, currentBlock.nextId);
-            if (!nextBlock || nextBlock.id === targetId) break; // Avoid loops
-            lastStackBlock = nextBlock;
-            currentBlock = nextBlock;
-          }
-
-          // If target has a previous block, connect it to the first block in our chain
-          if (targetPrevBlockId) {
-            const updatedPrevBlock = {
-              ...findBlockById(newCanvas, targetPrevBlockId)!,
-            };
-            updatedPrevBlock.nextId = newBlockToStack.id;
-            newCanvas = updateBlockById(
-              newCanvas,
-              targetPrevBlockId,
-              updatedPrevBlock
-            );
-
-            // Connect first block in chain back to the previous block
-            newBlockToStack.prevId = targetPrevBlockId;
-          } else {
-            // No previous block, so our chain starts fresh
-            newBlockToStack.prevId = null;
-          }
-
-          // Connect last block in our chain to the target
-          const updatedLastBlock = {
-            ...lastStackBlock,
-            nextId: targetId,
-          };
-          newCanvas = updateBlockById(
-            newCanvas,
-            lastStackBlock.id,
-            updatedLastBlock
-          );
-
-          // Update target to point to the last block in chain that was inserted above it
-          updatedTargetBlock.prevId = lastStackBlock.id;
+          newBlockToStack.coords = { ...newTargetBlock.coords }; // Place the new start block where the previous start blockk was
+          newTargetBlock.coords = { x: 0, y: 0 };
         }
       } else {
-        // Save the reference to the target's next block before we change it
-        const targetNextBlockId = updatedTargetBlock.nextId;
+        // Stacking below the target block
+        newTargetBlock.nextId = blockToStack.id;
+        newBlockToStack.prevId = targetBlock.id;
 
-        // Check if we're dealing with a single block or a chain
-        if (!newBlockToStack.nextId) {
-          // Single block case - simpler handling
-
-          // If target has a next block, connect our block to it
-          if (targetNextBlockId) {
-            // Connect the new block to what was previously the target's next block
-            newBlockToStack.nextId = targetNextBlockId;
-
-            // Update the original next block to point back to our block
-            const updatedNextBlock = {
-              ...findBlockById(newCanvas, targetNextBlockId)!,
-              prevId: id,
-            };
-            newCanvas = updateBlockById(
-              newCanvas,
-              targetNextBlockId,
-              updatedNextBlock
-            );
-          }
-        } else {
-          // Chain case - need to find the last block in the chain
-          let lastStackBlock = newBlockToStack;
-          let currentBlock = newBlockToStack;
-
-          // Traverse the chain to find the last block
-          while (currentBlock.nextId) {
-            const nextBlock = findBlockById(newCanvas, currentBlock.nextId);
-            if (!nextBlock) break;
-            lastStackBlock = nextBlock;
-            currentBlock = nextBlock;
-          }
-
-          // If target has a next block, connect our chain's last block to it
-          if (targetNextBlockId) {
-            // Update the last block in our stack chain to point to target's next block
-            const updatedLastBlock = {
-              ...lastStackBlock,
-              nextId: targetNextBlockId,
-            };
-            newCanvas = updateBlockById(
-              newCanvas,
-              lastStackBlock.id,
-              updatedLastBlock
-            );
-
-            // Update the original next block to point back to our chain's last block
-            const updatedNextBlock = {
-              ...findBlockById(newCanvas, targetNextBlockId)!,
-              prevId: lastStackBlock.id,
-            };
-            newCanvas = updateBlockById(
-              newCanvas,
-              targetNextBlockId,
-              updatedNextBlock
-            );
-          }
-        }
-
-        // Connect the target block to the first block in our chain
-        updatedTargetBlock.nextId = id;
-        newBlockToStack.prevId = targetId;
-      }
-
-      // Update the target blocks
-      newCanvas = updateBlockById(newCanvas, targetId, updatedTargetBlock);
-
-      newCanvas = updateBlockById(newCanvas, id, newBlockToStack);
-
-      // Update positions for the entire sequence
-      // Find the start of the sequence
-      let startBlock = newBlockToStack;
-      if (position === StackPosition.Top) {
-        // If we stacked on top, the blockToStack is the new start
-        while (startBlock.prevId) {
-          const prevBlock = newCanvas.find((b) => b.id === startBlock.prevId);
-          if (!prevBlock) break;
-          startBlock = prevBlock;
-        }
-      } else {
-        // If we stacked on bottom, we need to find the start of targetBlock's sequence
-        startBlock = updatedTargetBlock;
-        while (startBlock.prevId) {
-          const prevBlock = newCanvas.find((b) => b.id === startBlock.prevId);
-          if (!prevBlock) break;
-          startBlock = prevBlock;
+        if (targetBlock.nextId) {
+          const newTargetNext = findBlockById(state.canvas, targetBlock.nextId);
+          if (!newTargetNext) return state; // TODO: Handle this better
+          newTargetNext.prevId = blockToStack.id;
+          newBlockToStack.nextId = targetBlock.nextId;
         }
       }
 
-      // Now update positions for the sequence
-      let currentBlock = startBlock;
-      while (currentBlock.nextId) {
-        const nextBlock = newCanvas.find((b) => b.id === currentBlock.nextId);
-        if (!nextBlock) break;
-
-        // Update the next block's position
-        const nextPosition = calcNextBlockStartPosition(currentBlock);
-        newCanvas = updateBlockById(newCanvas, nextBlock.id, {
-          ...nextBlock,
-          coords: nextPosition,
-        });
-
-        // Move to the next block
-        currentBlock = {
-          ...nextBlock,
-          coords: nextPosition,
-        };
-      }
+      newCanvas = updateBlockById(newCanvas, blockToStack.id, newBlockToStack);
+      newCanvas = updateBlockById(newCanvas, targetBlock.id, newTargetBlock);
 
       return {
         ...state,
         canvas: newCanvas,
-        highlightedDropZoneId: null,
       };
     }
 
@@ -614,66 +448,6 @@ export default function BlocksReducer(
 
     case CanvasEvent.CLEAR_HIGHLIGHTED_DROPZONE: {
       return { ...state, highlightedDropZoneId: null };
-    }
-
-    case CanvasEvent.DISPLAY_SNAP_PREVIEW: {
-      const { id, position } = action.payload;
-      let currBlock = validateBlockExists(
-        state.canvas,
-        id,
-        CanvasEvent.DISPLAY_SNAP_PREVIEW
-      );
-      if (!currBlock) return state;
-
-      // Copy canvas
-      let newCanvas = [...state.canvas];
-
-      if (
-        position === StackPosition.Top &&
-        !currBlock.prevId &&
-        currBlock.nextId
-      ) {
-        return state;
-      }
-      if (
-        position === StackPosition.Top &&
-        currBlock.prevId &&
-        currBlock.prevId
-      ) {
-        newCanvas = updateBlockById(newCanvas, id, {
-          ...currBlock,
-          coords: { ...currBlock.coords, y: currBlock.coords.y + 20 },
-        });
-      }
-
-      // Update positions of all blocks in sequence
-      while (currBlock && currBlock.nextId) {
-        const nextBlock = findBlockById(newCanvas, currBlock.nextId);
-        if (!nextBlock) break;
-
-        const updatedNextBlock = {
-          ...nextBlock,
-          coords: { x: nextBlock.coords.x, y: nextBlock.coords.y + 20 },
-        };
-        newCanvas = updateBlockById(newCanvas, nextBlock.id, updatedNextBlock);
-        currBlock = nextBlock;
-      }
-
-      return { ...state, canvas: newCanvas };
-    }
-
-    case CanvasEvent.HIDE_SNAP_PREVIEW: {
-      const { id } = action.payload;
-      let rootBlock = validateBlockExists(
-        state.canvas,
-        id,
-        CanvasEvent.HIDE_SNAP_PREVIEW
-      );
-      if (!rootBlock || !rootBlock.nextId) return state;
-
-      // Redraw connected blocks
-      const newCanvas = drawConnectedBlocks(state.canvas, rootBlock);
-      return { ...state, canvas: newCanvas };
     }
 
     default:

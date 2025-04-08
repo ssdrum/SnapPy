@@ -13,6 +13,7 @@ export default function CanvasBlocksRenderer({
   canvas,
 }: CanvasBlocksRendererProps) {
   const startBlocks = canvas.filter((block) => block.prevId === null);
+  console.log(canvas);
 
   return (
     <>

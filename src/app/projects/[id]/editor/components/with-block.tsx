@@ -1,7 +1,13 @@
 import React from 'react';
-import { BlockChildren, BlockState, BlockType } from '../blocks/types';
+import {
+  BlockChildren,
+  BlockState,
+  BlockType,
+  OuterDropzonePosition,
+} from '../blocks/types';
 import classes from '../blocks/blocks.module.css';
 import { useBlocks } from '../contexts/blocks-context';
+import OuterDropZone from './outer-drop-zone';
 
 // Base props that for all blocks
 export interface WithBlockProps {
@@ -25,7 +31,7 @@ export default function withBlock<T extends object>(
       ...restProps
     } = props;
 
-    const { selectBlockAction, deselectBlockAction } = useBlocks();
+    const { state, selectBlockAction, deselectBlockAction } = useBlocks();
 
     const getBGColor = () => {
       switch (blockType) {
@@ -45,26 +51,36 @@ export default function withBlock<T extends object>(
     };
 
     return (
-      <div
-        className={classes.base}
-        style={{
-          backgroundColor: getBGColor(),
-          boxShadow: getBoxShadow(),
-        }}
-        onClick={() => {
-          deselectBlockAction();
-          if (!isWorkbenchBlock) {
-            selectBlockAction(id);
-          }
-        }}
-      >
-        <WrappedBlock
-          id={id}
-          isWorkbenchBlock={isWorkbenchBlock}
-          {...(restProps as T)}
+      <div style={{ position: 'relative' }}>
+        {!isWorkbenchBlock && !state.draggedGroupBlockIds?.has(id) && (
+          <OuterDropZone blockId={id} position={OuterDropzonePosition.Top} />
+        )}
+
+        <div
+          className={classes.base}
+          style={{
+            backgroundColor: getBGColor(),
+            boxShadow: getBoxShadow(),
+          }}
+          onClick={() => {
+            deselectBlockAction();
+            if (!isWorkbenchBlock) {
+              selectBlockAction(id);
+            }
+          }}
         >
-          {children}
-        </WrappedBlock>
+          <WrappedBlock
+            id={id}
+            isWorkbenchBlock={isWorkbenchBlock}
+            {...(restProps as T)}
+          >
+            {children}
+          </WrappedBlock>
+        </div>
+
+        {!isWorkbenchBlock && !state.draggedGroupBlockIds?.has(id) && (
+          <OuterDropZone blockId={id} position={OuterDropzonePosition.Bottom} />
+        )}
       </div>
     );
   };

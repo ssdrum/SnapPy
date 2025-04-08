@@ -6,7 +6,7 @@ import {
 } from '@dnd-kit/core';
 import { findBlockById } from '../utils/utils';
 import { useBlocks } from '../contexts/blocks-context';
-//import { StackPosition } from '../blocks/types';
+import { OuterDropzonePosition } from '../blocks/types';
 
 interface DragEventsHandlerProps {
   children: React.ReactNode;
@@ -23,10 +23,8 @@ export default function DragEventsHandler({
     deleteBlockAction,
     //addChildBlockAction,
     //removeChildBlockAction,
-    //stackBlockAction,
+    stackBlockAction,
     //breakStackAction,
-    //highlightDropzoneAction,
-    //clearHighlightedDropzoneAction,
     state,
   } = useBlocks();
 
@@ -69,6 +67,7 @@ export default function DragEventsHandler({
     }
 
     const overId = over.id.toString();
+    const tokens = overId.split('_');
     const activeId = active.id.toString();
 
     // Handle drop on canvas
@@ -94,17 +93,19 @@ export default function DragEventsHandler({
     //    return;
     //  }
     //
-    //  // Handle drop on another block (nesting)
-    //  if (overId.startsWith('stack')) {
-    //    const [_, position, targetId] = overId.split('_');
-    //    stackBlockAction(
-    //      activeId,
-    //      targetId,
-    //      position === 'top' ? StackPosition.Top : StackPosition.Bottom
-    //    );
-    //    return;
-    //  }
-    //
+    // Handle drop on another block (nesting)
+    if (tokens[0] === 'stack') {
+      const [_, position, targetId] = tokens;
+      stackBlockAction(
+        activeId,
+        targetId,
+        position === 'top'
+          ? OuterDropzonePosition.Top
+          : OuterDropzonePosition.Bottom
+      );
+      return;
+    }
+
     // Default case - delete the block
     deleteBlockAction(activeId);
   };

@@ -1,6 +1,3 @@
-describe('shut up', () => {
-  test('fake test', () => {});
-});
 import {
   CanvasAction,
   CanvasEvent,

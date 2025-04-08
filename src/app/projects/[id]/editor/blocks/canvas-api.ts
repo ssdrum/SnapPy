@@ -1,5 +1,5 @@
 import { Coordinates } from '@dnd-kit/core/dist/types';
-import { Block, StackPosition } from './types';
+import { Block, OuterDropzonePosition } from './types';
 
 // All possible block events
 export enum CanvasEvent {
@@ -19,8 +19,6 @@ export enum CanvasEvent {
   UPDATE_BLOCK = 'update block',
   HIGHLIGHT_DROPZONE = 'highlight dropzone',
   CLEAR_HIGHLIGHTED_DROPZONE = 'clear highlighted dropzone',
-  DISPLAY_SNAP_PREVIEW = 'display snap preview',
-  HIDE_SNAP_PREVIEW = 'hide snap preview',
 }
 
 interface SelectBlock {
@@ -68,7 +66,7 @@ interface RemoveChildBlock {
 }
 interface StackBlock {
   type: CanvasEvent.STACK_BLOCK;
-  payload: { id: string; targetId: string; position: StackPosition };
+  payload: { id: string; targetId: string; position: OuterDropzonePosition };
 }
 interface BreakStack {
   type: CanvasEvent.BREAK_STACK;
@@ -84,14 +82,6 @@ interface HighlightDropzone {
 }
 interface ClearHighlightedDropzone {
   type: CanvasEvent.CLEAR_HIGHLIGHTED_DROPZONE;
-}
-interface DisplaySnapPreview {
-  type: CanvasEvent.DISPLAY_SNAP_PREVIEW;
-  payload: { id: string; position: StackPosition };
-}
-interface HideSnapPreview {
-  type: CanvasEvent.HIDE_SNAP_PREVIEW;
-  payload: { id: string };
 }
 
 export type CanvasAction =
@@ -110,6 +100,4 @@ export type CanvasAction =
   | BreakStack
   | UpdateBlock
   | HighlightDropzone
-  | ClearHighlightedDropzone
-  | DisplaySnapPreview
-  | HideSnapPreview;
+  | ClearHighlightedDropzone;
