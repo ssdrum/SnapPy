@@ -71,9 +71,6 @@ export default function BlocksReducer(
       const newBlock = {
         ...block,
         state: BlockState.Dragging,
-        // Reset lastDelta when starting a new drag
-        // This will signal to the MOVE_BLOCK handler that it's the first move
-        lastDelta: undefined,
       };
 
       const newCanvas = updateBlockById(state.canvas, id, newBlock);

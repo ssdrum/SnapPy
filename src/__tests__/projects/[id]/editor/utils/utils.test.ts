@@ -23,7 +23,6 @@ const block1: Block = {
   parentId: null,
   prevId: null,
   nextId: null,
-  stackOptions: { top: true, bottom: true },
   children: null,
 };
 
@@ -37,7 +36,6 @@ const flatCanvas: Block[] = [
     parentId: null,
     prevId: null,
     nextId: null,
-    stackOptions: { top: true, bottom: true },
     children: null,
   },
   {
@@ -49,7 +47,6 @@ const flatCanvas: Block[] = [
     parentId: null,
     prevId: null,
     nextId: null,
-    stackOptions: { top: true, bottom: true },
     children: null,
   },
   {
@@ -61,7 +58,6 @@ const flatCanvas: Block[] = [
     parentId: null,
     prevId: null,
     nextId: null,
-    stackOptions: { top: true, bottom: true },
     children: null,
   },
 ];
@@ -76,7 +72,6 @@ const nestedCanvas: Block[] = [
     parentId: null,
     prevId: null,
     nextId: null,
-    stackOptions: { top: true, bottom: true },
     children: {
       condition: [
         {
@@ -88,7 +83,6 @@ const nestedCanvas: Block[] = [
           parentId: 'block1',
           prevId: null,
           nextId: null,
-          stackOptions: { top: true, bottom: true },
           selected: 'counter',
           children: {
             expression: [
@@ -98,7 +92,6 @@ const nestedCanvas: Block[] = [
                 state: BlockState.Idle,
                 coords: { x: 15, y: 15 },
                 isWorkbenchBlock: false,
-                stackOptions: { top: true, bottom: true },
                 parentId: 'condition-block',
                 prevId: null,
                 nextId: null,
@@ -118,7 +111,6 @@ const nestedCanvas: Block[] = [
           parentId: 'block1',
           prevId: null,
           nextId: null,
-          stackOptions: { top: true, bottom: true },
           children: {
             condition: [],
             body: [
@@ -131,7 +123,6 @@ const nestedCanvas: Block[] = [
                 parentId: 'body-while',
                 prevId: null,
                 nextId: null,
-                stackOptions: { top: true, bottom: true },
                 selected: 'innerVar',
                 children: {
                   expression: [
@@ -141,7 +132,6 @@ const nestedCanvas: Block[] = [
                       state: BlockState.Idle,
                       coords: { x: 35, y: 35 },
                       isWorkbenchBlock: false,
-                      stackOptions: { top: true, bottom: true },
                       parentId: 'inner-variable',
                       prevId: null,
                       nextId: null,
@@ -165,7 +155,6 @@ const nestedCanvas: Block[] = [
     parentId: null,
     prevId: null,
     nextId: null,
-    stackOptions: { top: true, bottom: true },
     selected: 'x',
     children: {
       expression: [
@@ -175,7 +164,6 @@ const nestedCanvas: Block[] = [
           state: BlockState.Idle,
           coords: { x: 120, y: 20 },
           isWorkbenchBlock: false,
-          stackOptions: { top: true, bottom: true },
           parentId: 'block2',
           prevId: null,
           nextId: null,

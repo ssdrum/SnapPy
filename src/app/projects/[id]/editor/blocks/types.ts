@@ -24,11 +24,6 @@ export enum OuterDropzonePosition {
   Bottom = 'bottom',
 }
 
-export interface StackOptions {
-  top: boolean;
-  bottom: boolean;
-}
-
 export interface CanvasState {
   workbench: Block[];
   canvas: Block[];
@@ -47,9 +42,7 @@ interface BaseBlock {
   type: BlockType;
   state: BlockState;
   coords: Coordinates;
-  lastDelta?: Coordinates;
   isWorkbenchBlock: boolean;
-  stackOptions: StackOptions;
   parentId: string | null;
   prevId: string | null;
   nextId: string | null;
