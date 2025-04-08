@@ -2,7 +2,7 @@ import classes from '../editor.module.css';
 import { useBlocks } from '../contexts/blocks-context';
 import { useDroppable } from '@dnd-kit/core';
 import { Box, Text } from '@mantine/core';
-import CanvasBlocksRenderer from './blocks-renderer';
+import CanvasBlocksRenderer from './canvas-blocks-renderer';
 
 export default function Canvas() {
   const { state, deselectBlockAction } = useBlocks();

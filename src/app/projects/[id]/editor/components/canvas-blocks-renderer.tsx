@@ -1,8 +1,8 @@
-import Empty from '../blocks/empty';
 import { Block } from '../blocks/types';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { getBlocksSequence } from '../utils/utils';
+import renderBlock from './render-block';
 
 interface CanvasBlocksRendererProps {
   canvas: Block[];
@@ -58,13 +58,6 @@ function SequenceWrapper({ sequence }: SequenceWrapperProps) {
     </div>
   );
 }
-
-export const renderBlock = (block: Block) => {
-  switch (block.type) {
-    default:
-      return <Empty key={block.id} />;
-  }
-};
 
 //import React from 'react';
 //import { Block, BlockType } from '../blocks/types';
