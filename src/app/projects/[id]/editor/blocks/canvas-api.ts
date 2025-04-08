@@ -9,7 +9,6 @@ export enum CanvasEvent {
   END_DRAG = 'end drag',
   BREAK_STACK = 'break stack',
   CREATE_BLOCK = 'create block',
-  CREATE_AND_DRAG_BLOCK = 'create and drag block',
   DELETE_BLOCK = 'delete block',
   CREATE_VARIABLE = 'create variable',
   CHANGE_VARIABLE_SELECTED_OPTION = 'change variable selected option',
@@ -38,10 +37,6 @@ interface EndDrag {
 }
 interface CreateBlock {
   type: CanvasEvent.CREATE_BLOCK;
-  payload: { id: string };
-}
-interface CreateAndDragBlock {
-  type: CanvasEvent.CREATE_AND_DRAG_BLOCK;
   payload: { id: string };
 }
 interface DeleteBlock {
@@ -90,7 +85,6 @@ export type CanvasAction =
   | StartDrag
   | EndDrag
   | CreateBlock
-  | CreateAndDragBlock
   | DeleteBlock
   | CreateVariable
   | ChangeVariableSelectedOption

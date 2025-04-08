@@ -31,7 +31,6 @@ interface BlocksContextType {
   startDragAction: (id: string) => void;
   endDragAction: (delta: Coordinates) => void;
   createBlockAction: (id: string) => void;
-  createAndDragBlockAction: (id: string) => void;
   deleteBlockAction: (id: string) => void;
   createVariableAction: (name: string) => boolean;
   changeVariableSelectedOptionAction: (selected: string, id?: string) => void;
@@ -122,13 +121,6 @@ export default function BlocksProvider({
   const createBlockAction = (id: string) => {
     dispatch({
       type: CanvasEvent.CREATE_BLOCK,
-      payload: { id },
-    });
-  };
-
-  const createAndDragBlockAction = (id: string) => {
-    dispatch({
-      type: CanvasEvent.CREATE_AND_DRAG_BLOCK,
       payload: { id },
     });
   };
@@ -236,7 +228,6 @@ export default function BlocksProvider({
     startDragAction,
     endDragAction,
     createBlockAction,
-    createAndDragBlockAction,
     breakStackAction,
     deleteBlockAction,
     createVariableAction,

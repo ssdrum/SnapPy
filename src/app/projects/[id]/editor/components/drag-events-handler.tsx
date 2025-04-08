@@ -19,7 +19,7 @@ export default function DragEventsHandler({
     startDragAction,
     endDragAction,
     deselectBlockAction,
-    createAndDragBlockAction,
+    createBlockAction,
     deleteBlockAction,
     //addChildBlockAction,
     //removeChildBlockAction,
@@ -37,7 +37,7 @@ export default function DragEventsHandler({
 
     // If dragging a block from the workbench, create and drag
     if (isWorkbenchBlock) {
-      createAndDragBlockAction(id);
+      createBlockAction(id);
       return; // Exit early for workbench blocks
     }
 

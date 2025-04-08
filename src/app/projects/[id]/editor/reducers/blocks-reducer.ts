@@ -120,38 +120,6 @@ export default function BlocksReducer(
       const newBlock = {
         ...block,
         isWorkbenchBlock: false,
-      };
-
-      // Create a replacement workbench block with a new ID
-      const newWorkbenchBlock = {
-        ...block,
-        id: uuidv4(),
-      };
-
-      return {
-        ...state,
-        // Add the block to canvas blocks
-        canvas: [...state.canvas, newBlock],
-        // Replace the original workbench block with one having a new ID
-        workbench: state.workbench.map((block) =>
-          block.id === id ? newWorkbenchBlock : block
-        ),
-      };
-    }
-
-    case CanvasEvent.CREATE_AND_DRAG_BLOCK: {
-      const { id } = action.payload;
-      const block = validateBlockExists(
-        state.workbench,
-        id,
-        CanvasEvent.CREATE_AND_DRAG_BLOCK
-      );
-      if (!block) return state;
-
-      // Create a copy for the canvas with the same ID
-      const newBlock = {
-        ...block,
-        isWorkbenchBlock: false,
         state: BlockState.Dragging,
       };
 
