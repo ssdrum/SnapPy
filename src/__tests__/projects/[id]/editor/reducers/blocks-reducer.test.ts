@@ -10,6 +10,7 @@ import {
   VariableBlock,
   EmptyBlock,
   WhileBlock,
+  OuterDropzonePosition,
 } from '@/app/projects/[id]/editor/blocks/types';
 import BlocksReducer from '@/app/projects/[id]/editor/reducers/blocks-reducer';
 import { findBlockById } from '@/app/projects/[id]/editor/utils/utils';
@@ -321,5 +322,524 @@ describe('BlocksReducer', () => {
     expect(newCanvas.canvas).toContainEqual(expectedBlock2);
     expect(newCanvas.canvas).toContainEqual(expectedBlock3);
     expect(newCanvas.canvas).toContainEqual(expectedParent);
+  });
+
+  test('Snaps single block above single block correctly', () => {
+    const action: CanvasAction = {
+      type: CanvasEvent.SNAP_BLOCK,
+      payload: {
+        id: 'block1',
+        targetId: 'block2',
+        position: OuterDropzonePosition.Top,
+      },
+    };
+
+    const testCanvas = { ...initialCanvas };
+    const newCanvas = BlocksReducer(testCanvas, action);
+    const newBlock1 = findBlockById(newCanvas.canvas, 'block1')!;
+    const newBlock2 = findBlockById(newCanvas.canvas, 'block2')!;
+
+    const expectedBlock1 = {
+      ...block1,
+      nextId: 'block2',
+      coords: { x: 200, y: 200 },
+    };
+    const expectedBlock2 = {
+      ...block2,
+      prevId: 'block1',
+    };
+
+    expect(newBlock1).toEqual(expectedBlock1);
+    expect(newBlock2).toEqual(expectedBlock2);
+  });
+
+  test('Snaps single block below single block correctly', () => {
+    const action: CanvasAction = {
+      type: CanvasEvent.SNAP_BLOCK,
+      payload: {
+        id: 'block1',
+        targetId: 'block2',
+        position: OuterDropzonePosition.Bottom,
+      },
+    };
+
+    const testCanvas = { ...initialCanvas };
+    const newCanvas = BlocksReducer(testCanvas, action);
+    const newBlock1 = findBlockById(newCanvas.canvas, 'block1')!;
+    const newBlock2 = findBlockById(newCanvas.canvas, 'block2')!;
+
+    const expectedBlock1 = {
+      ...block1,
+      prevId: 'block2',
+    };
+    const expectedBlock2 = {
+      ...block2,
+      nextId: 'block1',
+    };
+
+    expect(newBlock1).toEqual(expectedBlock1);
+    expect(newBlock2).toEqual(expectedBlock2);
+  });
+
+  test('Snaps single block above sequence of blocks correctly', () => {
+    const action: CanvasAction = {
+      type: CanvasEvent.SNAP_BLOCK,
+      payload: {
+        id: 'block to snap',
+        targetId: 'block1',
+        position: OuterDropzonePosition.Top,
+      },
+    };
+
+    const sequenceBlock1: Block = { ...block1, nextId: 'block2' };
+    const sequenceBlock2: Block = {
+      ...block2,
+      prevId: 'block1',
+      nextId: 'block3',
+    };
+    const sequenceBlock3: Block = { ...block3, prevId: 'block2' };
+    const blockToSnap: Block = { ...block4, id: 'block to snap' };
+    const testCanvas = {
+      ...initialCanvas,
+      canvas: [sequenceBlock1, sequenceBlock2, sequenceBlock3, blockToSnap],
+    };
+
+    const expectedBlockToSnap: Block = {
+      ...blockToSnap,
+      nextId: 'block1',
+      coords: { ...sequenceBlock1.coords },
+    };
+
+    const expectedSequenceBlock1: Block = {
+      ...sequenceBlock1,
+      prevId: 'block to snap',
+      nextId: 'block2',
+    };
+    const expectedSequenceBlock2: Block = {
+      ...sequenceBlock2,
+      prevId: 'block1',
+      nextId: 'block3',
+    };
+    const expectedSequenceBlock3: Block = {
+      ...sequenceBlock3,
+      prevId: 'block2',
+    };
+
+    const newCanvas = BlocksReducer(testCanvas, action);
+    const newSequenceBlock1 = findBlockById(newCanvas.canvas, 'block1')!;
+    const newSequenceBlock2 = findBlockById(newCanvas.canvas, 'block2')!;
+    const newSequenceBlock3 = findBlockById(newCanvas.canvas, 'block3')!;
+    const newBlockToSnap = findBlockById(newCanvas.canvas, 'block to snap')!;
+
+    expect(newBlockToSnap).toEqual(expectedBlockToSnap);
+    expect(newSequenceBlock1).toEqual(expectedSequenceBlock1);
+    expect(newSequenceBlock2).toEqual(expectedSequenceBlock2);
+    expect(newSequenceBlock3).toEqual(expectedSequenceBlock3);
+  });
+
+  test('Snaps single block below sequence of blocks correctly', () => {
+    const action: CanvasAction = {
+      type: CanvasEvent.SNAP_BLOCK,
+      payload: {
+        id: 'block to snap',
+        targetId: 'block3',
+        position: OuterDropzonePosition.Bottom,
+      },
+    };
+
+    const sequenceBlock1: Block = { ...block1, nextId: 'block2' };
+    const sequenceBlock2: Block = {
+      ...block2,
+      prevId: 'block1',
+      nextId: 'block3',
+    };
+    const sequenceBlock3: Block = { ...block3, prevId: 'block2' };
+    const blockToSnap: Block = { ...block4, id: 'block to snap' };
+    const testCanvas = {
+      ...initialCanvas,
+      canvas: [sequenceBlock1, sequenceBlock2, sequenceBlock3, blockToSnap],
+    };
+
+    const expectedBlockToSnap: Block = {
+      ...blockToSnap,
+      prevId: 'block3',
+    };
+
+    const expectedSequenceBlock1: Block = {
+      ...sequenceBlock1,
+      nextId: 'block2',
+    };
+    const expectedSequenceBlock2: Block = {
+      ...sequenceBlock2,
+      prevId: 'block1',
+      nextId: 'block3',
+    };
+    const expectedSequenceBlock3: Block = {
+      ...sequenceBlock3,
+      prevId: 'block2',
+      nextId: 'block to snap',
+    };
+
+    const newCanvas = BlocksReducer(testCanvas, action);
+    const newSequenceBlock1 = findBlockById(newCanvas.canvas, 'block1')!;
+    const newSequenceBlock2 = findBlockById(newCanvas.canvas, 'block2')!;
+    const newSequenceBlock3 = findBlockById(newCanvas.canvas, 'block3')!;
+    const newBlockToSnap = findBlockById(newCanvas.canvas, 'block to snap')!;
+
+    expect(newBlockToSnap).toEqual(expectedBlockToSnap);
+    expect(newSequenceBlock1).toEqual(expectedSequenceBlock1);
+    expect(newSequenceBlock2).toEqual(expectedSequenceBlock2);
+    expect(newSequenceBlock3).toEqual(expectedSequenceBlock3);
+  });
+
+  test('Snaps sequence of blocks above sequence of blocks correctly', () => {
+    // Setup:
+    // Initial: block1 -> block2 -> block3
+    //          blockToSnap -> block5 -> block6
+    // Expected: blockToSnap -> block5 -> block6 -> block1 -> block2 -> block3
+
+    // Define the action to test
+    const action: CanvasAction = {
+      type: CanvasEvent.SNAP_BLOCK,
+      payload: {
+        id: 'block to snap',
+        targetId: 'block1',
+        position: OuterDropzonePosition.Top,
+      },
+    };
+
+    const sequenceBlock1: Block = { ...block1, nextId: 'block2' };
+    const sequenceBlock2: Block = {
+      ...block2,
+      prevId: 'block1',
+      nextId: 'block3',
+    };
+    const sequenceBlock3: Block = { ...block3, prevId: 'block2' };
+
+    const blockToSnap: Block = {
+      ...block1,
+      id: 'block to snap',
+      nextId: 'block5',
+      coords: { x: 400, y: 400 },
+    };
+
+    const sequenceBlock5: Block = {
+      ...block2,
+      id: 'block5',
+      prevId: 'block to snap',
+      nextId: 'block6',
+    };
+
+    const sequenceBlock6: Block = {
+      ...block1,
+      id: 'block6',
+      prevId: 'block5',
+    };
+
+    // Create the test canvas with the initial blocks
+    const testCanvas = {
+      ...initialCanvas,
+      canvas: [
+        sequenceBlock1,
+        sequenceBlock2,
+        sequenceBlock3,
+        blockToSnap,
+        sequenceBlock5,
+        sequenceBlock6,
+      ],
+    };
+
+    // Define expected blocks after the action
+    const expectedBlockToSnap: Block = {
+      ...blockToSnap,
+      coords: { ...sequenceBlock1.coords },
+    };
+    const expectedSequenceBlock6: Block = {
+      ...sequenceBlock6,
+      nextId: 'block1',
+    };
+    const expectedSequenceBlock1: Block = {
+      ...sequenceBlock1,
+      prevId: 'block6',
+    };
+
+    // Execute the action
+    const newCanvas = BlocksReducer(testCanvas, action);
+
+    // Add assertions
+    expect(findBlockById(newCanvas.canvas, 'block to snap')!).toEqual(
+      expectedBlockToSnap
+    );
+    expect(findBlockById(newCanvas.canvas, 'block6')!).toEqual(
+      expectedSequenceBlock6
+    );
+    expect(findBlockById(newCanvas.canvas, 'block1')!).toEqual(
+      expectedSequenceBlock1
+    );
+  });
+
+  test('Snaps sequence of blocks below sequence of blocks correctly', () => {
+    // Setup:
+    // Initial: block1 -> block2 -> block3
+    //          blockToSnap -> block5 -> block6
+    // Expected: block1 -> block2 -> block3 -> blockToSnap -> block5 -> block6
+
+    // Define the action to test
+    const action: CanvasAction = {
+      type: CanvasEvent.SNAP_BLOCK,
+      payload: {
+        id: 'block to snap',
+        targetId: 'block3',
+        position: OuterDropzonePosition.Bottom,
+      },
+    };
+
+    const sequenceBlock1: Block = { ...block1, nextId: 'block2' };
+    const sequenceBlock2: Block = {
+      ...block2,
+      prevId: 'block1',
+      nextId: 'block3',
+    };
+    const sequenceBlock3: Block = { ...block3, prevId: 'block2' };
+
+    const blockToSnap: Block = {
+      ...block1,
+      id: 'block to snap',
+      nextId: 'block5',
+      coords: { x: 400, y: 400 },
+    };
+
+    const sequenceBlock5: Block = {
+      ...block2,
+      id: 'block5',
+      prevId: 'block to snap',
+      nextId: 'block6',
+    };
+
+    const sequenceBlock6: Block = {
+      ...block1,
+      id: 'block6',
+      prevId: 'block5',
+    };
+
+    // Create the test canvas with the initial blocks
+    const testCanvas = {
+      ...initialCanvas,
+      canvas: [
+        sequenceBlock1,
+        sequenceBlock2,
+        sequenceBlock3,
+        blockToSnap,
+        sequenceBlock5,
+        sequenceBlock6,
+      ],
+    };
+
+    // Define expected blocks after the action
+    const expectedSequenceBlock3: Block = {
+      ...sequenceBlock3,
+      nextId: 'block to snap',
+    };
+    const expectedBlockToSnap: Block = {
+      ...blockToSnap,
+      prevId: 'block3',
+    };
+
+    // Execute the action
+    const newCanvas = BlocksReducer(testCanvas, action);
+
+    // Add assertions
+    expect(findBlockById(newCanvas.canvas, 'block3')!).toEqual(
+      expectedSequenceBlock3
+    );
+    expect(findBlockById(newCanvas.canvas, 'block to snap')!).toEqual(
+      expectedBlockToSnap
+    );
+  });
+
+  test('Snaps sequence of blocks in the middle of a sequence of blocks correctly (top snap)', () => {
+    // Setup:
+    // Initial: block1 -> block2 -> block3
+    //          blockToSnap -> block5 -> block6
+    // Expected: block1 -> block2 -> blockToSnap -> block5 -> block6 -> block3
+
+    // Define the action to test
+    const action: CanvasAction = {
+      type: CanvasEvent.SNAP_BLOCK,
+      payload: {
+        id: 'block to snap',
+        targetId: 'block3',
+        position: OuterDropzonePosition.Top,
+      },
+    };
+
+    const sequenceBlock1: Block = { ...block1, nextId: 'block2' };
+    const sequenceBlock2: Block = {
+      ...block2,
+      prevId: 'block1',
+      nextId: 'block3',
+    };
+    const sequenceBlock3: Block = { ...block3, prevId: 'block2' };
+
+    const blockToSnap: Block = {
+      ...block1,
+      id: 'block to snap',
+      nextId: 'block5',
+      coords: { x: 400, y: 400 },
+    };
+
+    const sequenceBlock5: Block = {
+      ...block2,
+      id: 'block5',
+      prevId: 'block to snap',
+      nextId: 'block6',
+    };
+
+    const sequenceBlock6: Block = {
+      ...block1,
+      id: 'block6',
+      prevId: 'block5',
+    };
+
+    // Create the test canvas with the initial blocks
+    const testCanvas = {
+      ...initialCanvas,
+      canvas: [
+        sequenceBlock1,
+        sequenceBlock2,
+        sequenceBlock3,
+        blockToSnap,
+        sequenceBlock5,
+        sequenceBlock6,
+      ],
+    };
+
+    // Define expected blocks after the action
+    const expectedSequenceBlock2: Block = {
+      ...sequenceBlock2,
+      nextId: 'block to snap',
+    };
+    const expectedBlockToSnap: Block = {
+      ...blockToSnap,
+      prevId: 'block2',
+    };
+    const expectedSequenceBlock6: Block = {
+      ...sequenceBlock6,
+      nextId: 'block3',
+    };
+    const expectedSequenceBlock3: Block = {
+      ...sequenceBlock3,
+      prevId: 'block6',
+    };
+
+    // Execute the action
+    const newCanvas = BlocksReducer(testCanvas, action);
+
+    // Add assertions
+    expect(findBlockById(newCanvas.canvas, 'block2')!).toEqual(
+      expectedSequenceBlock2
+    );
+    expect(findBlockById(newCanvas.canvas, 'block to snap')!).toEqual(
+      expectedBlockToSnap
+    );
+    expect(findBlockById(newCanvas.canvas, 'block6')!).toEqual(
+      expectedSequenceBlock6
+    );
+    expect(findBlockById(newCanvas.canvas, 'block3')!).toEqual(
+      expectedSequenceBlock3
+    );
+  });
+
+  test('Snaps sequence of blocks in the middle of a sequence of blocks correctly (bottom snap)', () => {
+    // Setup:
+    // Initial: block1 -> block2 -> block3
+    //          blockToSnap -> block5 -> block6
+    // Expected: block1 -> block2 -> blockToSnap -> block5 -> block6 -> block3
+
+    // Define the action to test
+    const action: CanvasAction = {
+      type: CanvasEvent.SNAP_BLOCK,
+      payload: {
+        id: 'block to snap',
+        targetId: 'block2',
+        position: OuterDropzonePosition.Bottom,
+      },
+    };
+
+    const sequenceBlock1: Block = { ...block1, nextId: 'block2' };
+    const sequenceBlock2: Block = {
+      ...block2,
+      prevId: 'block1',
+      nextId: 'block3',
+    };
+    const sequenceBlock3: Block = { ...block3, prevId: 'block2' };
+
+    const blockToSnap: Block = {
+      ...block1,
+      id: 'block to snap',
+      nextId: 'block5',
+      coords: { x: 400, y: 400 },
+    };
+
+    const sequenceBlock5: Block = {
+      ...block2,
+      id: 'block5',
+      prevId: 'block to snap',
+      nextId: 'block6',
+    };
+
+    const sequenceBlock6: Block = {
+      ...block1,
+      id: 'block6',
+      prevId: 'block5',
+    };
+
+    // Create the test canvas with the initial blocks
+    const testCanvas = {
+      ...initialCanvas,
+      canvas: [
+        sequenceBlock1,
+        sequenceBlock2,
+        sequenceBlock3,
+        blockToSnap,
+        sequenceBlock5,
+        sequenceBlock6,
+      ],
+    };
+
+    // Define expected blocks after the action
+    const expectedSequenceBlock2: Block = {
+      ...sequenceBlock2,
+      nextId: 'block to snap',
+    };
+    const expectedBlockToSnap: Block = {
+      ...blockToSnap,
+      prevId: 'block2',
+    };
+    const expectedSequenceBlock6: Block = {
+      ...sequenceBlock6,
+      nextId: 'block3',
+    };
+    const expectedSequenceBlock3: Block = {
+      ...sequenceBlock3,
+      prevId: 'block6',
+    };
+
+    // Execute the action
+    const newCanvas = BlocksReducer(testCanvas, action);
+
+    // Add assertions
+    expect(findBlockById(newCanvas.canvas, 'block2')!).toEqual(
+      expectedSequenceBlock2
+    );
+    expect(findBlockById(newCanvas.canvas, 'block to snap')!).toEqual(
+      expectedBlockToSnap
+    );
+    expect(findBlockById(newCanvas.canvas, 'block6')!).toEqual(
+      expectedSequenceBlock6
+    );
+    expect(findBlockById(newCanvas.canvas, 'block3')!).toEqual(
+      expectedSequenceBlock3
+    );
   });
 });

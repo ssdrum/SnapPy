@@ -15,7 +15,7 @@ export default function OuterDropZone({
   const { state } = useBlocks();
 
   const { setNodeRef, isOver } = useDroppable({
-    id: `stack_${position}_${blockId}`,
+    id: `snap_${position}_${blockId}`,
   });
 
   const { active } = useDndContext();

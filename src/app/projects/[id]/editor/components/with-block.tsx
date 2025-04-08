@@ -13,6 +13,7 @@ import OuterDropZone from './outer-drop-zone';
 export interface WithBlockProps {
   id: string;
   isWorkbenchBlock: boolean;
+  hasPrev: boolean;
   blockType: BlockType;
   blockState: BlockState;
   children: BlockChildren | null;
@@ -25,6 +26,7 @@ export default function withBlock<T extends object>(
     const {
       id,
       isWorkbenchBlock,
+      hasPrev,
       blockType,
       blockState,
       children,
@@ -52,9 +54,11 @@ export default function withBlock<T extends object>(
 
     return (
       <div style={{ position: 'relative' }}>
-        {!isWorkbenchBlock && !state.draggedGroupBlockIds?.has(id) && (
-          <OuterDropZone blockId={id} position={OuterDropzonePosition.Top} />
-        )}
+        {!isWorkbenchBlock &&
+          !state.draggedGroupBlockIds?.has(id) &&
+          !hasPrev && (
+            <OuterDropZone blockId={id} position={OuterDropzonePosition.Top} />
+          )}
 
         <div
           className={classes.base}

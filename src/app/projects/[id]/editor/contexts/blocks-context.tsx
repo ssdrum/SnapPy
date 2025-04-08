@@ -36,7 +36,7 @@ interface BlocksContextType {
   changeVariableSelectedOptionAction: (selected: string, id?: string) => void;
   addChildBlockAction: (id: string, targetId: string, prefix: string) => void;
   removeChildBlockAction: (id: string, parentId: string) => void;
-  stackBlockAction: (
+  snapBlockAction: (
     id: string,
     targetId: string,
     position: OuterDropzonePosition
@@ -190,13 +190,13 @@ export default function BlocksProvider({
     });
   };
 
-  const stackBlockAction = (
+  const snapBlockAction = (
     id: string,
     targetId: string,
     position: OuterDropzonePosition
   ) => {
     dispatch({
-      type: CanvasEvent.STACK_BLOCK,
+      type: CanvasEvent.SNAP_BLOCK,
       payload: { id, targetId, position },
     });
   };
@@ -234,7 +234,7 @@ export default function BlocksProvider({
     changeVariableSelectedOptionAction,
     addChildBlockAction,
     removeChildBlockAction,
-    stackBlockAction,
+    snapBlockAction,
     updateBlockAction,
     highlightDropzoneAction,
     clearHighlightedDropzoneAction,

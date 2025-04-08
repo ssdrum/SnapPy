@@ -299,55 +299,99 @@ export default function BlocksReducer(
       };
     }
 
-    case CanvasEvent.STACK_BLOCK: {
+    // TODO: This needs some refactoring
+    case CanvasEvent.SNAP_BLOCK: {
       const { id, targetId, position } = action.payload;
       const targetBlock = validateBlockExists(
         state.canvas,
         targetId,
-        CanvasEvent.STACK_BLOCK
+        CanvasEvent.SNAP_BLOCK
       );
-      const blockToStack = validateBlockExists(
+      const blockToSnap = validateBlockExists(
         state.canvas,
         id,
-        CanvasEvent.STACK_BLOCK
+        CanvasEvent.SNAP_BLOCK
       );
-      if (!targetBlock || !blockToStack) return state;
+      if (!targetBlock || !blockToSnap) return state;
 
       // Copy canvas blocks
       let newCanvas = [...state.canvas];
-
-      // Copy involved blocks
-      let newTargetBlock = { ...targetBlock };
-      let newBlockToStack = { ...blockToStack };
+      const newBlockToSnap = { ...blockToSnap };
+      const newTargetBlock = { ...targetBlock };
 
       if (position === OuterDropzonePosition.Top) {
-        // Stacking above the target block
-        newBlockToStack.nextId = targetBlock.id;
-        newTargetBlock.prevId = blockToStack.id;
+        if (newTargetBlock.prevId && newBlockToSnap.nextId) {
+          const targetPrev = findBlockById(newCanvas, newTargetBlock.prevId);
+          if (!targetPrev) return state;
+          //console.log(targetPrev); // should be 2 OK
 
-        if (targetBlock.prevId) {
-          const newTargetPrev = findBlockById(state.canvas, targetBlock.prevId);
-          if (!newTargetPrev) return state; // TODO: Handle this better
-          newTargetPrev.nextId = blockToStack.id;
-          newBlockToStack.prevId = targetBlock.prevId;
+          targetPrev.nextId = newBlockToSnap.id;
+          newBlockToSnap.prevId = targetPrev.id;
+          updateBlockById(newCanvas, targetPrev.id, targetPrev);
+
+          //console.log(targetPrev.nextId); // should be 'block to snap' OK
+
+          const sequence = getBlocksSequence(newBlockToSnap, newCanvas);
+          const lastBlock = sequence[sequence.length - 1];
+
+          //console.log(lastBlock.id); // should be 6 OK
+
+          lastBlock.nextId = newTargetBlock.id;
+          //console.log(lastBlock.nextId); // should be 3
+          newTargetBlock.prevId = lastBlock.id;
+          newCanvas = updateBlockById(newCanvas, lastBlock.id, lastBlock);
+        } else if (!newBlockToSnap.nextId) {
+          // Snap single block
+          newBlockToSnap.nextId = newTargetBlock.id;
+          newTargetBlock.prevId = newBlockToSnap.id;
+          newBlockToSnap.coords = { ...newTargetBlock.coords };
         } else {
-          newBlockToStack.coords = { ...newTargetBlock.coords }; // Place the new start block where the previous start blockk was
-          newTargetBlock.coords = { x: 0, y: 0 };
+          // Snap sequence of blocks
+          // Find last block in sequence to be snapped
+          const sequence = getBlocksSequence(newBlockToSnap, newCanvas);
+          const lastBlock = sequence[sequence.length - 1];
+
+          // Connect last block with first block of target sequence
+          lastBlock.nextId = newTargetBlock.id;
+          newTargetBlock.prevId = lastBlock.id;
+          newCanvas = updateBlockById(newCanvas, lastBlock.id, lastBlock);
+
+          // Position new first block
+          newBlockToSnap.coords = { ...newTargetBlock.coords };
         }
       } else {
-        // Stacking below the target block
-        newTargetBlock.nextId = blockToStack.id;
-        newBlockToStack.prevId = targetBlock.id;
+        if (newTargetBlock.nextId && !newBlockToSnap.nextId) {
+          newTargetBlock.nextId = newBlockToSnap.id;
+          newBlockToSnap.prevId = newTargetBlock.id;
+          newBlockToSnap.nextId = targetBlock.nextId;
 
-        if (targetBlock.nextId) {
-          const newTargetNext = findBlockById(state.canvas, targetBlock.nextId);
-          if (!newTargetNext) return state; // TODO: Handle this better
-          newTargetNext.prevId = blockToStack.id;
-          newBlockToStack.nextId = targetBlock.nextId;
+          const originalNext = findBlockById(state.canvas, targetBlock.nextId!);
+          if (!originalNext) return state;
+          originalNext.prevId = newBlockToSnap.id;
+
+          newCanvas = updateBlockById(newCanvas, originalNext.id, originalNext);
+        } else if (newTargetBlock.nextId && newBlockToSnap.nextId) {
+          newTargetBlock.nextId = newBlockToSnap.id;
+          newBlockToSnap.prevId = newTargetBlock.id;
+
+          const sequence = getBlocksSequence(newBlockToSnap, newCanvas);
+          const lastBlock = sequence[sequence.length - 1];
+
+          const originalNext = findBlockById(state.canvas, targetBlock.nextId!);
+          if (!originalNext) return state;
+
+          lastBlock.nextId = originalNext.id;
+          newCanvas = updateBlockById(newCanvas, lastBlock.id, lastBlock);
+
+          originalNext.prevId = lastBlock.id;
+          newCanvas = updateBlockById(newCanvas, originalNext.id, originalNext);
+        } else {
+          newTargetBlock.nextId = newBlockToSnap.id;
+          newBlockToSnap.prevId = newTargetBlock.id;
         }
       }
 
-      newCanvas = updateBlockById(newCanvas, blockToStack.id, newBlockToStack);
+      newCanvas = updateBlockById(newCanvas, blockToSnap.id, newBlockToSnap);
       newCanvas = updateBlockById(newCanvas, targetBlock.id, newTargetBlock);
 
       return {

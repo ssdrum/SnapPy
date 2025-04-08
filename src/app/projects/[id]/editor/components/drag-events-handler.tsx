@@ -23,7 +23,7 @@ export default function DragEventsHandler({
     deleteBlockAction,
     //addChildBlockAction,
     //removeChildBlockAction,
-    stackBlockAction,
+    snapBlockAction,
     //breakStackAction,
     state,
   } = useBlocks();
@@ -93,10 +93,10 @@ export default function DragEventsHandler({
     //    return;
     //  }
     //
-    // Handle drop on another block (nesting)
-    if (tokens[0] === 'stack') {
+    // Handle block snaps
+    if (tokens[0] === 'snap') {
       const [_, position, targetId] = tokens;
-      stackBlockAction(
+      snapBlockAction(
         activeId,
         targetId,
         position === 'top'

@@ -4,7 +4,7 @@ import Empty from '../blocks/empty';
 import While from '../blocks/while';
 
 export default function renderBlock(block: Block) {
-  const { id, isWorkbenchBlock, state, children } = block;
+  const { id, prevId, isWorkbenchBlock, state, children } = block;
 
   switch (block.type) {
     case BlockType.Variable:
@@ -12,6 +12,7 @@ export default function renderBlock(block: Block) {
         <Variable
           key={id}
           id={id}
+          hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.Variable}
           blockState={state}
@@ -25,6 +26,7 @@ export default function renderBlock(block: Block) {
         <While
           key={id}
           id={id}
+          hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.While}
           blockState={state}
@@ -37,6 +39,7 @@ export default function renderBlock(block: Block) {
         <Empty
           key={block.id}
           id={id}
+          hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.Empty}
           blockState={state}
