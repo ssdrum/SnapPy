@@ -750,43 +750,253 @@ describe('BlocksReducer', () => {
     );
   });
 
-  //test('Snaps block below nested block correctly', () => {
-  //  const action: CanvasAction = {
-  //    type: CanvasEvent.SNAP_BLOCK,
-  //    payload: {
-  //      id: 'block to snap',
-  //      targetId: 'block2',
-  //      position: OuterDropzonePosition.Bottom,
-  //    },
-  //  };
-  //
-  //  const nested: Block = { ...block1, id: 'nested', parentId: 'parent' };
-  //  const parent: WhileBlock = {
-  //    ...block4,
-  //    id: 'parent',
-  //    children: { condition: [], body: [nested] },
-  //  };
-  //  const toNest: Block = { ...block1, id: 'to nest' };
-  //
-  //  const testCanvas = { ...initialCanvas, canvas: [parent, toNest] };
-  //
-  //  const expectedNested: EmptyBlock = { ...nested, nextId: 'to nest' };
-  //  const expectedToNest: EmptyBlock = {
-  //    ...toNest,
-  //    parentId: 'parent',
-  //    prevId: 'nested',
-  //  };
-  //  const expectedParent: WhileBlock = {
-  //    ...parent,
-  //    children: { condition: [], body: [expectedNested, expectedToNest] },
-  //  };
-  //
-  //  const newCanvas = BlocksReducer(testCanvas, action);
-  //  //console.log(newCanvas.canvas);
-  //
-  //  // Add assertions
-  //  expect(findBlockById(newCanvas.canvas, 'parent')!).toEqual(expectedParent);
-  //  expect(findBlockById(newCanvas.canvas, 'nested')!).toEqual(expectedNested);
-  //  expect(findBlockById(newCanvas.canvas, 'to nest')!).toEqual(expectedToNest);
-  //});
+  describe('Snaps to nested block(s)', () => {
+    // Setup:
+    // 1. An empty while block
+    // 2. Sequence a -> b -> c
+    // 3. Sequence d -> e -> f
+    // 4. A single block 'single'
+    const parent: WhileBlock = {
+      id: 'parent',
+      type: BlockType.While,
+      state: BlockState.Idle,
+      coords: { x: 0, y: 0 },
+      isWorkbenchBlock: false,
+      parentId: null,
+      prevId: null,
+      nextId: null,
+      children: {
+        condition: [],
+        body: [],
+      },
+    };
+
+    //const blockA: EmptyBlock = {
+    //  id: 'a',
+    //  type: BlockType.Empty,
+    //  state: BlockState.Idle,
+    //  coords: { x: 0, y: 0 },
+    //  isWorkbenchBlock: false,
+    //  parentId: null,
+    //  prevId: null,
+    //  nextId: 'b',
+    //  children: null,
+    //};
+    //const blockB: EmptyBlock = {
+    //  id: 'b',
+    //  type: BlockType.Empty,
+    //  state: BlockState.Idle,
+    //  coords: { x: 0, y: 0 },
+    //  isWorkbenchBlock: false,
+    //  parentId: null,
+    //  prevId: 'a',
+    //  nextId: 'c',
+    //  children: null,
+    //};
+    //const blockC: EmptyBlock = {
+    //  id: 'c',
+    //  type: BlockType.Empty,
+    //  state: BlockState.Idle,
+    //  coords: { x: 0, y: 0 },
+    //  isWorkbenchBlock: false,
+    //  parentId: null,
+    //  prevId: 'b',
+    //  nextId: null,
+    //  children: null,
+    //};
+    //
+    //const blockD: EmptyBlock = {
+    //  id: 'd',
+    //  type: BlockType.Empty,
+    //  state: BlockState.Idle,
+    //  coords: { x: 0, y: 0 },
+    //  isWorkbenchBlock: false,
+    //  parentId: null,
+    //  prevId: null,
+    //  nextId: 'e',
+    //  children: null,
+    //};
+    //const blockE: EmptyBlock = {
+    //  id: 'e',
+    //  type: BlockType.Empty,
+    //  state: BlockState.Idle,
+    //  coords: { x: 0, y: 0 },
+    //  isWorkbenchBlock: false,
+    //  parentId: null,
+    //  prevId: 'd',
+    //  nextId: 'f',
+    //  children: null,
+    //};
+    //const blockF: EmptyBlock = {
+    //  id: 'f',
+    //  type: BlockType.Empty,
+    //  state: BlockState.Idle,
+    //  coords: { x: 0, y: 0 },
+    //  isWorkbenchBlock: false,
+    //  parentId: null,
+    //  prevId: 'e',
+    //  nextId: null,
+    //  children: null,
+    //};
+
+    const singleBlock: EmptyBlock = {
+      id: 'single',
+      type: BlockType.Empty,
+      state: BlockState.Idle,
+      coords: { x: 0, y: 0 },
+      isWorkbenchBlock: false,
+      parentId: null,
+      prevId: null,
+      nextId: null,
+      children: null,
+    };
+
+    test('Snaps single block above nested single block correctly', () => {
+      // Setup canvas
+      const testTarget: EmptyBlock = {
+        ...singleBlock,
+        id: 'target',
+        parentId: 'parent',
+      };
+      const testBlockToSnap: EmptyBlock = {
+        ...singleBlock,
+        id: 'block to snap',
+      };
+      const testParent: WhileBlock = {
+        ...parent,
+        children: {
+          condition: [],
+          body: [{ ...testTarget }],
+        },
+      };
+
+      const testCanvas: CanvasState = {
+        ...initialCanvas,
+        canvas: [testParent, testBlockToSnap],
+      };
+
+      // Setup action
+      const action: CanvasAction = {
+        type: CanvasEvent.SNAP_BLOCK,
+        payload: {
+          id: 'block to snap',
+          targetId: 'target',
+          position: OuterDropzonePosition.Top,
+        },
+      };
+
+      // Apply reducer
+      const newCanvas = BlocksReducer(testCanvas, action);
+
+      // Assertions
+      const expectedTarget: EmptyBlock = {
+        ...testTarget,
+        prevId: 'block to snap',
+      };
+      const expectedBlockToSnap: EmptyBlock = {
+        ...testBlockToSnap,
+        parentId: 'parent',
+        nextId: 'target',
+      };
+      const expectedParent: WhileBlock = {
+        ...testParent,
+        children: {
+          condition: [],
+          body: [{ ...expectedTarget }, { ...expectedBlockToSnap }],
+        },
+      };
+
+      expect(findBlockById('parent', newCanvas.canvas)).toEqual(expectedParent);
+      expect(findBlockById('target', newCanvas.canvas)).toEqual(expectedTarget);
+      expect(findBlockById('block to snap', newCanvas.canvas)).toEqual(
+        expectedBlockToSnap
+      );
+    });
+
+    //test('Snaps single block above nested block correctly', () => {
+    //  const action: CanvasAction = {
+    //    type: CanvasEvent.SNAP_BLOCK,
+    //    payload: {
+    //      id: 'block to snap',
+    //      targetId: 'block2',
+    //      position: OuterDropzonePosition.Bottom,
+    //    },
+    //  };
+    //
+    //  const nested: Block = { ...block1, id: 'nested', parentId: 'parent' };
+    //  const parent: WhileBlock = {
+    //    ...block4,
+    //    id: 'parent',
+    //    children: { condition: [], body: [nested] },
+    //  };
+    //  const toNest: Block = { ...block1, id: 'to nest' };
+    //
+    //  const testCanvas = { ...initialCanvas, canvas: [parent, toNest] };
+    //
+    //  const expectedNested: EmptyBlock = { ...nested, nextId: 'to nest' };
+    //  const expectedToNest: EmptyBlock = {
+    //    ...toNest,
+    //    parentId: 'parent',
+    //    prevId: 'nested',
+    //  };
+    //  const expectedParent: WhileBlock = {
+    //    ...parent,
+    //    children: { condition: [], body: [expectedNested, expectedToNest] },
+    //  };
+    //
+    //  const newCanvas = BlocksReducer(testCanvas, action);
+    //  //console.log(newCanvas.canvas);
+    //
+    //  // Add assertions
+    //  expect(findBlockById('parent', newCanvas.canvas)!).toEqual(
+    //    expectedParent
+    //  );
+    //  expect(findBlockById('nested', newCanvas.canvas)!).toEqual(
+    //    expectedNested
+    //  );
+    //  expect(findBlockById('to nest', newCanvas.canvas)!).toEqual(
+    //    expectedToNest
+    //  );
+    //});
+
+    //test('Snaps single block below nested block correctly', () => {
+    //  const action: CanvasAction = {
+    //    type: CanvasEvent.SNAP_BLOCK,
+    //    payload: {
+    //      id: 'block to snap',
+    //      targetId: 'block2',
+    //      position: OuterDropzonePosition.Bottom,
+    //    },
+    //  };
+    //
+    //  const nested: Block = { ...block1, id: 'nested', parentId: 'parent' };
+    //  const parent: WhileBlock = {
+    //    ...block4,
+    //    id: 'parent',
+    //    children: { condition: [], body: [nested] },
+    //  };
+    //  const toNest: Block = { ...block1, id: 'to nest' };
+    //
+    //  const testCanvas = { ...initialCanvas, canvas: [parent, toNest] };
+    //
+    //  const expectedNested: EmptyBlock = { ...nested, nextId: 'to nest' };
+    //  const expectedToNest: EmptyBlock = {
+    //    ...toNest,
+    //    parentId: 'parent',
+    //    prevId: 'nested',
+    //  };
+    //  const expectedParent: WhileBlock = {
+    //    ...parent,
+    //    children: { condition: [], body: [expectedNested, expectedToNest] },
+    //  };
+    //
+    //  const newCanvas = BlocksReducer(testCanvas, action);
+    //  //console.log(newCanvas.canvas);
+    //
+    //  // Add assertions
+    //  expect(findBlockById('parent', newCanvas.canvas)!).toEqual(expectedParent);
+    //  expect(findBlockById('nested', newCanvas.canvas)!).toEqual(expectedNested);
+    //  expect(findBlockById('to nest', newCanvas.canvas)!).toEqual(expectedToNest);
+    //});
+  });
 });
