@@ -1,9 +1,4 @@
-import {
-  DragEndEvent,
-  //DragOverEvent,
-  DragStartEvent,
-  useDndMonitor,
-} from '@dnd-kit/core';
+import { DragEndEvent, DragStartEvent, useDndMonitor } from '@dnd-kit/core';
 import { findBlockById } from '../utils/utils';
 import { useBlocks } from '../contexts/blocks-context';
 import { OuterDropzonePosition } from '../blocks/types';
@@ -21,8 +16,8 @@ export default function DragEventsHandler({
     deselectBlockAction,
     createBlockAction,
     deleteBlockAction,
-    //addChildBlockAction,
-    //removeChildBlockAction,
+    addChildBlockAction,
+    removeChildBlockAction,
     snapBlockAction,
     unsnapBlockAction,
     state,
@@ -44,12 +39,12 @@ export default function DragEventsHandler({
     // For existing canvas blocks:
     const draggedBlock = findBlockById(state.canvas, id);
     if (!draggedBlock) return;
-    //
-    //// If dragging a nested block, remove child block from parent
-    //if (draggedBlock.parentId) {
-    //  removeChildBlockAction(id, draggedBlock.parentId);
-    //}
-    //
+
+    // If dragging a nested block, remove child block from parent
+    if (draggedBlock.parentId) {
+      removeChildBlockAction(id, draggedBlock.parentId);
+    }
+
     // If dragging a block with a prev block, unsnap
     if (draggedBlock.prevId) {
       unsnapBlockAction(id);
@@ -76,23 +71,22 @@ export default function DragEventsHandler({
       return;
     }
 
-    //  // Handle drop on another block (nesting)
-    //  const [prefix, targetBlockId] = overId.split('_');
-    //  if (
-    //    prefix === 'expression' ||
-    //    prefix === 'condition' ||
-    //    prefix === 'body'
-    //  ) {
-    //    // Prevent dropping onto itself
-    //    if (activeId === targetBlockId) {
-    //      endDragAction();
-    //      return;
-    //    }
-    //
-    //    addChildBlockAction(activeId, targetBlockId, prefix);
-    //    return;
-    //  }
-    //
+    // Handle drop on another block (nesting)
+    const [prefix, targetBlockId] = overId.split('_');
+    if (
+      prefix === 'expression' ||
+      prefix === 'condition' ||
+      prefix === 'body'
+    ) {
+      // Prevent dropping onto itself
+      if (activeId === targetBlockId) {
+        return;
+      }
+
+      addChildBlockAction(activeId, targetBlockId, prefix);
+      return;
+    }
+
     // Handle block snaps
     if (tokens[0] === 'snap') {
       const [_, position, targetId] = tokens;
@@ -110,26 +104,6 @@ export default function DragEventsHandler({
     deleteBlockAction(activeId);
   };
 
-  //const handleDragOver = (e: DragOverEvent) => {
-  //  const { over } = e;
-  //  if (!over) return;
-  //
-  //  // If we're dragging over an element with ID that starts with "drop", highlight the drop zone
-  //  const id = over.id.toString();
-  //  const [prefix, _] = id.split('_');
-  //  if (
-  //    prefix === 'expression' ||
-  //    prefix === 'condition' ||
-  //    prefix === 'body'
-  //  ) {
-  //    highlightDropzoneAction(id);
-  //  }
-  //
-  //  if (state.highlightedDropZoneId) {
-  //    clearHighlightedDropzoneAction();
-  //  }
-  //};
-
   useDndMonitor({
     onDragStart(e) {
       handleDragStart(e);
@@ -137,9 +111,6 @@ export default function DragEventsHandler({
     onDragEnd(e) {
       handleDragEnd(e);
     },
-    //onDragOver(e) {
-    //  //handleDragOver(e);
-    //},
   });
 
   return <>{children}</>;

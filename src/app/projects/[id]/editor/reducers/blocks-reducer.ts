@@ -8,12 +8,10 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import {
   findBlockById,
-  findRoot,
   getBlocksSequence,
   getConnectedBlockIds,
   removeBlocks,
   updateBlockById,
-  updateSequencePositions,
   validateBlockExists,
 } from '../utils/utils';
 import { CanvasAction, CanvasEvent } from '../blocks/canvas-api';
@@ -237,12 +235,6 @@ export default function BlocksReducer(
       // Update canvas
       newCanvas = updateBlockById(newCanvas, targetId, newTargetBlock);
 
-      // Update positions of following blocks
-      const rootBlock = findRoot(newCanvas, newTargetBlock);
-      if (rootBlock.nextId) {
-        newCanvas = updateSequencePositions(newCanvas, rootBlock);
-      }
-
       return {
         ...state,
         canvas: newCanvas,
@@ -285,12 +277,6 @@ export default function BlocksReducer(
 
       // Add sequence back to the top level of the canvas
       newCanvas = [...newCanvas, ...sequenceToUnnest];
-
-      // Update positions of following blocks in the sequence if parent is part of a sequence
-      const root = findRoot(newCanvas, newParent);
-      if (root.nextId) {
-        newCanvas = updateSequencePositions(newCanvas, root);
-      }
 
       return {
         ...state,

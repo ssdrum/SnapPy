@@ -1,7 +1,5 @@
 import { Coordinates } from '@dnd-kit/utilities';
 
-export const BLOCK_HEIGHT = 34.8;
-
 export enum BlockType {
   Empty = 'empty',
   Variable = 'variable',

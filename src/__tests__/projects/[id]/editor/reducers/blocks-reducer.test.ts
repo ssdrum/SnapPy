@@ -842,4 +842,44 @@ describe('BlocksReducer', () => {
       expectedSequenceBlock3
     );
   });
+
+  //test('Snaps block below nested block correctly', () => {
+  //  const action: CanvasAction = {
+  //    type: CanvasEvent.SNAP_BLOCK,
+  //    payload: {
+  //      id: 'block to snap',
+  //      targetId: 'block2',
+  //      position: OuterDropzonePosition.Bottom,
+  //    },
+  //  };
+  //
+  //  const nested: Block = { ...block1, id: 'nested', parentId: 'parent' };
+  //  const parent: WhileBlock = {
+  //    ...block4,
+  //    id: 'parent',
+  //    children: { condition: [], body: [nested] },
+  //  };
+  //  const toNest: Block = { ...block1, id: 'to nest' };
+  //
+  //  const testCanvas = { ...initialCanvas, canvas: [parent, toNest] };
+  //
+  //  const expectedNested: EmptyBlock = { ...nested, nextId: 'to nest' };
+  //  const expectedToNest: EmptyBlock = {
+  //    ...toNest,
+  //    parentId: 'parent',
+  //    prevId: 'nested',
+  //  };
+  //  const expectedParent: WhileBlock = {
+  //    ...parent,
+  //    children: { condition: [], body: [expectedNested, expectedToNest] },
+  //  };
+  //
+  //  const newCanvas = BlocksReducer(testCanvas, action);
+  //  //console.log(newCanvas.canvas);
+  //
+  //  // Add assertions
+  //  expect(findBlockById(newCanvas.canvas, 'parent')!).toEqual(expectedParent);
+  //  expect(findBlockById(newCanvas.canvas, 'nested')!).toEqual(expectedNested);
+  //  expect(findBlockById(newCanvas.canvas, 'to nest')!).toEqual(expectedToNest);
+  //});
 });

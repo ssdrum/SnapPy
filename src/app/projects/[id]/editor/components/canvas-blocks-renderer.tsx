@@ -43,7 +43,7 @@ function SequenceWrapper({ sequence }: SequenceWrapperProps) {
 
   const style: React.CSSProperties = {
     transform: CSS.Translate.toString(transform),
-    position: 'absolute',
+    position: startBlock.parentId ? 'static' : 'absolute', // Use position static if nested, otherwise position absolutely
     top: coords.y,
     left: coords.x,
     zIndex: state.draggedGroupBlockIds?.has(id) ? 10 : 1,
