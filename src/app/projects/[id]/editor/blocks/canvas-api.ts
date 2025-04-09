@@ -7,7 +7,6 @@ export enum CanvasEvent {
   DESELECT_BLOCK = 'deselect block',
   START_DRAG = 'start drag',
   END_DRAG = 'end drag',
-  BREAK_STACK = 'break stack',
   CREATE_BLOCK = 'create block',
   DELETE_BLOCK = 'delete block',
   CREATE_VARIABLE = 'create variable',
@@ -15,6 +14,7 @@ export enum CanvasEvent {
   ADD_CHILD_BLOCK = 'add child block',
   REMOVE_CHILD_BLOCK = 'remove child block',
   SNAP_BLOCK = 'snap block',
+  UNSNAP_BLOCK = 'unsnap block',
   UPDATE_BLOCK = 'update block',
   HIGHLIGHT_DROPZONE = 'highlight dropzone',
   CLEAR_HIGHLIGHTED_DROPZONE = 'clear highlighted dropzone',
@@ -63,8 +63,8 @@ interface SnapBlock {
   type: CanvasEvent.SNAP_BLOCK;
   payload: { id: string; targetId: string; position: OuterDropzonePosition };
 }
-interface BreakStack {
-  type: CanvasEvent.BREAK_STACK;
+interface UnsnapBlock {
+  type: CanvasEvent.UNSNAP_BLOCK;
   payload: { id: string };
 }
 interface UpdateBlock {
@@ -91,7 +91,7 @@ export type CanvasAction =
   | AddChildBlock
   | RemoveChildBlock
   | SnapBlock
-  | BreakStack
+  | UnsnapBlock
   | UpdateBlock
   | HighlightDropzone
   | ClearHighlightedDropzone;

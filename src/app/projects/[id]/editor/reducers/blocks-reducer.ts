@@ -400,12 +400,12 @@ export default function BlocksReducer(
       };
     }
 
-    case CanvasEvent.BREAK_STACK: {
+    case CanvasEvent.UNSNAP_BLOCK: {
       const { id } = action.payload;
       const block = validateBlockExists(
         state.canvas,
         id,
-        CanvasEvent.BREAK_STACK
+        CanvasEvent.UNSNAP_BLOCK
       );
       if (!block) return state;
 
@@ -415,7 +415,7 @@ export default function BlocksReducer(
       const prevBlock = validateBlockExists(
         state.canvas,
         prevId,
-        CanvasEvent.BREAK_STACK
+        CanvasEvent.UNSNAP_BLOCK
       );
       if (!prevBlock) return state;
 

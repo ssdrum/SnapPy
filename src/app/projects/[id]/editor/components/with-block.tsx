@@ -8,6 +8,7 @@ import {
 import classes from '../blocks/blocks.module.css';
 import { useBlocks } from '../contexts/blocks-context';
 import OuterDropZone from './outer-drop-zone';
+import { useDraggable } from '@dnd-kit/core';
 
 // Base props that for all blocks
 export interface WithBlockProps {
@@ -52,8 +53,17 @@ export default function withBlock<T extends object>(
       }
     };
 
+    const { attributes, listeners, setNodeRef } = useDraggable({
+      id: id,
+    });
+
     return (
-      <div style={{ position: 'relative' }}>
+      <div
+        ref={setNodeRef}
+        {...attributes}
+        {...listeners}
+        style={{ position: 'relative' }}
+      >
         {!isWorkbenchBlock &&
           !state.draggedGroupBlockIds?.has(id) &&
           !hasPrev && (

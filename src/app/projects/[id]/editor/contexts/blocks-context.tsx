@@ -41,7 +41,7 @@ interface BlocksContextType {
     targetId: string,
     position: OuterDropzonePosition
   ) => void;
-  breakStackAction: (id: string) => void;
+  unsnapBlockAction: (id: string) => void;
   updateBlockAction: (id: string, updates: Partial<Block>) => void;
   highlightDropzoneAction: (id: string) => void;
   clearHighlightedDropzoneAction: () => void;
@@ -145,9 +145,9 @@ export default function BlocksProvider({
     return true;
   };
 
-  const breakStackAction = (id: string) => {
+  const unsnapBlockAction = (id: string) => {
     dispatch({
-      type: CanvasEvent.BREAK_STACK,
+      type: CanvasEvent.UNSNAP_BLOCK,
       payload: { id },
     });
   };
@@ -228,13 +228,13 @@ export default function BlocksProvider({
     startDragAction,
     endDragAction,
     createBlockAction,
-    breakStackAction,
     deleteBlockAction,
     createVariableAction,
     changeVariableSelectedOptionAction,
     addChildBlockAction,
     removeChildBlockAction,
     snapBlockAction,
+    unsnapBlockAction,
     updateBlockAction,
     highlightDropzoneAction,
     clearHighlightedDropzoneAction,

@@ -24,7 +24,7 @@ export default function DragEventsHandler({
     //addChildBlockAction,
     //removeChildBlockAction,
     snapBlockAction,
-    //breakStackAction,
+    unsnapBlockAction,
     state,
   } = useBlocks();
 
@@ -50,11 +50,11 @@ export default function DragEventsHandler({
     //  removeChildBlockAction(id, draggedBlock.parentId);
     //}
     //
-    //// If dragging a block with a prev block, unsnap
-    //if (draggedBlock.prevId) {
-    //  breakStackAction(id);
-    //}
-    //
+    // If dragging a block with a prev block, unsnap
+    if (draggedBlock.prevId) {
+      unsnapBlockAction(id);
+    }
+
     startDragAction(id);
   };
 
