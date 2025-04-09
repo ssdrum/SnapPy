@@ -28,7 +28,7 @@ export default function DragEventsHandler({
     deselectBlockAction();
 
     const id = e.active.id.toString();
-    const isWorkbenchBlock = findBlockById(state.workbench, id) !== null;
+    const isWorkbenchBlock = findBlockById(id, state.workbench) !== null;
 
     // If dragging a block from the workbench, create and drag
     if (isWorkbenchBlock) {
@@ -37,7 +37,7 @@ export default function DragEventsHandler({
     }
 
     // For existing canvas blocks:
-    const draggedBlock = findBlockById(state.canvas, id);
+    const draggedBlock = findBlockById(id, state.canvas);
     if (!draggedBlock) return;
 
     // If dragging a nested block, remove child block from parent

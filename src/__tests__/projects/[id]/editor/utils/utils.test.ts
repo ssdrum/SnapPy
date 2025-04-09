@@ -175,31 +175,31 @@ const nestedCanvas: Block[] = [
 ];
 
 describe('findBlockById', () => {
-  test('Returns null for empty forest', () => {
-    const emptyForest: Block[] = [];
-    expect(findBlockById(emptyForest, 'id')).toBeNull();
+  test('Returns null for empty canvas', () => {
+    const emptyCanvas: Block[] = [];
+    expect(findBlockById('id', emptyCanvas)).toBeNull();
   });
 
   test('Finds non-nested block', () => {
     // Test finding the second block by ID
-    const foundBlock = findBlockById(flatCanvas, 'block2');
+    const foundBlock = findBlockById('block2', flatCanvas);
     expect(foundBlock).not.toBeNull();
     expect(foundBlock).toMatchObject({
       id: 'block2',
     });
 
-    expect(findBlockById(flatCanvas, 'nonexistentId')).toBeNull();
+    expect(findBlockById('nonexistentId', flatCanvas)).toBeNull();
   });
 
   test('Finds nested blocks', () => {
     // Test finding a deeply nested block in the while block
-    const foundDeepBlock = findBlockById(nestedCanvas, 'target-block-deep');
+    const foundDeepBlock = findBlockById('target-block-deep', nestedCanvas);
     expect(foundDeepBlock).not.toBeNull();
     expect(foundDeepBlock).toMatchObject({
       id: 'target-block-deep',
     });
 
-    const foundBlock = findBlockById(nestedCanvas, 'target-block1');
+    const foundBlock = findBlockById('target-block1', nestedCanvas);
     expect(foundBlock).not.toBeNull();
     expect(foundBlock).toMatchObject({
       id: 'target-block1',
@@ -217,7 +217,7 @@ describe('updateBlockbyId', () => {
     let testCanvas = [...flatCanvas];
     const updatedBlock = { ...block1, state: BlockState.Selected };
     testCanvas = updateBlockById(testCanvas, 'block1', updatedBlock);
-    expect(findBlockById(testCanvas, 'block1')!.state).toBe(
+    expect(findBlockById('block1', testCanvas)!.state).toBe(
       BlockState.Selected
     );
   });
@@ -230,7 +230,7 @@ describe('updateBlockbyId', () => {
       state: BlockState.Selected,
     };
     testCanvas = updateBlockById(testCanvas, 'target-block-deep', updatedBlock);
-    expect(findBlockById(testCanvas, 'target-block-deep')!.state).toBe(
+    expect(findBlockById('target-block-deep', testCanvas)!.state).toBe(
       BlockState.Selected
     );
   });
@@ -244,25 +244,25 @@ describe('updateBlockbyId', () => {
     test('Removes non-nested block correctly', () => {
       let testCanvas = [...flatCanvas];
       testCanvas = removeBlockById(testCanvas, 'block1');
-      expect(findBlockById(testCanvas, 'block1')).toBeNull();
+      expect(findBlockById('block1', testCanvas)).toBeNull();
     });
 
     test('Removes nested block correctly', () => {
       let testCanvas = [...nestedCanvas];
       testCanvas = removeBlockById(testCanvas, 'target-block-deep');
-      expect(findBlockById(testCanvas, 'target-block-deep')).toBeNull();
+      expect(findBlockById('target-block-deep', testCanvas)).toBeNull();
     });
   });
 
   describe('findRoot', () => {
     test('Returns self for block with no parent', () => {
-      const testBlock = findBlockById(nestedCanvas, 'block1')!;
+      const testBlock = findBlockById('block1', nestedCanvas)!;
       expect(findRoot(nestedCanvas, testBlock)).toEqual(testBlock);
     });
 
     test('Finds parent of deeply nested block correctly', () => {
-      const parentBlock = findBlockById(nestedCanvas, 'block1')!;
-      const testBlock = findBlockById(nestedCanvas, 'target-block-deep')!;
+      const parentBlock = findBlockById('block1', nestedCanvas)!;
+      const testBlock = findBlockById('target-block-deep', nestedCanvas)!;
       expect(findRoot(nestedCanvas, testBlock)).toEqual(parentBlock);
     });
   });

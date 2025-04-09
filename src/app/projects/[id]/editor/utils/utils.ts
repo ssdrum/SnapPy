@@ -5,7 +5,7 @@ import { Block, BlockType } from '../blocks/types';
  * if found. Returns null if not found.
  * Note: A canvas is a set of disjoint trees.
  */
-export function findBlockById(canvas: Block[], id: string): Block | null {
+export function findBlockById(id: string, canvas: Block[]): Block | null {
   for (const block of canvas) {
     if (block.id === id) return block;
 
@@ -16,7 +16,7 @@ export function findBlockById(canvas: Block[], id: string): Block | null {
     const entries = Object.entries(block.children);
     for (const [_, children] of entries) {
       if (children.length > 0) {
-        const found = findBlockById(children, id);
+        const found = findBlockById(id, children);
         if (found) return found;
       }
     }
@@ -111,7 +111,7 @@ export function validateBlockExists(
     return null;
   }
 
-  const block = findBlockById(blocks, id);
+  const block = findBlockById(id, blocks);
   if (!block) {
     console.error(
       `Error in action: ${actionName}. Block with id = ${id} not found`
@@ -126,7 +126,7 @@ export function validateBlockExists(
 export function findRoot(canvas: Block[], currBlock: Block) {
   if (!currBlock.parentId) return currBlock;
 
-  const parentBlock = findBlockById(canvas, currBlock.parentId);
+  const parentBlock = findBlockById(currBlock.parentId, canvas);
   if (!parentBlock) {
     console.error(
       `Error in findRoot: parent block with id = ${currBlock.parentId} not found in canvas`
@@ -145,7 +145,7 @@ export function findRoot(canvas: Block[], currBlock: Block) {
 export function getConnectedBlockIds(canvas: Block[], id: string): Set<string> {
   const idSet = new Set<string>();
 
-  const block = findBlockById(canvas, id);
+  const block = findBlockById(id, canvas);
   if (!block) return idSet;
 
   // Find the root of the tree containing the block
@@ -200,7 +200,7 @@ function traverseSequence(
   // Traverse forward through nextId chain
   let currBlock = startBlock;
   while (currBlock && currBlock.nextId) {
-    const nextBlock = findBlockById(canvas, currBlock.nextId);
+    const nextBlock = findBlockById(currBlock.nextId, canvas);
     if (!nextBlock || idSet.has(nextBlock.id)) break;
 
     // Add the next block and all its children
@@ -272,7 +272,7 @@ export function getBlocksSequence(startBlock: Block, canvas: Block[]) {
 
   let nextId = startBlock.nextId;
   while (nextId) {
-    let curr = findBlockById(canvas, nextId);
+    let curr = findBlockById(nextId, canvas);
     if (!curr) break;
 
     sequence.push({ ...curr });

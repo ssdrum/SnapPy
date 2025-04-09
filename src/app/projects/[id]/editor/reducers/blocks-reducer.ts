@@ -272,7 +272,7 @@ export default function BlocksReducer(
       // Remove blocks in sequence from canvas
       newCanvas = removeBlocks(newCanvas, sequenceToUnnest);
 
-      const newParent = findBlockById(newCanvas, parentId);
+      const newParent = findBlockById(parentId, newCanvas);
       if (!newParent) return state;
 
       // Add sequence back to the top level of the canvas
@@ -307,7 +307,7 @@ export default function BlocksReducer(
 
       if (position === OuterDropzonePosition.Top) {
         if (newTargetBlock.prevId && newBlockToSnap.nextId) {
-          const targetPrev = findBlockById(newCanvas, newTargetBlock.prevId);
+          const targetPrev = findBlockById(newTargetBlock.prevId, newCanvas);
           if (!targetPrev) return state;
           //console.log(targetPrev); // should be 2 OK
 
@@ -351,7 +351,7 @@ export default function BlocksReducer(
           newBlockToSnap.prevId = newTargetBlock.id;
           newBlockToSnap.nextId = targetBlock.nextId;
 
-          const originalNext = findBlockById(state.canvas, targetBlock.nextId!);
+          const originalNext = findBlockById(targetBlock.nextId!, state.canvas);
           if (!originalNext) return state;
           originalNext.prevId = newBlockToSnap.id;
 
@@ -363,7 +363,7 @@ export default function BlocksReducer(
           const sequence = getBlocksSequence(newBlockToSnap, newCanvas);
           const lastBlock = sequence[sequence.length - 1];
 
-          const originalNext = findBlockById(state.canvas, targetBlock.nextId!);
+          const originalNext = findBlockById(targetBlock.nextId!, state.canvas);
           if (!originalNext) return state;
 
           lastBlock.nextId = originalNext.id;

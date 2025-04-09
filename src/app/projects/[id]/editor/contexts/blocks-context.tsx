@@ -79,7 +79,7 @@ export default function BlocksProvider({
 
   // ----------------- API to interact with blocks -------------------
   const selectBlockAction = (id: string) => {
-    const selectedBlock = findBlockById(state.canvas, id);
+    const selectedBlock = findBlockById(id, state.canvas);
     if (!selectedBlock) {
       return;
     }

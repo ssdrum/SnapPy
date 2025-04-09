@@ -156,8 +156,8 @@ describe('BlocksReducer', () => {
       },
     });
 
-    const parent = findBlockById(newCanvas.canvas, 'block3')! as VariableBlock;
-    const child = findBlockById(newCanvas.canvas, 'block1')! as EmptyBlock;
+    const parent = findBlockById('block3', newCanvas.canvas)! as VariableBlock;
+    const child = findBlockById('block1', newCanvas.canvas)! as EmptyBlock;
     const expectedChild = {
       ...block1,
       state: BlockState.Nested,
@@ -336,8 +336,8 @@ describe('BlocksReducer', () => {
 
     const testCanvas = { ...initialCanvas };
     const newCanvas = BlocksReducer(testCanvas, action);
-    const newBlock1 = findBlockById(newCanvas.canvas, 'block1')!;
-    const newBlock2 = findBlockById(newCanvas.canvas, 'block2')!;
+    const newBlock1 = findBlockById('block1', newCanvas.canvas)!;
+    const newBlock2 = findBlockById('block2', newCanvas.canvas)!;
 
     const expectedBlock1 = {
       ...block1,
@@ -365,8 +365,8 @@ describe('BlocksReducer', () => {
 
     const testCanvas = { ...initialCanvas };
     const newCanvas = BlocksReducer(testCanvas, action);
-    const newBlock1 = findBlockById(newCanvas.canvas, 'block1')!;
-    const newBlock2 = findBlockById(newCanvas.canvas, 'block2')!;
+    const newBlock1 = findBlockById('block1', newCanvas.canvas)!;
+    const newBlock2 = findBlockById('block2', newCanvas.canvas)!;
 
     const expectedBlock1 = {
       ...block1,
@@ -426,10 +426,10 @@ describe('BlocksReducer', () => {
     };
 
     const newCanvas = BlocksReducer(testCanvas, action);
-    const newSequenceBlock1 = findBlockById(newCanvas.canvas, 'block1')!;
-    const newSequenceBlock2 = findBlockById(newCanvas.canvas, 'block2')!;
-    const newSequenceBlock3 = findBlockById(newCanvas.canvas, 'block3')!;
-    const newBlockToSnap = findBlockById(newCanvas.canvas, 'block to snap')!;
+    const newSequenceBlock1 = findBlockById('block1', newCanvas.canvas)!;
+    const newSequenceBlock2 = findBlockById('block2', newCanvas.canvas)!;
+    const newSequenceBlock3 = findBlockById('block3', newCanvas.canvas)!;
+    const newBlockToSnap = findBlockById('block to snap', newCanvas.canvas)!;
 
     expect(newBlockToSnap).toEqual(expectedBlockToSnap);
     expect(newSequenceBlock1).toEqual(expectedSequenceBlock1);
@@ -481,10 +481,10 @@ describe('BlocksReducer', () => {
     };
 
     const newCanvas = BlocksReducer(testCanvas, action);
-    const newSequenceBlock1 = findBlockById(newCanvas.canvas, 'block1')!;
-    const newSequenceBlock2 = findBlockById(newCanvas.canvas, 'block2')!;
-    const newSequenceBlock3 = findBlockById(newCanvas.canvas, 'block3')!;
-    const newBlockToSnap = findBlockById(newCanvas.canvas, 'block to snap')!;
+    const newSequenceBlock1 = findBlockById('block1', newCanvas.canvas)!;
+    const newSequenceBlock2 = findBlockById('block2', newCanvas.canvas)!;
+    const newSequenceBlock3 = findBlockById('block3', newCanvas.canvas)!;
+    const newBlockToSnap = findBlockById('block to snap', newCanvas.canvas)!;
 
     expect(newBlockToSnap).toEqual(expectedBlockToSnap);
     expect(newSequenceBlock1).toEqual(expectedSequenceBlock1);
@@ -567,13 +567,13 @@ describe('BlocksReducer', () => {
     const newCanvas = BlocksReducer(testCanvas, action);
 
     // Add assertions
-    expect(findBlockById(newCanvas.canvas, 'block to snap')!).toEqual(
+    expect(findBlockById('block to snap', newCanvas.canvas)!).toEqual(
       expectedBlockToSnap
     );
-    expect(findBlockById(newCanvas.canvas, 'block6')!).toEqual(
+    expect(findBlockById('block6', newCanvas.canvas)!).toEqual(
       expectedSequenceBlock6
     );
-    expect(findBlockById(newCanvas.canvas, 'block1')!).toEqual(
+    expect(findBlockById('block1', newCanvas.canvas)!).toEqual(
       expectedSequenceBlock1
     );
   });
@@ -649,10 +649,10 @@ describe('BlocksReducer', () => {
     const newCanvas = BlocksReducer(testCanvas, action);
 
     // Add assertions
-    expect(findBlockById(newCanvas.canvas, 'block3')!).toEqual(
+    expect(findBlockById('block3', newCanvas.canvas)!).toEqual(
       expectedSequenceBlock3
     );
-    expect(findBlockById(newCanvas.canvas, 'block to snap')!).toEqual(
+    expect(findBlockById('block to snap', newCanvas.canvas)!).toEqual(
       expectedBlockToSnap
     );
   });
@@ -736,16 +736,16 @@ describe('BlocksReducer', () => {
     const newCanvas = BlocksReducer(testCanvas, action);
 
     // Add assertions
-    expect(findBlockById(newCanvas.canvas, 'block2')!).toEqual(
+    expect(findBlockById('block2', newCanvas.canvas)!).toEqual(
       expectedSequenceBlock2
     );
-    expect(findBlockById(newCanvas.canvas, 'block to snap')!).toEqual(
+    expect(findBlockById('block to snap', newCanvas.canvas)!).toEqual(
       expectedBlockToSnap
     );
-    expect(findBlockById(newCanvas.canvas, 'block6')!).toEqual(
+    expect(findBlockById('block6', newCanvas.canvas)!).toEqual(
       expectedSequenceBlock6
     );
-    expect(findBlockById(newCanvas.canvas, 'block3')!).toEqual(
+    expect(findBlockById('block3', newCanvas.canvas)!).toEqual(
       expectedSequenceBlock3
     );
   });
@@ -829,16 +829,16 @@ describe('BlocksReducer', () => {
     const newCanvas = BlocksReducer(testCanvas, action);
 
     // Add assertions
-    expect(findBlockById(newCanvas.canvas, 'block2')!).toEqual(
+    expect(findBlockById('block2', newCanvas.canvas)!).toEqual(
       expectedSequenceBlock2
     );
-    expect(findBlockById(newCanvas.canvas, 'block to snap')!).toEqual(
+    expect(findBlockById('block to snap', newCanvas.canvas)!).toEqual(
       expectedBlockToSnap
     );
-    expect(findBlockById(newCanvas.canvas, 'block6')!).toEqual(
+    expect(findBlockById('block6', newCanvas.canvas)!).toEqual(
       expectedSequenceBlock6
     );
-    expect(findBlockById(newCanvas.canvas, 'block3')!).toEqual(
+    expect(findBlockById('block3', newCanvas.canvas)!).toEqual(
       expectedSequenceBlock3
     );
   });
