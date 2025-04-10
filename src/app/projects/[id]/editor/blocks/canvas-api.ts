@@ -78,6 +78,13 @@ interface HighlightDropzone {
 interface ClearHighlightedDropzone {
   type: CanvasEvent.CLEAR_HIGHLIGHTED_DROPZONE;
 }
+interface HighlightDropzone {
+  type: CanvasEvent.HIGHLIGHT_DROPZONE;
+  payload: { id: string };
+}
+interface ClearHighlightedDropzone {
+  type: CanvasEvent.CLEAR_HIGHLIGHTED_DROPZONE;
+}
 
 export type CanvasAction =
   | SelectBlock
@@ -93,5 +100,7 @@ export type CanvasAction =
   | SnapBlock
   | UnsnapBlock
   | UpdateBlock
+  | HighlightDropzone
+  | ClearHighlightedDropzone
   | HighlightDropzone
   | ClearHighlightedDropzone;

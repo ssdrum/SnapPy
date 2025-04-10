@@ -1,4 +1,9 @@
-import { DragEndEvent, DragStartEvent, useDndMonitor } from '@dnd-kit/core';
+import {
+  DragEndEvent,
+  DragOverEvent,
+  DragStartEvent,
+  useDndMonitor,
+} from '@dnd-kit/core';
 import { findBlockById } from '../utils/utils';
 import { useBlocks } from '../contexts/blocks-context';
 import { OuterDropzonePosition } from '../blocks/types';
@@ -20,6 +25,8 @@ export default function DragEventsHandler({
     removeChildBlockAction,
     snapBlockAction,
     unsnapBlockAction,
+    highlightDropzoneAction,
+    clearHighlightedDropzoneAction,
     state,
   } = useBlocks();
 
@@ -104,12 +111,35 @@ export default function DragEventsHandler({
     deleteBlockAction(activeId);
   };
 
+  const handleDragOver = (e: DragOverEvent) => {
+    const { over } = e;
+    if (!over) return;
+
+    // If we're dragging over an element with ID that starts with "drop", highlight the drop zone
+    const id = over.id.toString();
+    const [prefix, _] = id.split('_');
+    if (
+      prefix === 'expression' ||
+      prefix === 'condition' ||
+      prefix === 'body'
+    ) {
+      highlightDropzoneAction(id);
+    }
+
+    if (state.highlightedDropZoneId) {
+      clearHighlightedDropzoneAction();
+    }
+  };
+
   useDndMonitor({
     onDragStart(e) {
       handleDragStart(e);
     },
     onDragEnd(e) {
       handleDragEnd(e);
+    },
+    onDragOver(e) {
+      handleDragOver(e);
     },
   });
 
