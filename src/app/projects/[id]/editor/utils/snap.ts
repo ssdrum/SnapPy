@@ -3,6 +3,7 @@ import {
   findBlockById,
   getBlocksSequence,
   removeBlockById,
+  removeBlocks,
   updateBlockById,
 } from './utils';
 
@@ -206,6 +207,16 @@ function handleNestedSnapTop(
     return canvas;
   }
 
+  if (blockToSnap.nextId) {
+    return handleNestedSnapSequenceTop(
+      blockToSnap,
+      targetBlock,
+      parentBlock,
+      key,
+      canvas
+    );
+  }
+
   // Create new objects to maintain immutability
   const newBlockToSnap = {
     ...blockToSnap,
@@ -292,6 +303,74 @@ function handleNestedSnapBottom(
 
   // Then update the target block
   newCanvas = updateBlockById(newCanvas, targetBlock.id, newTargetBlock);
+
+  return newCanvas;
+}
+
+/**
+ * Snaps a sequence of blocks above a nested block or nested sequence of blocks
+ */
+function handleNestedSnapSequenceTop(
+  blockToSnap: Block,
+  targetBlock: Block,
+  parentBlock: Block,
+  key: string,
+  canvas: Block[]
+) {
+  // Find last block in sequence to be snapped
+  const sequence = getBlocksSequence(blockToSnap, canvas);
+  let lastBlock: Block | undefined;
+  for (const block of sequence) {
+    if (!block.nextId) {
+      lastBlock = block;
+      break;
+    }
+  }
+
+  if (!lastBlock) {
+    console.error(
+      `Error in handleNestedSnapSequenceTop: could not find last block`
+    );
+
+    return canvas;
+  }
+
+  // Remove blocks in sequence to snap from canvas
+  let newCanvas = removeBlocks(sequence, canvas);
+
+  //  Create a new parent block with updated children
+  const newParentBlock = { ...parentBlock };
+
+  // Update target block
+  const newTargetBlock: Block = { ...targetBlock, prevId: lastBlock.id };
+
+  // Deep clone the children
+  const childrenArrays: BlockChildren = { ...newParentBlock.children };
+
+  // Create a new array for the specific key
+  childrenArrays[key] = [...(childrenArrays[key] || [])].filter(
+    (block) => block.id !== targetBlock.id // Remove target block from original array
+  );
+
+  childrenArrays[key].push(newTargetBlock); // Add new target block back in
+
+  // Add the modified blocks to the children array
+  for (const block of sequence) {
+    block.parentId = parentBlock.id; // Add parent id
+
+    // Connect last block with new next
+    if (block.id === lastBlock.id) {
+      block.nextId = targetBlock.id;
+    }
+
+    childrenArrays[key].push(block);
+  }
+
+  // Update the children object
+  (newParentBlock.children as BlockChildren) = childrenArrays;
+
+  // First update the parent block (which now contains our block to snap in its children)
+  newCanvas = updateBlockById(newCanvas, parentBlock.id, newParentBlock);
 
   return newCanvas;
 }

@@ -254,7 +254,7 @@ export function resizeSelect(
 /**
  * Helper function to remove multiple blocks from canvas
  */
-export function removeBlocks(canvas: Block[], blocksToRemove: Block[]) {
+export function removeBlocks(blocksToRemove: Block[], canvas: Block[]) {
   let newCanvas = [...canvas];
 
   for (const block of blocksToRemove) {

@@ -221,7 +221,7 @@ export default function BlocksReducer(
       }
 
       // Remove blocks in sequence from canvas
-      newCanvas = removeBlocks(newCanvas, sequenceToNest);
+      newCanvas = removeBlocks(sequenceToNest, newCanvas);
 
       // Update the target block to include the updated sequence in its children
       const newChildren: BlockChildren = { ...targetBlock.children };
@@ -271,7 +271,7 @@ export default function BlocksReducer(
       }
 
       // Remove blocks in sequence from canvas
-      newCanvas = removeBlocks(newCanvas, sequenceToUnnest);
+      newCanvas = removeBlocks(sequenceToUnnest, newCanvas);
 
       const newParent = findBlockById(parentId, newCanvas);
       if (!newParent) return state;

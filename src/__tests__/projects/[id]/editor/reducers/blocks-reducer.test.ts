@@ -771,73 +771,73 @@ describe('BlocksReducer', () => {
       },
     };
 
-    //const blockA: EmptyBlock = {
-    //  id: 'a',
-    //  type: BlockType.Empty,
-    //  state: BlockState.Idle,
-    //  coords: { x: 0, y: 0 },
-    //  isWorkbenchBlock: false,
-    //  parentId: null,
-    //  prevId: null,
-    //  nextId: 'b',
-    //  children: null,
-    //};
-    //const blockB: EmptyBlock = {
-    //  id: 'b',
-    //  type: BlockType.Empty,
-    //  state: BlockState.Idle,
-    //  coords: { x: 0, y: 0 },
-    //  isWorkbenchBlock: false,
-    //  parentId: null,
-    //  prevId: 'a',
-    //  nextId: 'c',
-    //  children: null,
-    //};
-    //const blockC: EmptyBlock = {
-    //  id: 'c',
-    //  type: BlockType.Empty,
-    //  state: BlockState.Idle,
-    //  coords: { x: 0, y: 0 },
-    //  isWorkbenchBlock: false,
-    //  parentId: null,
-    //  prevId: 'b',
-    //  nextId: null,
-    //  children: null,
-    //};
-    //
-    //const blockD: EmptyBlock = {
-    //  id: 'd',
-    //  type: BlockType.Empty,
-    //  state: BlockState.Idle,
-    //  coords: { x: 0, y: 0 },
-    //  isWorkbenchBlock: false,
-    //  parentId: null,
-    //  prevId: null,
-    //  nextId: 'e',
-    //  children: null,
-    //};
-    //const blockE: EmptyBlock = {
-    //  id: 'e',
-    //  type: BlockType.Empty,
-    //  state: BlockState.Idle,
-    //  coords: { x: 0, y: 0 },
-    //  isWorkbenchBlock: false,
-    //  parentId: null,
-    //  prevId: 'd',
-    //  nextId: 'f',
-    //  children: null,
-    //};
-    //const blockF: EmptyBlock = {
-    //  id: 'f',
-    //  type: BlockType.Empty,
-    //  state: BlockState.Idle,
-    //  coords: { x: 0, y: 0 },
-    //  isWorkbenchBlock: false,
-    //  parentId: null,
-    //  prevId: 'e',
-    //  nextId: null,
-    //  children: null,
-    //};
+    const blockA: EmptyBlock = {
+      id: 'a',
+      type: BlockType.Empty,
+      state: BlockState.Idle,
+      coords: { x: 0, y: 0 },
+      isWorkbenchBlock: false,
+      parentId: null,
+      prevId: null,
+      nextId: 'b',
+      children: null,
+    };
+    const blockB: EmptyBlock = {
+      id: 'b',
+      type: BlockType.Empty,
+      state: BlockState.Idle,
+      coords: { x: 0, y: 0 },
+      isWorkbenchBlock: false,
+      parentId: null,
+      prevId: 'a',
+      nextId: 'c',
+      children: null,
+    };
+    const blockC: EmptyBlock = {
+      id: 'c',
+      type: BlockType.Empty,
+      state: BlockState.Idle,
+      coords: { x: 0, y: 0 },
+      isWorkbenchBlock: false,
+      parentId: null,
+      prevId: 'b',
+      nextId: null,
+      children: null,
+    };
+
+    const blockD: EmptyBlock = {
+      id: 'd',
+      type: BlockType.Empty,
+      state: BlockState.Idle,
+      coords: { x: 0, y: 0 },
+      isWorkbenchBlock: false,
+      parentId: null,
+      prevId: null,
+      nextId: 'e',
+      children: null,
+    };
+    const blockE: EmptyBlock = {
+      id: 'e',
+      type: BlockType.Empty,
+      state: BlockState.Idle,
+      coords: { x: 0, y: 0 },
+      isWorkbenchBlock: false,
+      parentId: null,
+      prevId: 'd',
+      nextId: 'f',
+      children: null,
+    };
+    const blockF: EmptyBlock = {
+      id: 'f',
+      type: BlockType.Empty,
+      state: BlockState.Idle,
+      coords: { x: 0, y: 0 },
+      isWorkbenchBlock: false,
+      parentId: null,
+      prevId: 'e',
+      nextId: null,
+      children: null,
+    };
 
     const singleBlock: EmptyBlock = {
       id: 'single',
@@ -975,6 +975,78 @@ describe('BlocksReducer', () => {
       );
     });
 
-    test('Snaps sequence of blocks above nested sequence of blocks correctly', () => {});
+    test('Snaps sequence of blocks above nested sequence of blocks correctly', () => {
+      // Setup:
+      //      While block with nested sequence A -> B -> C
+      //      Sequence D -> E -> F
+      //      Objective: Snap D above A
+      // Expected result:
+      //      While block with nested sequence D -> E -> F -> A -> B -> C
+
+      // Setup canvas
+      const testBlockA: EmptyBlock = {
+        ...blockA,
+        parentId: 'parent',
+      };
+      const testBlockB: EmptyBlock = {
+        ...blockB,
+        parentId: 'parent',
+      };
+      const testBlockC: EmptyBlock = {
+        ...blockC,
+        parentId: 'parent',
+      };
+      const testParent: WhileBlock = {
+        ...parent,
+        children: {
+          condition: [],
+          body: [{ ...testBlockA }, { ...testBlockB }, { ...testBlockC }],
+        },
+      };
+
+      const testBlockD = { ...blockD };
+      const testBlockE = { ...blockE };
+      const testBlockF = { ...blockF };
+
+      const testCanvas: CanvasState = {
+        ...initialCanvas,
+        canvas: [testParent, testBlockD, testBlockE, testBlockF],
+      };
+
+      // Setup action
+      const action: CanvasAction = {
+        type: CanvasEvent.SNAP_BLOCK,
+        payload: {
+          id: 'd',
+          targetId: 'a',
+          position: OuterDropzonePosition.Top,
+        },
+      };
+
+      // Apply reducer
+      const newCanvas = BlocksReducer(testCanvas, action);
+
+      // Setup expected result
+      const expectedA: EmptyBlock = { ...testBlockA, prevId: 'f' };
+      const expectedB: EmptyBlock = { ...testBlockB };
+      const expectedC: EmptyBlock = { ...testBlockC };
+      const expectedD: EmptyBlock = { ...testBlockD, parentId: 'parent' };
+      const expectedE: EmptyBlock = { ...testBlockE, parentId: 'parent' };
+      const expectedF: EmptyBlock = {
+        ...testBlockF,
+        parentId: 'parent',
+        nextId: 'a',
+      };
+
+      // Assertions
+      expect(findBlockById('a', newCanvas.canvas)).toEqual(expectedA);
+      expect(findBlockById('b', newCanvas.canvas)).toEqual(expectedB);
+      expect(findBlockById('c', newCanvas.canvas)).toEqual(expectedC);
+      expect(findBlockById('d', newCanvas.canvas)).toEqual(expectedD);
+      expect(findBlockById('e', newCanvas.canvas)).toEqual(expectedE);
+      expect(findBlockById('f', newCanvas.canvas)).toEqual(expectedF);
+      expect(newCanvas.canvas.length).toBe(1); // Should only have a single while block in the canvas with the full sequence in it
+      expect((newCanvas.canvas[0] as WhileBlock).children.body.length).toBe(6);
+    });
   });
 });
