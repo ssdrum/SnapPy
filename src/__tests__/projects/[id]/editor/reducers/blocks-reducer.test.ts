@@ -1123,5 +1123,84 @@ describe('BlocksReducer', () => {
       expect(newCanvas.canvas.length).toBe(1);
       expect((newCanvas.canvas[0] as WhileBlock).children.body.length).toBe(6);
     });
+
+    test('Snaps sequence of blocks between nested sequence of blocks correctly', () => {
+      // Setup:
+      //      While block with nested sequence A -> B -> C
+      //      Sequence D -> E -> F
+      //      Objective: Snap D below A
+      // Expected result:
+      //      While block with nested sequence A -> D -> E -> F -> B -> C
+
+      // Setup canvas
+      const testBlockA: EmptyBlock = {
+        ...blockA,
+        parentId: 'parent',
+      };
+      const testBlockB: EmptyBlock = {
+        ...blockB,
+        parentId: 'parent',
+      };
+      const testBlockC: EmptyBlock = {
+        ...blockC,
+        parentId: 'parent',
+      };
+      const testParent: WhileBlock = {
+        ...parent,
+        children: {
+          condition: [],
+          body: [{ ...testBlockA }, { ...testBlockB }, { ...testBlockC }],
+        },
+      };
+
+      const testBlockD = { ...blockD };
+      const testBlockE = { ...blockE };
+      const testBlockF = { ...blockF };
+
+      const testCanvas: CanvasState = {
+        ...initialCanvas,
+        canvas: [testParent, testBlockD, testBlockE, testBlockF],
+      };
+
+      // Setup action
+      const action: CanvasAction = {
+        type: CanvasEvent.SNAP_BLOCK,
+        payload: {
+          id: 'd',
+          position: OuterDropzonePosition.Bottom,
+          targetId: 'a',
+        },
+      };
+
+      // Apply reducer
+      const newCanvas = BlocksReducer(testCanvas, action);
+
+      // Setup expected result
+      const expectedA: EmptyBlock = { ...testBlockA, nextId: 'd' };
+      const expectedD: EmptyBlock = {
+        ...testBlockD,
+        parentId: 'parent',
+        prevId: 'a',
+      };
+      const expectedE: EmptyBlock = { ...testBlockE, parentId: 'parent' };
+      const expectedF: EmptyBlock = {
+        ...testBlockF,
+        parentId: 'parent',
+        nextId: 'b',
+      };
+      const expectedB: EmptyBlock = { ...testBlockB, prevId: 'f' };
+      const expectedC: EmptyBlock = { ...testBlockC };
+
+      // Assertions
+      expect(findBlockById('a', newCanvas.canvas)).toEqual(expectedA);
+      expect(findBlockById('b', newCanvas.canvas)).toEqual(expectedB);
+      expect(findBlockById('c', newCanvas.canvas)).toEqual(expectedC);
+      expect(findBlockById('d', newCanvas.canvas)).toEqual(expectedD);
+      expect(findBlockById('e', newCanvas.canvas)).toEqual(expectedE);
+      expect(findBlockById('f', newCanvas.canvas)).toEqual(expectedF);
+      // Should only have a single while block in the canvas with the full sequence in it
+      expect(newCanvas.canvas.length).toBe(1);
+      expect((newCanvas.canvas[0] as WhileBlock).children.body.length).toBe(6);
+    });
   });
 });

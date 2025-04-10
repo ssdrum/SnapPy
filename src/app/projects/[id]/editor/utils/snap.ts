@@ -273,6 +273,15 @@ function handleNestedSnapBottom(
     );
     return canvas;
   }
+  if (targetBlock.nextId) {
+    return handleNestedSnapSequenceMiddle(
+      blockToSnap,
+      targetBlock,
+      parentBlock,
+      key,
+      canvas
+    );
+  }
 
   if (blockToSnap.nextId) {
     return handleNestedSnapSequenceBottom(
@@ -418,6 +427,70 @@ function handleNestedSnapSequenceBottom(
     // Connect last block with new next
     if (block.id === blockToSnap.id) {
       block.prevId = targetBlock.id;
+    }
+
+    childrenArrays[key].push(block);
+  }
+
+  // Update the children object and replace parent block
+  (newParentBlock.children as BlockChildren) = childrenArrays;
+  newCanvas = updateBlockById(newCanvas, parentBlock.id, newParentBlock);
+
+  return newCanvas;
+}
+
+/**
+ * Snaps a sequence of blocks in between a nested sequence of blocks
+ */
+function handleNestedSnapSequenceMiddle(
+  blockToSnap: Block,
+  targetBlock: Block,
+  parentBlock: Block,
+  key: string,
+  canvas: Block[]
+) {
+  // Remove blocks in sequence to snap from canvas
+  const sequence = getBlocksSequence(blockToSnap, canvas);
+  let newCanvas = removeBlocks(sequence, canvas);
+
+  //  Create a new parent block with updated children
+  const newParentBlock = { ...parentBlock };
+
+  // Deep clone the children
+  const childrenArrays: BlockChildren = { ...newParentBlock.children };
+
+  // Create a new array for the specific key
+  childrenArrays[key] = [...(childrenArrays[key] || [])].filter(
+    (block) => block.id !== targetBlock.id && block.id !== targetBlock.nextId // Remove target block and its next
+  );
+
+  // Add new target block back in
+  const newTargetBlock: Block = { ...targetBlock, nextId: blockToSnap.id };
+  childrenArrays[key].push(newTargetBlock);
+
+  let newTargetNextBlock = findBlockById(targetBlock.nextId!, canvas);
+  if (!newTargetNextBlock) {
+    console.error(
+      `Error in handleNestedSnapSequenceMiddle: could not find target's next block`
+    );
+
+    return canvas;
+  }
+
+  // Set new target's next blocks prev to last block of sequence to snap
+  const lastBlock = sequence[sequence.length - 1];
+  newTargetNextBlock.prevId = lastBlock.id;
+  childrenArrays[key].push(newTargetNextBlock);
+
+  // Update prev and next in sequence to snap
+  for (const block of sequence) {
+    block.parentId = parentBlock.id; // Add parent id
+
+    if (block.id === blockToSnap.id) {
+      block.prevId = targetBlock.id;
+    }
+    if (block.id === lastBlock.id) {
+      block.nextId = newTargetNextBlock.id;
     }
 
     childrenArrays[key].push(block);
