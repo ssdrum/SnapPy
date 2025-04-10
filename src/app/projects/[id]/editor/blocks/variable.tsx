@@ -53,7 +53,7 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
         <InnerDropZone
           id={`expression_${id}`}
           enabled={!isWorkbenchBlock}
-          //enableStacking={false}
+          enableSequences={false}
         >
           {children.expression}
         </InnerDropZone>

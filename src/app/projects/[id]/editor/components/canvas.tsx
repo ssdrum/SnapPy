@@ -31,7 +31,7 @@ export default function Canvas() {
           </Text>
         </Box>
       ) : (
-        <CanvasBlocksRenderer canvas={state.canvas} />
+        <CanvasBlocksRenderer canvas={state.canvas} enableSequences />
       )}
     </div>
   );

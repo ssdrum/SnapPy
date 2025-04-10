@@ -27,7 +27,7 @@ function While({ id, isWorkbenchBlock, children }: WhileProps) {
           <InnerDropZone
             id={`condition_${id}`}
             enabled={!isWorkbenchBlock}
-            //enableStacking={false}
+            enableSequences={false}
           >
             {children.condition}
           </InnerDropZone>
@@ -40,7 +40,7 @@ function While({ id, isWorkbenchBlock, children }: WhileProps) {
           <InnerDropZone
             id={`body_${id}`}
             enabled={!isWorkbenchBlock}
-            //enableStacking={true}
+            enableSequences={true}
           >
             {children.body}
           </InnerDropZone>

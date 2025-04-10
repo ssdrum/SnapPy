@@ -3,7 +3,7 @@ import Variable from '../blocks/variable';
 import Empty from '../blocks/empty';
 import While from '../blocks/while';
 
-export default function renderBlock(block: Block) {
+export default function renderBlock(block: Block, enableSequences: boolean) {
   const { id, prevId, isWorkbenchBlock, state, children } = block;
 
   switch (block.type) {
@@ -17,6 +17,7 @@ export default function renderBlock(block: Block) {
           blockType={BlockType.Variable}
           blockState={state}
           selected={block.selected}
+          enableSequences={enableSequences}
         >
           {block.children}
         </Variable>
@@ -30,6 +31,7 @@ export default function renderBlock(block: Block) {
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.While}
           blockState={state}
+          enableSequences={enableSequences}
         >
           {block.children}
         </While>
@@ -43,6 +45,7 @@ export default function renderBlock(block: Block) {
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.Empty}
           blockState={state}
+          enableSequences={enableSequences}
         >
           {children}
         </Empty>

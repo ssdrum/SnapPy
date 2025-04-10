@@ -7,10 +7,12 @@ import { useBlocks } from '../contexts/blocks-context';
 
 interface CanvasBlocksRendererProps {
   canvas: Block[];
+  enableSequences: boolean;
 }
 
 export default function CanvasBlocksRenderer({
   canvas,
+  enableSequences,
 }: CanvasBlocksRendererProps) {
   const startBlocks = canvas.filter((block) => block.prevId === null);
 
@@ -18,9 +20,10 @@ export default function CanvasBlocksRenderer({
     <>
       {startBlocks.map((block) => {
         return (
-          <SequenceWrapper
+          <BlockGroupWrapper
             key={block.id}
             sequence={getBlocksSequence(block, canvas)}
+            enableSequences={enableSequences}
           />
         );
       })}
@@ -28,11 +31,15 @@ export default function CanvasBlocksRenderer({
   );
 }
 
-interface SequenceWrapperProps {
+interface BlockGroupWrapperProps {
   sequence: Block[];
+  enableSequences: boolean;
 }
 
-function SequenceWrapper({ sequence }: SequenceWrapperProps) {
+function BlockGroupWrapper({
+  sequence,
+  enableSequences,
+}: BlockGroupWrapperProps) {
   const startBlock = sequence[0];
   const { id, coords } = startBlock;
   const { state } = useBlocks();
@@ -57,58 +64,7 @@ function SequenceWrapper({ sequence }: SequenceWrapperProps) {
       {...listeners}
       {...attributes}
     >
-      {sequence.map((block) => renderBlock(block))}
+      {sequence.map((block) => renderBlock(block, enableSequences))}
     </div>
   );
 }
-
-//import React from 'react';
-//import { Block, BlockType } from '../blocks/types';
-//import Empty from '../blocks/empty';
-//import Variable from '../blocks/variable';
-//import While from '../blocks/while';
-//import { findBlockById } from '../utils/utils';
-//
-//interface BlocksRendererProps {
-//  blocks: Block[];
-//}
-//
-//export default function BlocksRenderer({ blocks }: BlocksRendererProps) {
-//  // Find the start nodes
-//  const startNodes = blocks.filter((block) => block.prevId === null);
-//
-//  // Render the start nodes
-//  return (
-//    <>
-//      {startNodes.map((block) => (
-//        <React.Fragment key={block.id}>
-//          {renderBlockSequence(block, blocks)}
-//        </React.Fragment>
-//      ))}
-//    </>
-//  );
-//}
-//
-//export const renderBlockSequence = (
-//  currBlock: Block,
-//  canvas: Block[]
-//): React.ReactNode => {
-//  const renderedBlock = renderBlock(currBlock);
-//
-//  if (!currBlock.nextId) return renderedBlock;
-//
-//  const nextBlock = findBlockById(canvas, currBlock.nextId);
-//
-//  if (!nextBlock) {
-//    console.warn(`Next block with id ${currBlock.nextId} not found`);
-//    return renderedBlock;
-//  }
-//
-//  return (
-//    <>
-//      {renderedBlock}
-//      {renderBlockSequence(nextBlock, canvas)}
-//    </>
-//  );
-//};
-//

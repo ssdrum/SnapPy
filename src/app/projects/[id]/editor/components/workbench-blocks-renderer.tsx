@@ -40,7 +40,7 @@ function WorkbenchBlock({ block }: WorkbenchBlockProps) {
       {...listeners}
       {...attributes}
     >
-      {renderBlock(block)}
+      {renderBlock(block, false)}
     </div>
   );
 }

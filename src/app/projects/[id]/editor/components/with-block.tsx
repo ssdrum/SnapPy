@@ -17,6 +17,7 @@ export interface WithBlockProps {
   hasPrev: boolean;
   blockType: BlockType;
   blockState: BlockState;
+  enableSequences: boolean;
   children: BlockChildren | null;
 }
 
@@ -30,6 +31,7 @@ export default function withBlock<T extends object>(
       hasPrev,
       blockType,
       blockState,
+      enableSequences,
       children,
       ...restProps
     } = props;
@@ -66,7 +68,8 @@ export default function withBlock<T extends object>(
       >
         {!isWorkbenchBlock &&
           !state.draggedGroupBlockIds?.has(id) &&
-          !hasPrev && (
+          !hasPrev &&
+          enableSequences && (
             <OuterDropZone blockId={id} position={OuterDropzonePosition.Top} />
           )}
 
@@ -92,9 +95,14 @@ export default function withBlock<T extends object>(
           </WrappedBlock>
         </div>
 
-        {!isWorkbenchBlock && !state.draggedGroupBlockIds?.has(id) && (
-          <OuterDropZone blockId={id} position={OuterDropzonePosition.Bottom} />
-        )}
+        {!isWorkbenchBlock &&
+          !state.draggedGroupBlockIds?.has(id) &&
+          enableSequences && (
+            <OuterDropZone
+              blockId={id}
+              position={OuterDropzonePosition.Bottom}
+            />
+          )}
       </div>
     );
   };
