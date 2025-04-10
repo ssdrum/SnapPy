@@ -10,9 +10,17 @@
   padding: 5px 12px;
   border-radius: 3px;
   transition: box-shadow 0.15s ease;
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-color: salmon;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  margin-bottom: -1px; /* Negative margin to overlap borders */
+}
+
+/* Top border only on first element */
+.base:first-child {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .select {
@@ -38,20 +46,23 @@
   align-items: center;
 }
 
-.innerDropZone {
+.innerDropzone {
   background-color: rgba(255, 255, 255, 0.3);
-  min-width: 24px;
+  min-width: 40px;
+  width: 100%;
   min-height: 24px;
   border-radius: 2px;
   border: 2px dashed rgba(255, 255, 255, 0.7);
   position: relative;
   display: flex;
-  justify-content: center;
   align-items: center;
   transition: 'all 0.2s ease-in-out';
 }
 
-.blockDropZone {
-  background-color: red;
-  height: 34px;
+.outerDropzone {
+  height: 20px;
+  left: 0;
+  right: 0;
+  border-radius: 4px;
+  transition: 'opacity 0.2s ease-in';
 }

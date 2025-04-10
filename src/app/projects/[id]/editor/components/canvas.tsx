@@ -1,8 +1,8 @@
 import classes from '../editor.module.css';
 import { useBlocks } from '../contexts/blocks-context';
 import { useDroppable } from '@dnd-kit/core';
-import BlocksRenderer from './blocks-renderer';
 import { Box, Text } from '@mantine/core';
+import CanvasBlocksRenderer from './canvas-blocks-renderer';
 
 export default function Canvas() {
   const { state, deselectBlockAction } = useBlocks();
@@ -31,7 +31,7 @@ export default function Canvas() {
           </Text>
         </Box>
       ) : (
-        <BlocksRenderer blocks={state.canvas} />
+        <CanvasBlocksRenderer canvas={state.canvas} enableSequences />
       )}
     </div>
   );

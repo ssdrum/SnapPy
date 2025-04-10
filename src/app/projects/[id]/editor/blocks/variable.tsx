@@ -1,16 +1,16 @@
 import React, { useRef, useEffect } from 'react';
-import withDraggableBlock from '../components/with-draggable-block';
+import { Block } from './types';
 import { useBlocks } from '../contexts/blocks-context';
 import { resizeSelect } from '../utils/utils';
 import classes from './blocks.module.css';
-import { Block } from './types';
 import InnerDropZone from '../components/inner-drop-zone';
+import withBlock from '../components/with-block';
 
 interface VariableProps {
   id: string;
   isWorkbenchBlock: boolean;
   selected: string;
-  children: Block[];
+  children: { expression: Block[] };
 }
 
 function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
@@ -32,7 +32,7 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
 
   return (
     <>
-      Set
+      <span>Set</span>
       <select
         ref={selectRef}
         value={selected}
@@ -47,12 +47,19 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
           </option>
         ))}
       </select>
-      to
-      <InnerDropZone blockId={id} enabled={!isWorkbenchBlock}>
-        {children}
-      </InnerDropZone>
+      <span>to</span>
+
+      {
+        <InnerDropZone
+          id={`expression_${id}`}
+          enabled={!isWorkbenchBlock}
+          enableSequences={false}
+        >
+          {children.expression}
+        </InnerDropZone>
+      }
     </>
   );
 }
 
-export default withDraggableBlock(Variable);
+export default withBlock(Variable);

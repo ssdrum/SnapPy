@@ -1,58 +1,38 @@
-import { useDroppable, useDndContext } from '@dnd-kit/core';
-import { useEffect } from 'react';
+import { OuterDropzonePosition } from '../blocks/types';
+import classes from '../blocks/blocks.module.css';
+import { useDndContext, useDroppable } from '@dnd-kit/core';
 import { useBlocks } from '../contexts/blocks-context';
-import { StackPosition } from '../blocks/types';
 
 interface OuterDropZoneProps {
   blockId: string;
-  position: StackPosition;
+  position: OuterDropzonePosition;
 }
 
 export default function OuterDropZone({
   blockId,
   position,
 }: OuterDropZoneProps) {
-  const { active } = useDndContext();
-  const { displaySnapPreviewAction, hideSnapPreviewAction, state } =
-    useBlocks();
+  const { state } = useBlocks();
 
-  // Check if we're dragging the current block (to prevent self-dropping)
-  const isDraggingSelf = active ? active.id === blockId : false;
-
-  const { isOver, setNodeRef } = useDroppable({
-    id: `stack_${position}_${blockId}`,
-    disabled: isDraggingSelf,
+  const { setNodeRef, isOver } = useDroppable({
+    id: `snap_${position}_${blockId}`,
   });
 
-  // Only show indicator if something is dragging, it's not this block, and it's over the drop zone
-  const show = Boolean(active) && !isDraggingSelf && isOver;
+  const { active } = useDndContext();
 
-  useEffect(() => {
-    if (show) {
-      // Hide all previews before opening a new one
-      for (const block of state.canvas) {
-        hideSnapPreviewAction(block.id);
-      }
-      displaySnapPreviewAction(blockId, position);
-    } else {
-      hideSnapPreviewAction(blockId);
-    }
-  }, [show]);
+  const isVisible =
+    Boolean(active) && isOver && !state.draggedGroupBlockIds?.has(blockId);
 
   return (
     <div
       ref={setNodeRef}
+      className={classes.outerDropzone}
       style={{
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        [position === StackPosition.Top ? 'top' : 'bottom']: '-20px',
-        height: '20px',
-        backgroundColor: show ? '#FFD54F' : 'transparent',
-        opacity: show ? 1 : 0,
-        borderRadius: '4px',
-        transition: 'opacity 0.2s ease-in',
-        zIndex: -1,
+        backgroundColor: '#FFD54F',
+        position: isVisible ? 'static' : 'absolute',
+        [position === OuterDropzonePosition.Top ? 'top' : 'bottom']: '-20px',
+        opacity: isVisible ? 1 : 0,
+        zIndex: state.draggedGroupBlockIds ? 10 : -1, // Push on top when dragging something
       }}
     />
   );

@@ -3,6 +3,7 @@ import { Coordinates } from '@dnd-kit/utilities';
 export enum BlockType {
   Empty = 'empty',
   Variable = 'variable',
+  While = 'while',
 }
 
 export enum BlockState {
@@ -12,14 +13,13 @@ export enum BlockState {
   Nested = 'nested',
 }
 
-export enum StackPosition {
-  Top = 'top',
-  Bottom = 'bottom',
+export interface BlockChildren {
+  [key: string]: Block[];
 }
 
-export interface StackOptions {
-  top: boolean;
-  bottom: boolean;
+export enum OuterDropzonePosition {
+  Top = 'top',
+  Bottom = 'bottom',
 }
 
 export interface CanvasState {
@@ -40,21 +40,34 @@ interface BaseBlock {
   type: BlockType;
   state: BlockState;
   coords: Coordinates;
-  lastDelta?: Coordinates;
   isWorkbenchBlock: boolean;
-  stackOptions: StackOptions;
   parentId: string | null;
-  prevBlockId: string | null;
-  nextBlockId: string | null;
-  children: Block[]; // TODO: Consider removing this property from the base interface since not all blocks use it
+  prevId: string | null;
+  nextId: string | null;
+}
+
+export interface EmptyBlock extends BaseBlock {
+  type: BlockType.Empty;
+  children: null;
 }
 
 export interface VariableBlock extends BaseBlock {
   type: BlockType.Variable;
   selected: string;
+  children: {
+    expression: Block[];
+  };
+}
+
+export interface WhileBlock extends BaseBlock {
+  type: BlockType.While;
+  children: {
+    condition: Block[];
+    body: Block[];
+  };
 }
 
 /**
  * Union of all blocks
  */
-export type Block = BaseBlock | VariableBlock;
+export type Block = EmptyBlock | VariableBlock | WhileBlock;

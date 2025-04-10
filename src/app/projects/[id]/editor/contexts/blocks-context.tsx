@@ -6,7 +6,7 @@ import {
   CanvasState,
   BlockState,
   BlockType,
-  StackPosition,
+  OuterDropzonePosition,
 } from '../blocks/types';
 import { createContext, useContext, useReducer } from 'react';
 import BlocksReducer from '../reducers/blocks-reducer';
@@ -29,26 +29,22 @@ interface BlocksContextType {
   selectBlockAction: (id: string) => void;
   deselectBlockAction: () => void;
   startDragAction: (id: string) => void;
-  moveBlockAction: (id: string, delta: Coordinates) => void;
-  endDragAction: () => void;
+  endDragAction: (delta: Coordinates) => void;
   createBlockAction: (id: string) => void;
-  createAndDragBlockAction: (id: string) => void;
   deleteBlockAction: (id: string) => void;
   createVariableAction: (name: string) => boolean;
   changeVariableSelectedOptionAction: (selected: string, id?: string) => void;
-  addChildBlockAction: (id: string, targetId: string) => void;
+  addChildBlockAction: (id: string, targetId: string, prefix: string) => void;
   removeChildBlockAction: (id: string, parentId: string) => void;
-  stackBlockAction: (
+  snapBlockAction: (
     id: string,
     targetId: string,
-    position: StackPosition
+    position: OuterDropzonePosition
   ) => void;
-  breakStackAction: (id: string) => void;
+  unsnapBlockAction: (id: string) => void;
   updateBlockAction: (id: string, updates: Partial<Block>) => void;
   highlightDropzoneAction: (id: string) => void;
   clearHighlightedDropzoneAction: () => void;
-  displaySnapPreviewAction: (id: string, position: StackPosition) => void;
-  hideSnapPreviewAction: (id: string) => void;
 }
 
 // Create context object
@@ -71,7 +67,7 @@ export default function BlocksProvider({
 }: BlocksProviderProps) {
   const initialState: CanvasState = {
     workbench: workBench,
-    canvas,
+    canvas: canvas,
     variables,
     selectedBlockId: null,
     draggedBlockId: null,
@@ -83,7 +79,7 @@ export default function BlocksProvider({
 
   // ----------------- API to interact with blocks -------------------
   const selectBlockAction = (id: string) => {
-    const selectedBlock = findBlockById(state.canvas, id);
+    const selectedBlock = findBlockById(id, state.canvas);
     if (!selectedBlock) {
       return;
     }
@@ -114,16 +110,10 @@ export default function BlocksProvider({
     });
   };
 
-  const moveBlockAction = (id: string, delta: Coordinates) => {
-    dispatch({
-      type: CanvasEvent.MOVE_BLOCK,
-      payload: { id, delta },
-    });
-  };
-
-  const endDragAction = () => {
+  const endDragAction = (delta: Coordinates) => {
     dispatch({
       type: CanvasEvent.END_DRAG,
+      payload: { delta },
     });
   };
 
@@ -131,13 +121,6 @@ export default function BlocksProvider({
   const createBlockAction = (id: string) => {
     dispatch({
       type: CanvasEvent.CREATE_BLOCK,
-      payload: { id },
-    });
-  };
-
-  const createAndDragBlockAction = (id: string) => {
-    dispatch({
-      type: CanvasEvent.CREATE_AND_DRAG_BLOCK,
       payload: { id },
     });
   };
@@ -162,9 +145,9 @@ export default function BlocksProvider({
     return true;
   };
 
-  const breakStackAction = (id: string) => {
+  const unsnapBlockAction = (id: string) => {
     dispatch({
-      type: CanvasEvent.BREAK_STACK,
+      type: CanvasEvent.UNSNAP_BLOCK,
       payload: { id },
     });
   };
@@ -189,10 +172,14 @@ export default function BlocksProvider({
     });
   };
 
-  const addChildBlockAction = (id: string, targetId: string) => {
+  const addChildBlockAction = (
+    id: string,
+    targetId: string,
+    prefix: string
+  ) => {
     dispatch({
       type: CanvasEvent.ADD_CHILD_BLOCK,
-      payload: { id, targetId },
+      payload: { id, targetId, prefix },
     });
   };
 
@@ -203,13 +190,13 @@ export default function BlocksProvider({
     });
   };
 
-  const stackBlockAction = (
+  const snapBlockAction = (
     id: string,
     targetId: string,
-    position: StackPosition
+    position: OuterDropzonePosition
   ) => {
     dispatch({
-      type: CanvasEvent.STACK_BLOCK,
+      type: CanvasEvent.SNAP_BLOCK,
       payload: { id, targetId, position },
     });
   };
@@ -234,41 +221,23 @@ export default function BlocksProvider({
     });
   };
 
-  const displaySnapPreviewAction = (id: string, position: StackPosition) => {
-    dispatch({
-      type: CanvasEvent.DISPLAY_SNAP_PREVIEW,
-      payload: { id, position },
-    });
-  };
-
-  const hideSnapPreviewAction = (id: string) => {
-    dispatch({
-      type: CanvasEvent.HIDE_SNAP_PREVIEW,
-      payload: { id },
-    });
-  };
-
   const value: BlocksContextType = {
     state,
     selectBlockAction,
     deselectBlockAction,
     startDragAction,
-    moveBlockAction,
     endDragAction,
     createBlockAction,
-    createAndDragBlockAction,
-    breakStackAction,
     deleteBlockAction,
     createVariableAction,
     changeVariableSelectedOptionAction,
     addChildBlockAction,
     removeChildBlockAction,
-    stackBlockAction,
+    snapBlockAction,
+    unsnapBlockAction,
     updateBlockAction,
     highlightDropzoneAction,
     clearHighlightedDropzoneAction,
-    displaySnapPreviewAction,
-    hideSnapPreviewAction,
   };
 
   return (
@@ -284,11 +253,10 @@ const workBench: Block[] = [
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
-    stackOptions: { top: true, bottom: true },
     parentId: null,
-    prevBlockId: null,
-    nextBlockId: null,
-    children: [],
+    prevId: null,
+    nextId: null,
+    children: null,
   },
   {
     id: uuidv4(),
@@ -297,10 +265,25 @@ const workBench: Block[] = [
     isWorkbenchBlock: true,
     state: BlockState.Idle,
     selected: 'x',
-    stackOptions: { top: true, bottom: true },
     parentId: null,
-    prevBlockId: null,
-    nextBlockId: null,
-    children: [],
+    prevId: null,
+    nextId: null,
+    children: {
+      expression: [],
+    },
+  },
+  {
+    id: uuidv4(),
+    type: BlockType.While,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    children: {
+      condition: [],
+      body: [],
+    },
   },
 ];

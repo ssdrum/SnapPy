@@ -1,27 +1,23 @@
 import { Coordinates } from '@dnd-kit/core/dist/types';
-import { Block, StackPosition } from './types';
+import { Block, OuterDropzonePosition } from './types';
 
 // All possible block events
 export enum CanvasEvent {
   SELECT_BLOCK = 'select block',
   DESELECT_BLOCK = 'deselect block',
   START_DRAG = 'start drag',
-  MOVE_BLOCK = 'move block',
   END_DRAG = 'end drag',
-  BREAK_STACK = 'break stack',
   CREATE_BLOCK = 'create block',
-  CREATE_AND_DRAG_BLOCK = 'create and drag block',
   DELETE_BLOCK = 'delete block',
   CREATE_VARIABLE = 'create variable',
   CHANGE_VARIABLE_SELECTED_OPTION = 'change variable selected option',
   ADD_CHILD_BLOCK = 'add child block',
   REMOVE_CHILD_BLOCK = 'remove child block',
-  STACK_BLOCK = 'stack block',
+  SNAP_BLOCK = 'snap block',
+  UNSNAP_BLOCK = 'unsnap block',
   UPDATE_BLOCK = 'update block',
   HIGHLIGHT_DROPZONE = 'highlight dropzone',
   CLEAR_HIGHLIGHTED_DROPZONE = 'clear highlighted dropzone',
-  DISPLAY_SNAP_PREVIEW = 'display snap preview',
-  HIDE_SNAP_PREVIEW = 'hide snap preview',
 }
 
 interface SelectBlock {
@@ -37,13 +33,10 @@ interface StartDrag {
 }
 interface EndDrag {
   type: CanvasEvent.END_DRAG;
+  payload: { delta: Coordinates };
 }
 interface CreateBlock {
   type: CanvasEvent.CREATE_BLOCK;
-  payload: { id: string };
-}
-interface CreateAndDragBlock {
-  type: CanvasEvent.CREATE_AND_DRAG_BLOCK;
   payload: { id: string };
 }
 interface DeleteBlock {
@@ -60,22 +53,18 @@ interface ChangeVariableSelectedOption {
 }
 interface AddChildBlock {
   type: CanvasEvent.ADD_CHILD_BLOCK;
-  payload: { id: string; targetId: string };
+  payload: { id: string; targetId: string; prefix: string };
 }
 interface RemoveChildBlock {
   type: CanvasEvent.REMOVE_CHILD_BLOCK;
   payload: { id: string; parentId: string };
 }
-interface StackBlock {
-  type: CanvasEvent.STACK_BLOCK;
-  payload: { id: string; targetId: string; position: StackPosition };
+interface SnapBlock {
+  type: CanvasEvent.SNAP_BLOCK;
+  payload: { id: string; targetId: string; position: OuterDropzonePosition };
 }
-interface MoveBlock {
-  type: CanvasEvent.MOVE_BLOCK;
-  payload: { id: string; delta: Coordinates };
-}
-interface BreakStack {
-  type: CanvasEvent.BREAK_STACK;
+interface UnsnapBlock {
+  type: CanvasEvent.UNSNAP_BLOCK;
   payload: { id: string };
 }
 interface UpdateBlock {
@@ -89,13 +78,12 @@ interface HighlightDropzone {
 interface ClearHighlightedDropzone {
   type: CanvasEvent.CLEAR_HIGHLIGHTED_DROPZONE;
 }
-interface DisplaySnapPreview {
-  type: CanvasEvent.DISPLAY_SNAP_PREVIEW;
-  payload: { id: string; position: StackPosition };
-}
-interface HideSnapPreview {
-  type: CanvasEvent.HIDE_SNAP_PREVIEW;
+interface HighlightDropzone {
+  type: CanvasEvent.HIGHLIGHT_DROPZONE;
   payload: { id: string };
+}
+interface ClearHighlightedDropzone {
+  type: CanvasEvent.CLEAR_HIGHLIGHTED_DROPZONE;
 }
 
 export type CanvasAction =
@@ -104,17 +92,15 @@ export type CanvasAction =
   | StartDrag
   | EndDrag
   | CreateBlock
-  | CreateAndDragBlock
   | DeleteBlock
   | CreateVariable
   | ChangeVariableSelectedOption
   | AddChildBlock
   | RemoveChildBlock
-  | StackBlock
-  | MoveBlock
-  | BreakStack
+  | SnapBlock
+  | UnsnapBlock
   | UpdateBlock
   | HighlightDropzone
   | ClearHighlightedDropzone
-  | DisplaySnapPreview
-  | HideSnapPreview;
+  | HighlightDropzone
+  | ClearHighlightedDropzone;

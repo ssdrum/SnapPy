@@ -1,7 +1,7 @@
-import withDraggableBlock from '../components/with-draggable-block';
+import withBlock from '../components/with-block';
 
 function Empty() {
-  return <div>Empty Block</div>;
+  return <span>Empty Block</span>;
 }
 
-export default withDraggableBlock(Empty);
+export default withBlock(Empty);
