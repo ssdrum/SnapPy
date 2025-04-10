@@ -15,7 +15,16 @@ export function handleSnapTop(
   canvas: Block[]
 ) {
   if (targetBlock.parentId) {
-    return handleNestedSnapTop(blockToSnap, targetBlock, canvas);
+    const parentBlock = findBlockById(targetBlock.parentId, canvas);
+    if (!parentBlock) {
+      console.error(
+        `Error in handleSnapTop: parent block with ID = ${targetBlock.parentId} not found`
+      );
+
+      return canvas;
+    }
+
+    return handleNestedSnapTop(blockToSnap, targetBlock, parentBlock, canvas);
   }
 
   if (blockToSnap.nextId) {
@@ -73,7 +82,21 @@ export function handleSnapBottom(
   canvas: Block[]
 ) {
   if (targetBlock.parentId) {
-    return handleNestedSnapBottom(blockToSnap, targetBlock, canvas);
+    const parentBlock = findBlockById(targetBlock.parentId, canvas);
+    if (!parentBlock) {
+      console.error(
+        `Error in handleSnapBottom: parent block with ID = ${targetBlock.parentId} not found`
+      );
+
+      return canvas;
+    }
+
+    return handleNestedSnapBottom(
+      blockToSnap,
+      targetBlock,
+      parentBlock,
+      canvas
+    );
   }
 
   if (targetBlock.nextId) {
@@ -170,29 +193,16 @@ export function handleSnapSequenceBetweenBlocks(
 function handleNestedSnapTop(
   blockToSnap: Block,
   targetBlock: Block,
+  parentBlock: Block,
   canvas: Block[]
 ): Block[] {
-  // Verify target block has a parent
-  if (!targetBlock.parentId) {
-    console.error('Error in handleNestedSnapTop: targetBlock has no parentId');
-    return canvas;
-  }
-
-  // Find the parent block
-  const parentBlock = findBlockById(targetBlock.parentId, canvas);
-  if (!parentBlock) {
-    console.error(
-      `Error in handleNestedSnapTop: parent block with ID = ${targetBlock.parentId} not found`
-    );
-    return canvas;
-  }
-
   // Find which child array contains the target block
   const key = getChildArrayKey(parentBlock, targetBlock);
   if (!key) {
     console.error(
       `Error in handleNestedSnapTop: could not find target block in parent's children`
     );
+
     return canvas;
   }
 
@@ -241,23 +251,9 @@ function handleNestedSnapTop(
 function handleNestedSnapBottom(
   blockToSnap: Block,
   targetBlock: Block,
+  parentBlock: Block,
   canvas: Block[]
 ): Block[] {
-  // Verify target block has a parent
-  if (!targetBlock.parentId) {
-    console.error('Error in handleNestedSnapTop: targetBlock has no parentId');
-    return canvas;
-  }
-
-  // Find the parent block
-  const parentBlock = findBlockById(targetBlock.parentId, canvas);
-  if (!parentBlock) {
-    console.error(
-      `Error in handleNestedSnapTop: parent block with ID = ${targetBlock.parentId} not found`
-    );
-    return canvas;
-  }
-
   // Find which child array contains the target block
   const key = getChildArrayKey(parentBlock, targetBlock);
   if (!key) {

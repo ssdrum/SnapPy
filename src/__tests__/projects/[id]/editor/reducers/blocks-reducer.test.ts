@@ -974,5 +974,7 @@ describe('BlocksReducer', () => {
         expectedBlockToSnap
       );
     });
+
+    test('Snaps sequence of blocks above nested sequence of blocks correctly', () => {});
   });
 });
