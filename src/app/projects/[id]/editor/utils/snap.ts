@@ -72,6 +72,10 @@ export function handleSnapBottom(
   targetBlock: Block,
   canvas: Block[]
 ) {
+  if (targetBlock.parentId) {
+    return handleNestedSnapBottom(blockToSnap, targetBlock, canvas);
+  }
+
   if (targetBlock.nextId) {
     return handleSnapBetweenBlocks(blockToSnap, targetBlock, canvas);
   }
@@ -205,6 +209,71 @@ function handleNestedSnapTop(
   };
 
   // Remove the block from the canvas
+  let newCanvas = removeBlockById(canvas, blockToSnap.id);
+
+  //  Create a new parent block with updated children
+  const newParentBlock = { ...parentBlock };
+
+  // Deep clone the children
+  const childrenArrays: BlockChildren = { ...newParentBlock.children };
+
+  // Create a new array for the specific key
+  childrenArrays[key] = [...(childrenArrays[key] || [])];
+
+  // Add the modified block to the children array
+  childrenArrays[key].push(newBlockToSnap);
+
+  // Update the children object
+  (newParentBlock.children as BlockChildren) = childrenArrays;
+
+  // First update the parent block (which now contains our block to snap in its children)
+  newCanvas = updateBlockById(newCanvas, parentBlock.id, newParentBlock);
+
+  // Then update the target block
+  newCanvas = updateBlockById(newCanvas, targetBlock.id, newTargetBlock);
+
+  return newCanvas;
+}
+
+/**
+ * Snaps a single block above another (nested) block
+ */
+function handleNestedSnapBottom(
+  blockToSnap: Block,
+  targetBlock: Block,
+  canvas: Block[]
+): Block[] {
+  // Verify target block has a parent
+  if (!targetBlock.parentId) {
+    console.error('Error in handleNestedSnapTop: targetBlock has no parentId');
+    return canvas;
+  }
+
+  // Find the parent block
+  const parentBlock = findBlockById(targetBlock.parentId, canvas);
+  if (!parentBlock) {
+    console.error(
+      `Error in handleNestedSnapTop: parent block with ID = ${targetBlock.parentId} not found`
+    );
+    return canvas;
+  }
+
+  // Find which child array contains the target block
+  const key = getChildArrayKey(parentBlock, targetBlock);
+  if (!key) {
+    console.error(
+      `Error in handleNestedSnapTop: could not find target block in parent's children`
+    );
+    return canvas;
+  }
+
+  const newBlockToSnap: Block = {
+    ...blockToSnap,
+    prevId: targetBlock.id,
+    parentId: parentBlock.id,
+  };
+  const newTargetBlock: Block = { ...targetBlock, nextId: blockToSnap.id };
+
   let newCanvas = removeBlockById(canvas, blockToSnap.id);
 
   //  Create a new parent block with updated children
