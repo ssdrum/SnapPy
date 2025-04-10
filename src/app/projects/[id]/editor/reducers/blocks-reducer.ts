@@ -10,6 +10,7 @@ import {
   findBlockById,
   getBlocksSequence,
   getConnectedBlockIds,
+  removeBlockById,
   removeBlocks,
   updateBlockById,
   validateBlockExists,
@@ -149,9 +150,17 @@ export default function BlocksReducer(
       );
       if (!block) return state;
 
+      let newCanvas = [...state.canvas];
+
+      // Delete all blocks connected to deleted block
+      const blocksToDelete = getConnectedBlockIds(state.canvas, id);
+      for (const blockId of blocksToDelete) {
+        newCanvas = removeBlockById(newCanvas, blockId);
+      }
+
       return {
         ...state,
-        canvas: state.canvas.filter((block) => block.id !== id),
+        canvas: newCanvas,
       };
     }
 
