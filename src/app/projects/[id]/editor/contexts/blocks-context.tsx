@@ -7,6 +7,7 @@ import {
   BlockState,
   BlockType,
   OuterDropzonePosition,
+  MathOperator,
 } from '../blocks/types';
 import { createContext, useContext, useReducer } from 'react';
 import BlocksReducer from '../reducers/blocks-reducer';
@@ -45,6 +46,11 @@ interface BlocksContextType {
   updateBlockAction: (id: string, updates: Partial<Block>) => void;
   highlightDropzoneAction: (id: string) => void;
   clearHighlightedDropzoneAction: () => void;
+  changeInputTextAction: (
+    id: string,
+    text: string,
+    isWorkbenchBlock: boolean
+  ) => void;
 }
 
 // Create context object
@@ -221,6 +227,17 @@ export default function BlocksProvider({
     });
   };
 
+  const changeInputTextAction = (
+    id: string,
+    text: string,
+    isWorkbenchBlock: boolean
+  ) => {
+    dispatch({
+      type: CanvasEvent.CHANGE_INPUT_TEXT,
+      payload: { id, isWorkbenchBlock, text },
+    });
+  };
+
   const value: BlocksContextType = {
     state,
     selectBlockAction,
@@ -238,6 +255,7 @@ export default function BlocksProvider({
     updateBlockAction,
     highlightDropzoneAction,
     clearHighlightedDropzoneAction,
+    changeInputTextAction,
   };
 
   return (
@@ -284,6 +302,78 @@ const workBench: Block[] = [
     children: {
       condition: [],
       body: [],
+    },
+  },
+  {
+    id: uuidv4(),
+    type: BlockType.Number,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    value: '',
+    children: null,
+  },
+  {
+    id: uuidv4(),
+    type: BlockType.Math,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    operator: MathOperator.Addition,
+    children: {
+      left: [],
+      right: [],
+    },
+  },
+  {
+    id: uuidv4(),
+    type: BlockType.Math,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    operator: MathOperator.Subtraction,
+    children: {
+      left: [],
+      right: [],
+    },
+  },
+  {
+    id: uuidv4(),
+    type: BlockType.Math,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    operator: MathOperator.Multiplication,
+    children: {
+      left: [],
+      right: [],
+    },
+  },
+  {
+    id: uuidv4(),
+    type: BlockType.Math,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    operator: MathOperator.Division,
+    children: {
+      left: [],
+      right: [],
     },
   },
 ];
