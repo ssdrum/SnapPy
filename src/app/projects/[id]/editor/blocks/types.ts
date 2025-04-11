@@ -5,6 +5,7 @@ export enum BlockType {
   Variable = 'variable',
   While = 'while',
   Number = 'number',
+  Math = 'math',
 }
 
 export enum BlockState {
@@ -21,6 +22,13 @@ export interface BlockChildren {
 export enum OuterDropzonePosition {
   Top = 'top',
   Bottom = 'bottom',
+}
+
+export enum MathOperator {
+  Addition = '+',
+  Subtraction = '-',
+  Multiplication = '*',
+  Division = '/',
 }
 
 export interface CanvasState {
@@ -74,7 +82,21 @@ export interface NumberBlock extends BaseBlock {
   children: null;
 }
 
+export interface MathBlock extends BaseBlock {
+  type: BlockType.Math;
+  operator: MathOperator;
+  children: {
+    left: Block[];
+    right: Block[];
+  };
+}
+
 /**
  * Union of all blocks
  */
-export type Block = EmptyBlock | VariableBlock | WhileBlock | NumberBlock;
+export type Block =
+  | EmptyBlock
+  | VariableBlock
+  | WhileBlock
+  | NumberBlock
+  | MathBlock;

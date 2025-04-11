@@ -3,6 +3,7 @@ import Variable from '../blocks/variable';
 import Empty from '../blocks/empty';
 import While from '../blocks/while';
 import Number from '../blocks/number';
+import Math from '../blocks/math';
 
 export default function renderBlock(block: Block, enableSequences: boolean) {
   const { id, prevId, isWorkbenchBlock, state, children } = block;
@@ -51,6 +52,21 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
         >
           {children}
         </Number>
+      );
+    case BlockType.Math:
+      return (
+        <Math
+          key={id}
+          id={id}
+          hasPrev={prevId !== null}
+          isWorkbenchBlock={isWorkbenchBlock}
+          blockType={BlockType.Math}
+          blockState={state}
+          enableSequences={enableSequences}
+          operator={block.operator}
+        >
+          {block.children}
+        </Math>
       );
     default:
       return (

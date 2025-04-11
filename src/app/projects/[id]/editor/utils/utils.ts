@@ -98,6 +98,11 @@ function processBlockChildren(
         condition: operation(block.children.condition, ...args),
         body: operation(block.children.body, ...args),
       };
+    case BlockType.Math:
+      return {
+        left: operation(block.children.left, ...args),
+        right: operation(block.children.right, ...args),
+      };
     case BlockType.Empty:
     case BlockType.Number:
       return null;
