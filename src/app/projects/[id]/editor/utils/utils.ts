@@ -1,3 +1,4 @@
+import { RefObject } from 'react';
 import { Block, BlockType } from '../blocks/types';
 
 /**
@@ -281,4 +282,23 @@ export function getBlocksSequence(startBlock: Block, canvas: Block[]) {
   }
 
   return sequence;
+}
+
+/**
+ * Resizes the input to match the text width
+ */
+export function resizeInput(
+  inputRef: RefObject<HTMLInputElement | null>,
+  hiddenRef: RefObject<HTMLSpanElement | null>
+) {
+  if (inputRef.current && hiddenRef.current) {
+    // Update the hidden span's text to match the input
+    hiddenRef.current.textContent = inputRef.current.value || '0';
+
+    // Get the width of the hidden span (plus some padding)
+    const width = hiddenRef.current.offsetWidth;
+
+    // Set the input width (with minimum width)
+    inputRef.current.style.width = `${Math.max(35, width + 10)}px`;
+  }
 }

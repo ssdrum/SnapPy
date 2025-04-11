@@ -385,7 +385,6 @@ export default function BlocksReducer(
 
     case CanvasEvent.CHANGE_INPUT_TEXT: {
       const { id, isWorkbenchBlock, text } = action.payload;
-      console.log(id, isWorkbenchBlock, text);
 
       const blocksArray = isWorkbenchBlock ? state.workbench : state.canvas;
 
