@@ -98,6 +98,7 @@ function processBlockChildren(
         body: operation(block.children.body, ...args),
       };
     case BlockType.Empty:
+    case BlockType.Number:
       return null;
   }
 }

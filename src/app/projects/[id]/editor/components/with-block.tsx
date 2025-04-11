@@ -44,6 +44,8 @@ export default function withBlock<T extends object>(
           return '#9966FF'; // Violet
         case BlockType.While:
           return '#FF8C1A'; // Orange
+        case BlockType.Number:
+          return '#59C059'; // Green
         default:
           return '#4C97FF'; // Blue
       }

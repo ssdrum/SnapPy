@@ -4,6 +4,7 @@ export enum BlockType {
   Empty = 'empty',
   Variable = 'variable',
   While = 'while',
+  Number = 'number',
 }
 
 export enum BlockState {
@@ -67,7 +68,13 @@ export interface WhileBlock extends BaseBlock {
   };
 }
 
+export interface NumberBlock extends BaseBlock {
+  type: BlockType.Number;
+  value: number;
+  children: null;
+}
+
 /**
  * Union of all blocks
  */
-export type Block = EmptyBlock | VariableBlock | WhileBlock;
+export type Block = EmptyBlock | VariableBlock | WhileBlock | NumberBlock;

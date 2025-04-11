@@ -66,3 +66,25 @@
   border-radius: 4px;
   transition: 'opacity 0.2s ease-in';
 }
+
+.inputText {
+  width: 35px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+  color: white;
+  outline: none;
+  text-align: center;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.input:focus {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}

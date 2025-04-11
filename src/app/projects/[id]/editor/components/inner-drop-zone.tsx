@@ -19,7 +19,6 @@ export default function InnerDropZone({
 }: InnerDropZoneProps) {
   const { state } = useBlocks();
   const highlighted = state.highlightedDropZoneId === id;
-  console.log(id);
 
   const { setNodeRef } = useDroppable({ id });
 

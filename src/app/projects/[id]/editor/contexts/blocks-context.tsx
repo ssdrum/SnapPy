@@ -286,4 +286,16 @@ const workBench: Block[] = [
       body: [],
     },
   },
+  {
+    id: uuidv4(),
+    type: BlockType.Number,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    value: 0,
+    children: null,
+  },
 ];
