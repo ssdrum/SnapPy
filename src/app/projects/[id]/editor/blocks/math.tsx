@@ -16,7 +16,7 @@ function Math({ id, isWorkbenchBlock, operator, children }: MathProps) {
   return (
     <>
       <InnerDropZone
-        id={`mathLeft_${id}`}
+        id={`left_${id}`}
         enabled={!isWorkbenchBlock}
         enableSequences={false}
       >
@@ -26,7 +26,7 @@ function Math({ id, isWorkbenchBlock, operator, children }: MathProps) {
       <span>{operator}</span>
 
       <InnerDropZone
-        id={`mathRight_${id}`}
+        id={`right_${id}`}
         enabled={!isWorkbenchBlock}
         enableSequences={false}
       >
