@@ -47,6 +47,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           blockType={BlockType.Number}
           blockState={state}
           enableSequences={enableSequences}
+          value={block.value}
         >
           {children}
         </Number>

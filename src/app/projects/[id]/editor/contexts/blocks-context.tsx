@@ -45,6 +45,11 @@ interface BlocksContextType {
   updateBlockAction: (id: string, updates: Partial<Block>) => void;
   highlightDropzoneAction: (id: string) => void;
   clearHighlightedDropzoneAction: () => void;
+  changeInputTextAction: (
+    id: string,
+    text: string,
+    isWorkbenchBlock: boolean
+  ) => void;
 }
 
 // Create context object
@@ -221,6 +226,17 @@ export default function BlocksProvider({
     });
   };
 
+  const changeInputTextAction = (
+    id: string,
+    text: string,
+    isWorkbenchBlock: boolean
+  ) => {
+    dispatch({
+      type: CanvasEvent.CHANGE_INPUT_TEXT,
+      payload: { id, isWorkbenchBlock, text },
+    });
+  };
+
   const value: BlocksContextType = {
     state,
     selectBlockAction,
@@ -238,6 +254,7 @@ export default function BlocksProvider({
     updateBlockAction,
     highlightDropzoneAction,
     clearHighlightedDropzoneAction,
+    changeInputTextAction,
   };
 
   return (
@@ -295,7 +312,7 @@ const workBench: Block[] = [
     parentId: null,
     prevId: null,
     nextId: null,
-    value: 0,
+    value: '',
     children: null,
   },
 ];

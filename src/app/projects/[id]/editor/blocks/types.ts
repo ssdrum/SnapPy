@@ -70,7 +70,7 @@ export interface WhileBlock extends BaseBlock {
 
 export interface NumberBlock extends BaseBlock {
   type: BlockType.Number;
-  value: number;
+  value: string;
   children: null;
 }
 

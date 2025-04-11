@@ -3,6 +3,7 @@ import {
   BlockChildren,
   BlockState,
   CanvasState,
+  NumberBlock,
   OuterDropzonePosition,
 } from '../blocks/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -380,6 +381,39 @@ export default function BlocksReducer(
 
     case CanvasEvent.CLEAR_HIGHLIGHTED_DROPZONE: {
       return { ...state, highlightedDropZoneId: null };
+    }
+
+    case CanvasEvent.CHANGE_INPUT_TEXT: {
+      const { id, isWorkbenchBlock, text } = action.payload;
+      console.log(id, isWorkbenchBlock, text);
+
+      const blocksArray = isWorkbenchBlock ? state.workbench : state.canvas;
+
+      const block = validateBlockExists(
+        blocksArray,
+        id,
+        CanvasEvent.CHANGE_INPUT_TEXT
+      );
+      if (!block) return state;
+
+      // Update the block with the new selected variable option
+      const newBlock: NumberBlock = {
+        ...(block as NumberBlock),
+        value: text,
+      };
+
+      // Update the appropriate blocks array based on whether it's a workbench block
+      if (isWorkbenchBlock) {
+        return {
+          ...state,
+          workbench: updateBlockById(state.workbench, id, newBlock),
+        };
+      } else {
+        return {
+          ...state,
+          canvas: updateBlockById(state.canvas, id, newBlock),
+        };
+      }
     }
 
     default:

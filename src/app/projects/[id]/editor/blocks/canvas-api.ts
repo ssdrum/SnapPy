@@ -18,6 +18,7 @@ export enum CanvasEvent {
   UPDATE_BLOCK = 'update block',
   HIGHLIGHT_DROPZONE = 'highlight dropzone',
   CLEAR_HIGHLIGHTED_DROPZONE = 'clear highlighted dropzone',
+  CHANGE_INPUT_TEXT = 'change input text',
 }
 
 interface SelectBlock {
@@ -85,6 +86,10 @@ interface HighlightDropzone {
 interface ClearHighlightedDropzone {
   type: CanvasEvent.CLEAR_HIGHLIGHTED_DROPZONE;
 }
+interface ChangeInputText {
+  type: CanvasEvent.CHANGE_INPUT_TEXT;
+  payload: { id: string; isWorkbenchBlock: boolean; text: string };
+}
 
 export type CanvasAction =
   | SelectBlock
@@ -103,4 +108,5 @@ export type CanvasAction =
   | HighlightDropzone
   | ClearHighlightedDropzone
   | HighlightDropzone
-  | ClearHighlightedDropzone;
+  | ClearHighlightedDropzone
+  | ChangeInputText;
