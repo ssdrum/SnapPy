@@ -68,8 +68,12 @@ function visitMath(ctx: Context, block: MathBlock) {
   let leftCode = '';
   let rightCode = '';
 
-  leftCode = visitExpression(ctx, block.children.left);
-  rightCode = visitExpression(ctx, block.children.right);
+  if (block.children.left.length > 0) {
+    leftCode = visitExpression(ctx, block.children.left);
+  }
+  if (block.children.right.length > 0) {
+    rightCode = visitExpression(ctx, block.children.right);
+  }
 
   return `(${leftCode} ${block.operator} ${rightCode})`;
 }

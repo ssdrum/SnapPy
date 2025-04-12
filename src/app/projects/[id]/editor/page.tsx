@@ -14,10 +14,15 @@ import CodeEditor from './components/code-editor';
 import OutputBox from './components/output-box';
 import { useCustomSensors } from './utils/sensors';
 import DragEventsHandler from './components/drag-events-handler';
+import { useBlocks } from './contexts/blocks-context';
 
 export default function EditorPage() {
   const { name, id } = useContext(ProjectContext)!;
-  const { code, handleCodeChange, error, output } = useCodeEditor();
+  const { state } = useBlocks();
+  const { code, handleCodeChange, error, output } = useCodeEditor(
+    state.canvas,
+    state.startBlockId
+  );
 
   // Show a window alert when an error occurs
   // TODO: handle this more gracefully

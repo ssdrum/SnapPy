@@ -160,6 +160,14 @@ export default function BlocksReducer(
         newCanvas = removeBlockById(newCanvas, blockId);
       }
 
+      if (block.type === BlockType.ProgramStart) {
+        return {
+          ...state,
+          canvas: newCanvas,
+          startBlockId: null,
+        } as CanvasState;
+      }
+
       return {
         ...state,
         canvas: newCanvas,

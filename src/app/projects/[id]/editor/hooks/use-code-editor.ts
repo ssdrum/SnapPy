@@ -1,15 +1,40 @@
 import { useEffect, useState } from 'react';
 import { PyodideInterface } from 'pyodide';
+import { Block } from '../blocks/types';
+import { generateCode } from '../code-generation/code-generation';
+import { findBlockById, getBlocksSequence } from '../utils/utils';
 
 const PYODIDE_CND = 'https://cdn.jsdelivr.net/pyodide/v0.23.4/full';
 
-export default function useCodeEditor() {
-  const [code, setCode] = useState<string>(`print("Hello World!")`);
+export default function useCodeEditor(
+  canvas: Block[],
+  startBlockId: string | null
+) {
+  const initialMessage = '// Snap a block to the start block to generate code!';
+  const [code, setCode] = useState<string>(initialMessage);
   const [pyodide, setPyodide] = useState<PyodideInterface>();
   const [isPyodideLoading, setIsPyodideLoading] = useState(true);
   const [error, setError] = useState('');
   const [output, setOutput] = useState<string[]>([]);
 
+  // Effect for handling the startBlockId change and setting code
+  useEffect(() => {
+    if (startBlockId) {
+      const startBlock = findBlockById(startBlockId, canvas);
+      if (!startBlock) {
+        console.error(
+          `Error in useCodeEditor: startBlock with id: ${startBlockId} not found`
+        );
+        return;
+      }
+
+      setCode(generateCode(getBlocksSequence(startBlock, canvas)));
+    } else {
+      setCode(initialMessage);
+    }
+  }, [startBlockId, canvas]);
+
+  // Load pyodide on first render
   useEffect(() => {
     async function loadPyodide() {
       try {
