@@ -150,7 +150,7 @@ export default function BlocksReducer(
         id,
         CanvasEvent.DELETE_BLOCK
       );
-      if (!block) return state;
+      if (!block || block.type === BlockType.ProgramStart) return state;
 
       let newCanvas = [...state.canvas];
 
@@ -158,14 +158,6 @@ export default function BlocksReducer(
       const blocksToDelete = getConnectedBlockIds(state.canvas, id);
       for (const blockId of blocksToDelete) {
         newCanvas = removeBlockById(newCanvas, blockId);
-      }
-
-      if (block.type === BlockType.ProgramStart) {
-        return {
-          ...state,
-          canvas: newCanvas,
-          startBlockId: null,
-        } as CanvasState;
       }
 
       return {
@@ -329,7 +321,7 @@ export default function BlocksReducer(
           return {
             ...state,
             canvas: newCanvas,
-            startBlockId: targetId,
+            entrypointBlockId: targetId,
           } as CanvasState;
         }
       } else {
@@ -340,7 +332,7 @@ export default function BlocksReducer(
           return {
             ...state,
             canvas: newCanvas,
-            startBlockId: id,
+            entrypointBlockId: id,
           } as CanvasState;
         }
       }
@@ -377,11 +369,11 @@ export default function BlocksReducer(
       newCanvas = updateBlockById(newCanvas, prevId, updatedPrevBlock);
 
       // Set start block id to null if we unsnapped the start block
-      if (block.id === state.startBlockId) {
+      if (block.id === state.entrypointBlockId) {
         return {
           ...state,
           canvas: newCanvas,
-          startBlockId: null,
+          entrypointBlockId: null,
         } as CanvasState;
       }
 

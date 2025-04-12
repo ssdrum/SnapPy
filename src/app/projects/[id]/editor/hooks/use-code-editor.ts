@@ -8,7 +8,7 @@ const PYODIDE_CND = 'https://cdn.jsdelivr.net/pyodide/v0.23.4/full';
 
 export default function useCodeEditor(
   canvas: Block[],
-  startBlockId: string | null
+  entrypointBlockId: string | null
 ) {
   const initialMessage = '// Snap a block to the start block to generate code!';
   const [code, setCode] = useState<string>(initialMessage);
@@ -17,13 +17,13 @@ export default function useCodeEditor(
   const [error, setError] = useState('');
   const [output, setOutput] = useState<string[]>([]);
 
-  // Effect for handling the startBlockId change and setting code
+  // Effect for handling the entrypointBlockId change and setting code
   useEffect(() => {
-    if (startBlockId) {
-      const startBlock = findBlockById(startBlockId, canvas);
+    if (entrypointBlockId) {
+      const startBlock = findBlockById(entrypointBlockId, canvas);
       if (!startBlock) {
         console.error(
-          `Error in useCodeEditor: startBlock with id: ${startBlockId} not found`
+          `Error in useCodeEditor: startBlock with id: ${entrypointBlockId} not found`
         );
         return;
       }
@@ -32,7 +32,7 @@ export default function useCodeEditor(
     } else {
       setCode(initialMessage);
     }
-  }, [startBlockId, canvas]);
+  }, [entrypointBlockId, canvas]);
 
   // Load pyodide on first render
   useEffect(() => {

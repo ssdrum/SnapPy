@@ -21,7 +21,7 @@ export default function EditorPage() {
   const { state } = useBlocks();
   const { code, handleCodeChange, error, output } = useCodeEditor(
     state.canvas,
-    state.startBlockId
+    state.entrypointBlockId
   );
 
   // Show a window alert when an error occurs

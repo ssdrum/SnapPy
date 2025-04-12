@@ -99,7 +99,7 @@ describe('BlocksReducer', () => {
     draggedBlockId: null,
     draggedGroupBlockIds: null,
     highlightedDropZoneId: null,
-    startBlockId: null,
+    entrypointBlockId: null,
   };
 
   // --------------- Add tests here ------------------

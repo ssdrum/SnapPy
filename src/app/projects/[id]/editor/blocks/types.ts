@@ -40,7 +40,7 @@ export interface CanvasState {
   draggedBlockId: string | null;
   draggedGroupBlockIds: Set<string> | null;
   highlightedDropZoneId: string | null;
-  startBlockId: string | null;
+  entrypointBlockId: string | null;
 }
 
 /**
