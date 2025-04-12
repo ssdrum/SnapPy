@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import withBlock from '../components/with-block';
 import { useBlocks } from '../contexts/blocks-context';
 import classes from './blocks.module.css';
@@ -26,6 +26,10 @@ function Number({ id, isWorkbenchBlock, value }: NumberProps) {
       resizeInput(inputRef, hiddenRef);
     }
   };
+
+  useEffect(() => {
+    resizeInput(inputRef, hiddenRef);
+  }, []);
 
   return (
     <>

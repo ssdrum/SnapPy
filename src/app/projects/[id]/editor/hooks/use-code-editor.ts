@@ -10,7 +10,7 @@ export default function useCodeEditor(
   canvas: Block[],
   entrypointBlockId: string | null
 ) {
-  const initialMessage = '// Snap a block to the start block to generate code!';
+  const initialMessage = '# Snap a block to the start block to generate code!';
   const [code, setCode] = useState<string>(initialMessage);
   const [pyodide, setPyodide] = useState<PyodideInterface>();
   const [isPyodideLoading, setIsPyodideLoading] = useState(true);
