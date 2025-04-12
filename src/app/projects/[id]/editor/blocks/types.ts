@@ -1,11 +1,12 @@
 import { Coordinates } from '@dnd-kit/utilities';
 
 export enum BlockType {
-  Empty = 'empty',
+  ProgramStart = 'program start ',
   Variable = 'variable',
   While = 'while',
   Number = 'number',
   Math = 'math',
+  Empty = 'empty', // Only used for testing
 }
 
 export enum BlockState {
@@ -55,6 +56,11 @@ interface BaseBlock {
   nextId: string | null;
 }
 
+export interface ProgramStartBlock extends BaseBlock {
+  type: BlockType.ProgramStart;
+  children: null;
+}
+
 export interface EmptyBlock extends BaseBlock {
   type: BlockType.Empty;
   children: null;
@@ -95,8 +101,9 @@ export interface MathBlock extends BaseBlock {
  * Union of all blocks
  */
 export type Block =
-  | EmptyBlock
+  | ProgramStartBlock
   | VariableBlock
   | WhileBlock
   | NumberBlock
-  | MathBlock;
+  | MathBlock
+  | EmptyBlock;

@@ -267,7 +267,7 @@ export default function BlocksProvider({
 const workBench: Block[] = [
   {
     id: uuidv4(),
-    type: BlockType.Empty,
+    type: BlockType.ProgramStart,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
