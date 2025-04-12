@@ -2,7 +2,11 @@ import { getUserSession } from '@/app/lib/session';
 import { prisma } from './prisma';
 import { Project } from '@prisma/client';
 import { Prisma } from '@prisma/client';
-import { Block } from '@/app/projects/[id]/editor/blocks/types';
+import {
+  Block,
+  BlockState,
+  BlockType,
+} from '@/app/projects/[id]/editor/blocks/types';
 import { JsonValue } from '@prisma/client/runtime/library';
 
 // Fetch projects by user
@@ -35,7 +39,19 @@ export async function createProject(name: string): Promise<Project> {
     data: {
       name: name,
       userId: user.id,
-      canvas: Prisma.JsonNull, // Set data to null as default
+      canvas: [
+        {
+          id: 'start',
+          type: BlockType.ProgramStart,
+          coords: { x: 400, y: 200 },
+          isWorkbenchBlock: false,
+          state: BlockState.Idle,
+          parentId: null,
+          prevId: null,
+          nextId: null,
+          children: null,
+        },
+      ],
       variables: ['x'],
     },
   });

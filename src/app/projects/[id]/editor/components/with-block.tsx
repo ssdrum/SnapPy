@@ -40,6 +40,8 @@ export default function withBlock<T extends object>(
 
     const getBGColor = () => {
       switch (blockType) {
+        case BlockType.ProgramStart:
+          return '#FFD000'; // Yellow
         case BlockType.Variable:
           return '#9966FF'; // Violet
         case BlockType.While:

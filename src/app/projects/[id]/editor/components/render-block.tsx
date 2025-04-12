@@ -4,11 +4,26 @@ import Empty from '../blocks/empty';
 import While from '../blocks/while';
 import Number from '../blocks/number';
 import Math from '../blocks/math';
+import ProgramStart from '../blocks/program-start';
 
 export default function renderBlock(block: Block, enableSequences: boolean) {
   const { id, prevId, isWorkbenchBlock, state, children } = block;
 
   switch (block.type) {
+    case BlockType.ProgramStart:
+      return (
+        <ProgramStart
+          key={block.id}
+          id={id}
+          hasPrev={prevId !== null}
+          isWorkbenchBlock={isWorkbenchBlock}
+          blockType={BlockType.ProgramStart}
+          blockState={state}
+          enableSequences={enableSequences}
+        >
+          {children}
+        </ProgramStart>
+      );
     case BlockType.Variable:
       return (
         <Variable

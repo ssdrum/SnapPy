@@ -71,6 +71,7 @@ export default function BlocksProvider({
   canvas,
   variables,
 }: BlocksProviderProps) {
+  const startBlock = findBlockById('start', canvas)!;
   const initialState: CanvasState = {
     workbench: workBench,
     canvas: canvas,
@@ -79,6 +80,7 @@ export default function BlocksProvider({
     draggedBlockId: null,
     draggedGroupBlockIds: null,
     highlightedDropZoneId: null,
+    entrypointBlockId: startBlock.nextId,
   };
 
   const [state, dispatch] = useReducer(BlocksReducer, initialState);
@@ -265,17 +267,6 @@ export default function BlocksProvider({
 
 // Add workbench blocks here
 const workBench: Block[] = [
-  {
-    id: uuidv4(),
-    type: BlockType.Empty,
-    coords: { x: 0, y: 0 },
-    isWorkbenchBlock: true,
-    state: BlockState.Idle,
-    parentId: null,
-    prevId: null,
-    nextId: null,
-    children: null,
-  },
   {
     id: uuidv4(),
     type: BlockType.Variable,
