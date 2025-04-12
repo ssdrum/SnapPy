@@ -38,7 +38,6 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
         value={selected}
         onChange={handleChange}
         className={classes.select}
-        style={{ background: '#7A4DD6' }}
       >
         {/* Display options */}
         {state.variables.map((variable) => (

@@ -2,6 +2,8 @@ import {
   Block,
   BlockChildren,
   BlockState,
+  BlockType,
+  BooleanBlock,
   CanvasState,
   NumberBlock,
   OuterDropzonePosition,
@@ -149,7 +151,7 @@ export default function BlocksReducer(
         id,
         CanvasEvent.DELETE_BLOCK
       );
-      if (!block) return state;
+      if (!block || block.type === BlockType.ProgramStart) return state;
 
       let newCanvas = [...state.canvas];
 
@@ -314,8 +316,26 @@ export default function BlocksReducer(
 
       if (position === OuterDropzonePosition.Top) {
         newCanvas = handleSnapTop(blockToSnap, targetBlock, state.canvas);
+
+        // update start program block
+        if (blockToSnap.type === BlockType.ProgramStart) {
+          return {
+            ...state,
+            canvas: newCanvas,
+            entrypointBlockId: targetId,
+          } as CanvasState;
+        }
       } else {
         newCanvas = handleSnapBottom(blockToSnap, targetBlock, state.canvas);
+
+        // update start program block
+        if (targetBlock.type === BlockType.ProgramStart) {
+          return {
+            ...state,
+            canvas: newCanvas,
+            entrypointBlockId: id,
+          } as CanvasState;
+        }
       }
 
       return {
@@ -348,6 +368,15 @@ export default function BlocksReducer(
 
       let newCanvas = updateBlockById(state.canvas, id, newBlock);
       newCanvas = updateBlockById(newCanvas, prevId, updatedPrevBlock);
+
+      // Set start block id to null if we unsnapped the start block
+      if (block.id === state.entrypointBlockId) {
+        return {
+          ...state,
+          canvas: newCanvas,
+          entrypointBlockId: null,
+        } as CanvasState;
+      }
 
       return { ...state, canvas: newCanvas };
     }
@@ -402,6 +431,36 @@ export default function BlocksReducer(
       };
 
       // Update the appropriate blocks array based on whether it's a workbench block
+      if (isWorkbenchBlock) {
+        return {
+          ...state,
+          workbench: updateBlockById(state.workbench, id, newBlock),
+        };
+      } else {
+        return {
+          ...state,
+          canvas: updateBlockById(state.canvas, id, newBlock),
+        };
+      }
+    }
+
+    case CanvasEvent.CHANGE_BOOLEAN_VALUE: {
+      const { id, value, isWorkbenchBlock } = action.payload;
+
+      const blocksArray = isWorkbenchBlock ? state.workbench : state.canvas;
+
+      const block = validateBlockExists(
+        blocksArray,
+        id,
+        CanvasEvent.CHANGE_BOOLEAN_VALUE
+      );
+      if (!block) return state;
+
+      const newBlock: BooleanBlock = {
+        ...(block as BooleanBlock),
+        value: value,
+      };
+
       if (isWorkbenchBlock) {
         return {
           ...state,

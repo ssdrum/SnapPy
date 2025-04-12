@@ -92,7 +92,6 @@ export default function DragEventsHandler({
         return;
       }
 
-      console.log(activeId, targetBlockId, prefix);
       addChildBlockAction(activeId, targetBlockId, prefix);
       return;
     }

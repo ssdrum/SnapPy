@@ -103,8 +103,10 @@ function processBlockChildren(
         left: operation(block.children.left, ...args),
         right: operation(block.children.right, ...args),
       };
-    case BlockType.Empty:
+    case BlockType.ProgramStart:
     case BlockType.Number:
+    case BlockType.Boolean:
+    case BlockType.Empty:
       return null;
   }
 }

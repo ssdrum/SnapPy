@@ -8,6 +8,7 @@ import {
   BlockType,
   OuterDropzonePosition,
   MathOperator,
+  BooleanValue,
 } from '../blocks/types';
 import { createContext, useContext, useReducer } from 'react';
 import BlocksReducer from '../reducers/blocks-reducer';
@@ -51,6 +52,11 @@ interface BlocksContextType {
     text: string,
     isWorkbenchBlock: boolean
   ) => void;
+  changeBooleanValueAction: (
+    id: string,
+    value: BooleanValue,
+    isWorkbenchBlock: boolean
+  ) => void;
 }
 
 // Create context object
@@ -71,6 +77,7 @@ export default function BlocksProvider({
   canvas,
   variables,
 }: BlocksProviderProps) {
+  const startBlock = findBlockById('start', canvas)!;
   const initialState: CanvasState = {
     workbench: workBench,
     canvas: canvas,
@@ -79,6 +86,7 @@ export default function BlocksProvider({
     draggedBlockId: null,
     draggedGroupBlockIds: null,
     highlightedDropZoneId: null,
+    entrypointBlockId: startBlock.nextId,
   };
 
   const [state, dispatch] = useReducer(BlocksReducer, initialState);
@@ -238,6 +246,17 @@ export default function BlocksProvider({
     });
   };
 
+  const changeBooleanValueAction = (
+    id: string,
+    value: BooleanValue,
+    isWorkbenchBlock: boolean
+  ) => {
+    dispatch({
+      type: CanvasEvent.CHANGE_BOOLEAN_VALUE,
+      payload: { id, value, isWorkbenchBlock },
+    });
+  };
+
   const value: BlocksContextType = {
     state,
     selectBlockAction,
@@ -256,6 +275,7 @@ export default function BlocksProvider({
     highlightDropzoneAction,
     clearHighlightedDropzoneAction,
     changeInputTextAction,
+    changeBooleanValueAction,
   };
 
   return (
@@ -265,17 +285,6 @@ export default function BlocksProvider({
 
 // Add workbench blocks here
 const workBench: Block[] = [
-  {
-    id: uuidv4(),
-    type: BlockType.Empty,
-    coords: { x: 0, y: 0 },
-    isWorkbenchBlock: true,
-    state: BlockState.Idle,
-    parentId: null,
-    prevId: null,
-    nextId: null,
-    children: null,
-  },
   {
     id: uuidv4(),
     type: BlockType.Variable,
@@ -375,5 +384,17 @@ const workBench: Block[] = [
       left: [],
       right: [],
     },
+  },
+  {
+    id: uuidv4(),
+    type: BlockType.Boolean,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    value: BooleanValue.True,
+    children: null,
   },
 ];

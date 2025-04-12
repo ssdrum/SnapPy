@@ -1,11 +1,13 @@
 import { Coordinates } from '@dnd-kit/utilities';
 
 export enum BlockType {
-  Empty = 'empty',
+  ProgramStart = 'program start',
   Variable = 'variable',
   While = 'while',
   Number = 'number',
   Math = 'math',
+  Boolean = 'boolean',
+  Empty = 'empty', // Only used for testing
 }
 
 export enum BlockState {
@@ -31,6 +33,11 @@ export enum MathOperator {
   Division = '/',
 }
 
+export enum BooleanValue {
+  True = 'True',
+  False = 'False',
+}
+
 export interface CanvasState {
   workbench: Block[];
   canvas: Block[];
@@ -39,6 +46,7 @@ export interface CanvasState {
   draggedBlockId: string | null;
   draggedGroupBlockIds: Set<string> | null;
   highlightedDropZoneId: string | null;
+  entrypointBlockId: string | null;
 }
 
 /**
@@ -53,6 +61,11 @@ interface BaseBlock {
   parentId: string | null;
   prevId: string | null;
   nextId: string | null;
+}
+
+export interface ProgramStartBlock extends BaseBlock {
+  type: BlockType.ProgramStart;
+  children: null;
 }
 
 export interface EmptyBlock extends BaseBlock {
@@ -91,12 +104,20 @@ export interface MathBlock extends BaseBlock {
   };
 }
 
+export interface BooleanBlock extends BaseBlock {
+  type: BlockType.Boolean;
+  value: BooleanValue;
+  children: null;
+}
+
 /**
  * Union of all blocks
  */
 export type Block =
-  | EmptyBlock
+  | ProgramStartBlock
   | VariableBlock
   | WhileBlock
   | NumberBlock
-  | MathBlock;
+  | MathBlock
+  | EmptyBlock
+  | BooleanBlock;
