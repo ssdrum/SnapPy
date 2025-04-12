@@ -2,6 +2,7 @@ import {
   Block,
   BlockChildren,
   BlockState,
+  BlockType,
   CanvasState,
   NumberBlock,
   OuterDropzonePosition,
@@ -314,8 +315,26 @@ export default function BlocksReducer(
 
       if (position === OuterDropzonePosition.Top) {
         newCanvas = handleSnapTop(blockToSnap, targetBlock, state.canvas);
+
+        // update start program block
+        if (blockToSnap.type === BlockType.ProgramStart) {
+          return {
+            ...state,
+            canvas: newCanvas,
+            startBlockId: targetId,
+          } as CanvasState;
+        }
       } else {
         newCanvas = handleSnapBottom(blockToSnap, targetBlock, state.canvas);
+
+        // update start program block
+        if (targetBlock.type === BlockType.ProgramStart) {
+          return {
+            ...state,
+            canvas: newCanvas,
+            startBlockId: id,
+          } as CanvasState;
+        }
       }
 
       return {
@@ -348,6 +367,15 @@ export default function BlocksReducer(
 
       let newCanvas = updateBlockById(state.canvas, id, newBlock);
       newCanvas = updateBlockById(newCanvas, prevId, updatedPrevBlock);
+
+      // Set start block id to null if we unsnapped the start block
+      if (block.id === state.startBlockId) {
+        return {
+          ...state,
+          canvas: newCanvas,
+          startBlockId: null,
+        } as CanvasState;
+      }
 
       return { ...state, canvas: newCanvas };
     }

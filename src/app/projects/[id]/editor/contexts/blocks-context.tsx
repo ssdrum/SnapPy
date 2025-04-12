@@ -79,6 +79,7 @@ export default function BlocksProvider({
     draggedBlockId: null,
     draggedGroupBlockIds: null,
     highlightedDropZoneId: null,
+    startBlockId: null,
   };
 
   const [state, dispatch] = useReducer(BlocksReducer, initialState);

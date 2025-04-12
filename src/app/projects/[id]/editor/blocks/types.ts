@@ -1,7 +1,7 @@
 import { Coordinates } from '@dnd-kit/utilities';
 
 export enum BlockType {
-  ProgramStart = 'program start ',
+  ProgramStart = 'program start',
   Variable = 'variable',
   While = 'while',
   Number = 'number',
@@ -40,6 +40,7 @@ export interface CanvasState {
   draggedBlockId: string | null;
   draggedGroupBlockIds: Set<string> | null;
   highlightedDropZoneId: string | null;
+  startBlockId: string | null;
 }
 
 /**
