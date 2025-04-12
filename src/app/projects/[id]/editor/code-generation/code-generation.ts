@@ -1,4 +1,10 @@
-import { Block, BlockType, VariableBlock, NumberBlock } from '../blocks/types';
+import {
+  Block,
+  BlockType,
+  VariableBlock,
+  NumberBlock,
+  MathBlock,
+} from '../blocks/types';
 
 interface Context {
   indent: number;
@@ -25,12 +31,12 @@ export function generateCode(blocks: Block[]): string {
 
 function visitBlock(ctx: Context, block: Block) {
   switch (block.type) {
-    case BlockType.Variable: {
+    case BlockType.Variable:
       return visitVariable(ctx, block);
-    }
-    case BlockType.Number: {
+    case BlockType.Number:
       return visitNumber(block);
-    }
+    case BlockType.Math:
+      return visitMath(ctx, block);
     default:
       return '';
   }
@@ -56,4 +62,14 @@ function visitExpression(ctx: Context, blocks: Block[]) {
 
 function visitNumber(block: NumberBlock) {
   return block.value;
+}
+
+function visitMath(ctx: Context, block: MathBlock) {
+  let leftCode = '';
+  let rightCode = '';
+
+  leftCode = visitExpression(ctx, block.children.left);
+  rightCode = visitExpression(ctx, block.children.right);
+
+  return `(${leftCode} ${block.operator} ${rightCode})`;
 }
