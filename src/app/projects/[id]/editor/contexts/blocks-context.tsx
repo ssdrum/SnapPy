@@ -7,15 +7,14 @@ import {
   BlockState,
   BlockType,
   OuterDropzonePosition,
-  MathOperator,
   BooleanValue,
 } from '../blocks/types';
 import { createContext, useContext, useReducer } from 'react';
 import BlocksReducer from '../reducers/blocks-reducer';
 import { Coordinates } from '@dnd-kit/core/dist/types';
-import { v4 as uuidv4 } from 'uuid';
 import { findBlockById } from '../utils/utils';
 import { CanvasEvent } from '../blocks/canvas-api';
+import workbenchBlocks from './workbench-blocks';
 
 interface BlocksProviderProps {
   children: React.ReactNode;
@@ -79,7 +78,7 @@ export default function BlocksProvider({
 }: BlocksProviderProps) {
   const startBlock = findBlockById('start', canvas)!;
   const initialState: CanvasState = {
-    workbench: workBench,
+    workbench: workbenchBlocks,
     canvas: canvas,
     variables,
     selectedBlockId: null,
@@ -282,119 +281,3 @@ export default function BlocksProvider({
     <BlocksContext.Provider value={value}>{children}</BlocksContext.Provider>
   );
 }
-
-// Add workbench blocks here
-const workBench: Block[] = [
-  {
-    id: uuidv4(),
-    type: BlockType.Variable,
-    coords: { x: 0, y: 0 },
-    isWorkbenchBlock: true,
-    state: BlockState.Idle,
-    selected: 'x',
-    parentId: null,
-    prevId: null,
-    nextId: null,
-    children: {
-      expression: [],
-    },
-  },
-  {
-    id: uuidv4(),
-    type: BlockType.While,
-    coords: { x: 0, y: 0 },
-    isWorkbenchBlock: true,
-    state: BlockState.Idle,
-    parentId: null,
-    prevId: null,
-    nextId: null,
-    children: {
-      condition: [],
-      body: [],
-    },
-  },
-  {
-    id: uuidv4(),
-    type: BlockType.Number,
-    coords: { x: 0, y: 0 },
-    isWorkbenchBlock: true,
-    state: BlockState.Idle,
-    parentId: null,
-    prevId: null,
-    nextId: null,
-    value: '',
-    children: null,
-  },
-  {
-    id: uuidv4(),
-    type: BlockType.Math,
-    coords: { x: 0, y: 0 },
-    isWorkbenchBlock: true,
-    state: BlockState.Idle,
-    parentId: null,
-    prevId: null,
-    nextId: null,
-    operator: MathOperator.Addition,
-    children: {
-      left: [],
-      right: [],
-    },
-  },
-  {
-    id: uuidv4(),
-    type: BlockType.Math,
-    coords: { x: 0, y: 0 },
-    isWorkbenchBlock: true,
-    state: BlockState.Idle,
-    parentId: null,
-    prevId: null,
-    nextId: null,
-    operator: MathOperator.Subtraction,
-    children: {
-      left: [],
-      right: [],
-    },
-  },
-  {
-    id: uuidv4(),
-    type: BlockType.Math,
-    coords: { x: 0, y: 0 },
-    isWorkbenchBlock: true,
-    state: BlockState.Idle,
-    parentId: null,
-    prevId: null,
-    nextId: null,
-    operator: MathOperator.Multiplication,
-    children: {
-      left: [],
-      right: [],
-    },
-  },
-  {
-    id: uuidv4(),
-    type: BlockType.Math,
-    coords: { x: 0, y: 0 },
-    isWorkbenchBlock: true,
-    state: BlockState.Idle,
-    parentId: null,
-    prevId: null,
-    nextId: null,
-    operator: MathOperator.Division,
-    children: {
-      left: [],
-      right: [],
-    },
-  },
-  {
-    id: uuidv4(),
-    type: BlockType.Boolean,
-    coords: { x: 0, y: 0 },
-    isWorkbenchBlock: true,
-    state: BlockState.Idle,
-    parentId: null,
-    prevId: null,
-    nextId: null,
-    value: BooleanValue.True,
-    children: null,
-  },
-];

@@ -6,6 +6,7 @@ import Number from '../blocks/number';
 import Math from '../blocks/math';
 import ProgramStart from '../blocks/program-start';
 import Boolean from '../blocks/boolean';
+import Comparison from '../blocks/comparison';
 
 export default function renderBlock(block: Block, enableSequences: boolean) {
   const { id, prevId, isWorkbenchBlock, state, children } = block;
@@ -98,6 +99,22 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
         >
           {children}
         </Boolean>
+      );
+
+    case BlockType.Comparison:
+      return (
+        <Comparison
+          key={id}
+          id={id}
+          hasPrev={prevId !== null}
+          isWorkbenchBlock={isWorkbenchBlock}
+          blockType={BlockType.Comparison}
+          blockState={state}
+          enableSequences={enableSequences}
+          operator={block.operator}
+        >
+          {block.children}
+        </Comparison>
       );
     default:
       return (

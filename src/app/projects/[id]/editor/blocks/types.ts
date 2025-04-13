@@ -7,6 +7,7 @@ export enum BlockType {
   Number = 'number',
   Math = 'math',
   Boolean = 'boolean',
+  Comparison = 'comparison',
   Empty = 'empty', // Only used for testing
 }
 
@@ -31,6 +32,15 @@ export enum MathOperator {
   Subtraction = '-',
   Multiplication = '*',
   Division = '/',
+}
+
+export enum ComparisonOperator {
+  Equal = '==',
+  NotEqual = '!=',
+  GreaterThan = '>',
+  LessThan = '<',
+  GreaterThanOrEqual = '>=',
+  LessThanOrEqual = '<=',
 }
 
 export enum BooleanValue {
@@ -110,6 +120,15 @@ export interface BooleanBlock extends BaseBlock {
   children: null;
 }
 
+export interface ComparisonBlock extends BaseBlock {
+  type: BlockType.Comparison;
+  operator: ComparisonOperator;
+  children: {
+    left: Block[];
+    right: Block[];
+  };
+}
+
 /**
  * Union of all blocks
  */
@@ -120,4 +139,5 @@ export type Block =
   | NumberBlock
   | MathBlock
   | EmptyBlock
-  | BooleanBlock;
+  | BooleanBlock
+  | ComparisonBlock;
