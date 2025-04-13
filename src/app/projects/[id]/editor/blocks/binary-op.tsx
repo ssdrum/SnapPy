@@ -1,18 +1,18 @@
 import InnerDropZone from '../components/inner-drop-zone';
 import withBlock from '../components/with-block';
-import { Block, MathOperator } from './types';
+import { Block, ComparisonOperator, MathOperator } from './types';
 
-interface MathProps {
+interface BinaryOpProps {
   id: string;
   isWorkbenchBlock: boolean;
-  operator: MathOperator;
+  operator: MathOperator | ComparisonOperator;
   children: {
     left: Block[];
     right: Block[];
   };
 }
 
-function Math({ id, isWorkbenchBlock, operator, children }: MathProps) {
+function BinaryOp({ id, isWorkbenchBlock, operator, children }: BinaryOpProps) {
   return (
     <>
       <InnerDropZone
@@ -23,7 +23,7 @@ function Math({ id, isWorkbenchBlock, operator, children }: MathProps) {
         {children.left}
       </InnerDropZone>
 
-      <span>{operator}</span>
+      <span style={{ whiteSpace: 'nowrap' }}>{operator}</span>
 
       <InnerDropZone
         id={`right_${id}`}
@@ -36,4 +36,4 @@ function Math({ id, isWorkbenchBlock, operator, children }: MathProps) {
   );
 }
 
-export default withBlock(Math);
+export default withBlock(BinaryOp);
