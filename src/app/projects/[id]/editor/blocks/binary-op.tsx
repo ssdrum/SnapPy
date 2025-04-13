@@ -1,6 +1,7 @@
 import InnerDropZone from '../components/inner-drop-zone';
 import withBlock from '../components/with-block';
 import { Block, ComparisonOperator, MathOperator } from './types';
+import { OperatorIcon } from './operator-icon';
 
 interface BinaryOpProps {
   id: string;
@@ -22,9 +23,16 @@ function BinaryOp({ id, isWorkbenchBlock, operator, children }: BinaryOpProps) {
       >
         {children.left}
       </InnerDropZone>
-
-      <span style={{ whiteSpace: 'nowrap' }}>{operator}</span>
-
+      <div
+        style={{
+          width: '50px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <OperatorIcon operator={operator} />
+      </div>
       <InnerDropZone
         id={`right_${id}`}
         enabled={!isWorkbenchBlock}

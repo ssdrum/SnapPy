@@ -50,7 +50,7 @@
 
 .innerDropzone {
   background-color: rgba(255, 255, 255, 0.3);
-  min-width: 40px;
+  min-width: 20px;
   width: 100%;
   min-height: 24px;
   border-radius: 2px;
