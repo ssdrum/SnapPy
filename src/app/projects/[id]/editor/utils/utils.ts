@@ -122,9 +122,9 @@ function processBlockChildren(
       return null;
     case BlockType.IfElse:
       return {
-        condition: operation(block.children.condition),
-        ifBody: operation(block.children.ifBody),
-        elseBody: operation(block.children.elseBody),
+        condition: operation(block.children.condition, ...args),
+        ifBody: operation(block.children.ifBody, ...args),
+        elseBody: operation(block.children.elseBody, ...args),
       };
     case BlockType.ProgramStart:
     case BlockType.Number:

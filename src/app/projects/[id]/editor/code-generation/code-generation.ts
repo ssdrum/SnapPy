@@ -11,6 +11,7 @@ import {
   LogicalBlockBinary,
   IfBlock,
   WhileBlock,
+  IfElseBlock,
 } from '../blocks/types';
 import { isLogicalBinaryOperator } from '../utils/utils';
 
@@ -53,6 +54,8 @@ function visitBlock(ctx: Context, block: Block) {
       return visitLogical(ctx, block);
     case BlockType.If:
       return visitIf(ctx, block);
+    case BlockType.IfElse:
+      return visitIfElse(ctx, block);
     case BlockType.While:
       return visitWhile(ctx, block);
     default:
@@ -193,6 +196,46 @@ function visitWhile(ctx: Context, block: WhileBlock) {
   }
 
   // Restore the original indentation
+  ctx.indent--;
+
+  return '';
+}
+
+function visitIfElse(ctx: Context, block: IfElseBlock) {
+  let conditionCode = '';
+  if (block.children.condition.length > 0) {
+    conditionCode = visitExpression(ctx, block.children.condition);
+  } else {
+    conditionCode = 'True'; // Default condition if none provided
+  }
+
+  addLine(ctx, `if ${conditionCode}:`);
+  ctx.indent++;
+
+  // If no if-body blocks, add a pass statement
+  if (block.children.ifBody.length === 0) {
+    addLine(ctx, 'pass');
+  } else {
+    // Process each block in the if body
+    for (const bodyBlock of block.children.ifBody) {
+      visitBlock(ctx, bodyBlock);
+    }
+  }
+
+  ctx.indent--;
+  addLine(ctx, 'else:');
+  ctx.indent++;
+
+  // If no else-body blocks, add a pass statement
+  if (block.children.elseBody.length === 0) {
+    addLine(ctx, 'pass');
+  } else {
+    // Process each block in the else body
+    for (const bodyBlock of block.children.elseBody) {
+      visitBlock(ctx, bodyBlock);
+    }
+  }
+
   ctx.indent--;
 
   return '';
