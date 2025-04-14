@@ -9,6 +9,8 @@ import {
   LogicalBlock,
   LogicalBlockUnary,
   LogicalBlockBinary,
+  IfBlock,
+  WhileBlock,
 } from '../blocks/types';
 import { isLogicalBinaryOperator } from '../utils/utils';
 
@@ -49,6 +51,10 @@ function visitBlock(ctx: Context, block: Block) {
       return visitComparison(ctx, block);
     case BlockType.Logical:
       return visitLogical(ctx, block);
+    case BlockType.If:
+      return visitIf(ctx, block);
+    case BlockType.While:
+      return visitWhile(ctx, block);
     default:
       return '';
   }
@@ -136,4 +142,58 @@ function visitLogical(ctx: Context, block: LogicalBlock) {
   }
 
   return `(${unaryOpBlock.operator} ${operandCode})`;
+}
+
+function visitIf(ctx: Context, block: IfBlock) {
+  let conditionCode = '';
+  if (block.children.condition.length > 0) {
+    conditionCode = visitExpression(ctx, block.children.condition);
+  } else {
+    conditionCode = 'True'; // Default condition if none provided
+  }
+
+  addLine(ctx, `if ${conditionCode}:`);
+
+  ctx.indent++;
+
+  // If no body blocks, add a pass statement
+  if (block.children.body.length === 0) {
+    addLine(ctx, 'pass');
+  } else {
+    for (const bodyBlock of block.children.body) {
+      visitBlock(ctx, bodyBlock);
+    }
+  }
+
+  // Restore the original indentation
+  ctx.indent--;
+
+  return '';
+}
+
+function visitWhile(ctx: Context, block: WhileBlock) {
+  let conditionCode = '';
+  if (block.children.condition.length > 0) {
+    conditionCode = visitExpression(ctx, block.children.condition);
+  } else {
+    conditionCode = 'True'; // Default condition if none provided
+  }
+
+  addLine(ctx, `while ${conditionCode}:`);
+
+  ctx.indent++;
+
+  // If no body blocks, add a pass statement
+  if (block.children.body.length === 0) {
+    addLine(ctx, 'pass');
+  } else {
+    for (const bodyBlock of block.children.body) {
+      visitBlock(ctx, bodyBlock);
+    }
+  }
+
+  // Restore the original indentation
+  ctx.indent--;
+
+  return '';
 }
