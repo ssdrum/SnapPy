@@ -5,6 +5,7 @@ import {
   BlockType,
   BooleanValue,
   ComparisonOperator,
+  LogicalOperator,
   MathOperator,
 } from '../blocks/types';
 
@@ -207,6 +208,36 @@ const workbenchBlocks: Block[] = [
     prevId: null,
     nextId: null,
     operator: ComparisonOperator.LessThanOrEqual,
+    children: {
+      left: [],
+      right: [],
+    },
+  },
+  {
+    id: uuidv4(),
+    type: BlockType.Logical,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    operator: LogicalOperator.And,
+    children: {
+      left: [],
+      right: [],
+    },
+  },
+  {
+    id: uuidv4(),
+    type: BlockType.Logical,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    operator: LogicalOperator.Or,
     children: {
       left: [],
       right: [],

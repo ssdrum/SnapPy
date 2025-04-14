@@ -1,4 +1,4 @@
-import { Block, BlockType } from '../blocks/types';
+import { Block, BlockType, LogicalOperator } from '../blocks/types';
 import Variable from '../blocks/variable';
 import Empty from '../blocks/empty';
 import While from '../blocks/while';
@@ -100,6 +100,27 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           {children}
         </Boolean>
       );
+    case BlockType.Logical:
+      if (
+        block.operator === LogicalOperator.And ||
+        block.operator === LogicalOperator.Or
+      ) {
+        return (
+          <BinaryOp
+            key={id}
+            id={id}
+            hasPrev={prevId !== null}
+            isWorkbenchBlock={isWorkbenchBlock}
+            blockType={block.type}
+            blockState={state}
+            enableSequences={enableSequences}
+            operator={block.operator}
+          >
+            {block.children}
+          </BinaryOp>
+        );
+      }
+      break;
     default:
       return (
         <Empty

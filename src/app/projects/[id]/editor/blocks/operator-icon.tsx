@@ -9,11 +9,17 @@ import {
   IconMathLower,
   IconMathEqualGreater,
   IconMathEqualLower,
+  IconLogicAnd,
+  IconLogicOr,
 } from '@tabler/icons-react';
-import { MathOperator, ComparisonOperator } from './types';
+import { MathOperator, ComparisonOperator, LogicalOperator } from './types';
 
 interface OperatorIconProps {
-  operator: MathOperator | ComparisonOperator;
+  operator:
+    | MathOperator
+    | ComparisonOperator
+    | LogicalOperator.And
+    | LogicalOperator.Or;
 }
 
 export function OperatorIcon({ operator }: OperatorIconProps) {
@@ -47,6 +53,12 @@ export function OperatorIcon({ operator }: OperatorIconProps) {
       return <IconMathEqualGreater size={size} color={color} stroke={stroke} />;
     case ComparisonOperator.LessThanOrEqual:
       return <IconMathEqualLower size={size} color={color} stroke={stroke} />;
+
+    // Logical operators
+    case LogicalOperator.And:
+      return <IconLogicAnd size={size} color={color} stroke={stroke} />;
+    case LogicalOperator.Or:
+      return <IconLogicOr size={size} color={color} stroke={stroke} />;
 
     // Fallback for unknown operators
     default:
