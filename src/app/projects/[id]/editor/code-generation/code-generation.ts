@@ -10,9 +10,9 @@ import {
   LogicalBlockUnary,
   LogicalBlockBinary,
   IfBlock,
-  WhileBlock,
   IfElseBlock,
   ForBlock,
+  WhileBlock,
 } from '../blocks/types';
 import { isLogicalBinaryOperator } from '../utils/utils';
 

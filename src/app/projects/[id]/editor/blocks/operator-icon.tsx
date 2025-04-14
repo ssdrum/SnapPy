@@ -11,6 +11,7 @@ import {
   IconMathEqualLower,
   IconLogicAnd,
   IconLogicOr,
+  IconPercentage,
 } from '@tabler/icons-react';
 import { MathOperator, ComparisonOperator, LogicalOperator } from './types';
 
@@ -39,6 +40,8 @@ export function OperatorIcon({ operator }: OperatorIconProps) {
       return <IconX size={size} color={color} stroke={stroke} />;
     case MathOperator.Division:
       return <IconDivide size={size} color={color} stroke={stroke} />;
+    case MathOperator.Modulo:
+      return <IconPercentage size={size} color={color} stroke={stroke} />;
 
     // Comparison operators
     case ComparisonOperator.Equal:

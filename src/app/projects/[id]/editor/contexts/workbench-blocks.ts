@@ -168,6 +168,21 @@ const workbenchBlocks: Block[] = [
   },
   {
     id: uuidv4(),
+    type: BlockType.Math,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    operator: MathOperator.Modulo,
+    children: {
+      left: [],
+      right: [],
+    },
+  },
+  {
+    id: uuidv4(),
     type: BlockType.Comparison,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,

@@ -36,6 +36,7 @@ export enum MathOperator {
   Subtraction = '-',
   Multiplication = '*',
   Division = '/',
+  Modulo = '%',
 }
 
 export enum ComparisonOperator {
