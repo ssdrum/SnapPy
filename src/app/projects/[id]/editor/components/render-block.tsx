@@ -13,6 +13,7 @@ import Boolean from '../blocks/boolean';
 import BinaryOp from '../blocks/binary-op';
 import UnaryOp from '../blocks/unary-op';
 import If from '../blocks/if';
+import IfElse from '../blocks/if-else';
 
 export default function renderBlock(block: Block, enableSequences: boolean) {
   const { id, prevId, isWorkbenchBlock, state, children } = block;
@@ -155,6 +156,21 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
         >
           {block.children}
         </If>
+      );
+    }
+    case BlockType.IfElse: {
+      return (
+        <IfElse
+          key={id}
+          id={id}
+          hasPrev={prevId !== null}
+          isWorkbenchBlock={isWorkbenchBlock}
+          blockType={BlockType.IfElse}
+          blockState={state}
+          enableSequences={enableSequences}
+        >
+          {block.children}
+        </IfElse>
       );
     }
     default:

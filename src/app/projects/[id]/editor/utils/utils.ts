@@ -120,6 +120,12 @@ function processBlockChildren(
         };
       }
       return null;
+    case BlockType.IfElse:
+      return {
+        condition: operation(block.children.condition),
+        ifBody: operation(block.children.ifBody),
+        elseBody: operation(block.children.elseBody),
+      };
     case BlockType.ProgramStart:
     case BlockType.Number:
     case BlockType.Boolean:

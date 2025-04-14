@@ -10,6 +10,7 @@ export enum BlockType {
   Comparison = 'comparison',
   Logical = 'logical',
   If = 'if',
+  IfElse = 'if else',
   Empty = 'empty', // Only used for testing
 }
 
@@ -166,6 +167,15 @@ export interface IfBlock extends BaseBlock {
   };
 }
 
+export interface IfElseBlock extends BaseBlock {
+  type: BlockType.IfElse;
+  children: {
+    condition: Block[];
+    ifBody: Block[];
+    elseBody: Block[];
+  };
+}
+
 /**
  * Union of all blocks
  */
@@ -179,4 +189,5 @@ export type Block =
   | BooleanBlock
   | ComparisonBlock
   | LogicalBlock
-  | IfBlock;
+  | IfBlock
+  | IfElseBlock;
