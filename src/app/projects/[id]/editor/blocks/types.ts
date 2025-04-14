@@ -9,6 +9,9 @@ export enum BlockType {
   Boolean = 'boolean',
   Comparison = 'comparison',
   Logical = 'logical',
+  If = 'if',
+  IfElse = 'if else',
+  For = 'for',
   Empty = 'empty', // Only used for testing
 }
 
@@ -33,6 +36,7 @@ export enum MathOperator {
   Subtraction = '-',
   Multiplication = '*',
   Division = '/',
+  Modulo = '%',
 }
 
 export enum ComparisonOperator {
@@ -157,6 +161,31 @@ export interface LogicalBlockUnary extends LogicalBlockBase {
 
 export type LogicalBlock = LogicalBlockBinary | LogicalBlockUnary;
 
+export interface IfBlock extends BaseBlock {
+  type: BlockType.If;
+  children: {
+    condition: Block[];
+    body: Block[];
+  };
+}
+
+export interface IfElseBlock extends BaseBlock {
+  type: BlockType.IfElse;
+  children: {
+    condition: Block[];
+    ifBody: Block[];
+    elseBody: Block[];
+  };
+}
+
+export interface ForBlock extends BaseBlock {
+  type: BlockType.For;
+  children: {
+    expression: Block[];
+    body: Block[];
+  };
+}
+
 /**
  * Union of all blocks
  */
@@ -169,4 +198,7 @@ export type Block =
   | EmptyBlock
   | BooleanBlock
   | ComparisonBlock
-  | LogicalBlock;
+  | LogicalBlock
+  | IfBlock
+  | IfElseBlock
+  | ForBlock;

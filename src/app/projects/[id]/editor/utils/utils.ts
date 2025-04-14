@@ -94,6 +94,7 @@ function processBlockChildren(
         expression: operation(block.children.expression, ...args),
       };
     case BlockType.While:
+    case BlockType.If:
       return {
         condition: operation(block.children.condition, ...args),
         body: operation(block.children.body, ...args),
@@ -119,6 +120,17 @@ function processBlockChildren(
         };
       }
       return null;
+    case BlockType.IfElse:
+      return {
+        condition: operation(block.children.condition, ...args),
+        ifBody: operation(block.children.ifBody, ...args),
+        elseBody: operation(block.children.elseBody, ...args),
+      };
+    case BlockType.For:
+      return {
+        expression: operation(block.children.expression, ...args),
+        body: operation(block.children.body, ...args),
+      };
     case BlockType.ProgramStart:
     case BlockType.Number:
     case BlockType.Boolean:

@@ -9,6 +9,10 @@ import {
   LogicalBlock,
   LogicalBlockUnary,
   LogicalBlockBinary,
+  IfBlock,
+  IfElseBlock,
+  ForBlock,
+  WhileBlock,
 } from '../blocks/types';
 import { isLogicalBinaryOperator } from '../utils/utils';
 
@@ -49,6 +53,14 @@ function visitBlock(ctx: Context, block: Block) {
       return visitComparison(ctx, block);
     case BlockType.Logical:
       return visitLogical(ctx, block);
+    case BlockType.If:
+      return visitIf(ctx, block);
+    case BlockType.IfElse:
+      return visitIfElse(ctx, block);
+    case BlockType.While:
+      return visitWhile(ctx, block);
+    case BlockType.For:
+      return visitFor(ctx, block);
     default:
       return '';
   }
@@ -136,4 +148,124 @@ function visitLogical(ctx: Context, block: LogicalBlock) {
   }
 
   return `(${unaryOpBlock.operator} ${operandCode})`;
+}
+
+function visitIf(ctx: Context, block: IfBlock) {
+  let conditionCode = '';
+  if (block.children.condition.length > 0) {
+    conditionCode = visitExpression(ctx, block.children.condition);
+  } else {
+    conditionCode = 'True'; // Default condition if none provided
+  }
+
+  addLine(ctx, `if ${conditionCode}:`);
+
+  ctx.indent++;
+
+  // If no body blocks, add a pass statement
+  if (block.children.body.length === 0) {
+    addLine(ctx, 'pass');
+  } else {
+    for (const bodyBlock of block.children.body) {
+      visitBlock(ctx, bodyBlock);
+    }
+  }
+
+  // Restore the original indentation
+  ctx.indent--;
+
+  return '';
+}
+
+function visitWhile(ctx: Context, block: WhileBlock) {
+  let conditionCode = '';
+  if (block.children.condition.length > 0) {
+    conditionCode = visitExpression(ctx, block.children.condition);
+  } else {
+    conditionCode = 'True'; // Default condition if none provided
+  }
+
+  addLine(ctx, `while ${conditionCode}:`);
+
+  ctx.indent++;
+
+  // If no body blocks, add a pass statement
+  if (block.children.body.length === 0) {
+    addLine(ctx, 'pass');
+  } else {
+    for (const bodyBlock of block.children.body) {
+      visitBlock(ctx, bodyBlock);
+    }
+  }
+
+  // Restore the original indentation
+  ctx.indent--;
+
+  return '';
+}
+
+function visitIfElse(ctx: Context, block: IfElseBlock) {
+  let conditionCode = '';
+  if (block.children.condition.length > 0) {
+    conditionCode = visitExpression(ctx, block.children.condition);
+  } else {
+    conditionCode = 'True'; // Default condition if none provided
+  }
+
+  addLine(ctx, `if ${conditionCode}:`);
+  ctx.indent++;
+
+  // If no if-body blocks, add a pass statement
+  if (block.children.ifBody.length === 0) {
+    addLine(ctx, 'pass');
+  } else {
+    // Process each block in the if body
+    for (const bodyBlock of block.children.ifBody) {
+      visitBlock(ctx, bodyBlock);
+    }
+  }
+
+  ctx.indent--;
+  addLine(ctx, 'else:');
+  ctx.indent++;
+
+  // If no else-body blocks, add a pass statement
+  if (block.children.elseBody.length === 0) {
+    addLine(ctx, 'pass');
+  } else {
+    // Process each block in the else body
+    for (const bodyBlock of block.children.elseBody) {
+      visitBlock(ctx, bodyBlock);
+    }
+  }
+
+  ctx.indent--;
+
+  return '';
+}
+
+function visitFor(ctx: Context, block: ForBlock) {
+  let expressionCode = '';
+  if (block.children.expression.length > 0) {
+    expressionCode = visitExpression(ctx, block.children.expression);
+  } else {
+    expressionCode = '0'; // Default condition if none provided
+  }
+
+  addLine(ctx, `for index in range(${expressionCode}):`);
+
+  ctx.indent++;
+
+  // If no body blocks, add a pass statement
+  if (block.children.body.length === 0) {
+    addLine(ctx, 'pass');
+  } else {
+    for (const bodyBlock of block.children.body) {
+      visitBlock(ctx, bodyBlock);
+    }
+  }
+
+  ctx.indent--;
+
+  return '';
 }

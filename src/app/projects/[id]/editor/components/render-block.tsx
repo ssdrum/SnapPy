@@ -12,6 +12,9 @@ import ProgramStart from '../blocks/program-start';
 import Boolean from '../blocks/boolean';
 import BinaryOp from '../blocks/binary-op';
 import UnaryOp from '../blocks/unary-op';
+import If from '../blocks/if';
+import IfElse from '../blocks/if-else';
+import For from '../blocks/for';
 
 export default function renderBlock(block: Block, enableSequences: boolean) {
   const { id, prevId, isWorkbenchBlock, state, children } = block;
@@ -141,6 +144,51 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           </UnaryOp>
         );
       }
+    case BlockType.If: {
+      return (
+        <If
+          key={id}
+          id={id}
+          hasPrev={prevId !== null}
+          isWorkbenchBlock={isWorkbenchBlock}
+          blockType={BlockType.If}
+          blockState={state}
+          enableSequences={enableSequences}
+        >
+          {block.children}
+        </If>
+      );
+    }
+    case BlockType.IfElse: {
+      return (
+        <IfElse
+          key={id}
+          id={id}
+          hasPrev={prevId !== null}
+          isWorkbenchBlock={isWorkbenchBlock}
+          blockType={BlockType.IfElse}
+          blockState={state}
+          enableSequences={enableSequences}
+        >
+          {block.children}
+        </IfElse>
+      );
+    }
+    case BlockType.For: {
+      return (
+        <For
+          key={id}
+          id={id}
+          hasPrev={prevId !== null}
+          isWorkbenchBlock={isWorkbenchBlock}
+          blockType={BlockType.For}
+          blockState={state}
+          enableSequences={enableSequences}
+        >
+          {block.children}
+        </For>
+      );
+    }
     default:
       return (
         <Empty
