@@ -14,6 +14,7 @@ import {
   ForBlock,
   WhileBlock,
   VariableValueBlock,
+  PrintBlock,
 } from '../blocks/types';
 import { isLogicalBinaryOperator } from '../utils/utils';
 
@@ -64,6 +65,8 @@ function visitBlock(ctx: Context, block: Block) {
       return visitWhile(ctx, block);
     case BlockType.For:
       return visitFor(ctx, block);
+    case BlockType.Print:
+      return visitPrint(ctx, block);
     default:
       return '';
   }
@@ -273,6 +276,20 @@ function visitFor(ctx: Context, block: ForBlock) {
   }
 
   ctx.indent--;
+
+  return '';
+}
+
+function visitPrint(ctx: Context, block: PrintBlock) {
+  let expressionCode = '';
+
+  if (block.children.expression.length > 0) {
+    expressionCode = visitExpression(ctx, block.children.expression);
+  } else {
+    expressionCode = 'None';
+  }
+
+  addLine(ctx, `print(${expressionCode})`);
 
   return '';
 }

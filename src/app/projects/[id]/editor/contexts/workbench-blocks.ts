@@ -39,6 +39,19 @@ const workbenchBlocks: Block[] = [
   },
   {
     id: uuidv4(),
+    type: BlockType.Print,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    children: {
+      expression: [],
+    },
+  },
+  {
+    id: uuidv4(),
     type: BlockType.If,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,

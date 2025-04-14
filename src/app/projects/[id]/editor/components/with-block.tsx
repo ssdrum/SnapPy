@@ -83,8 +83,8 @@ export default function withBlock<T extends object>(
           return '#FF6680'; // Pink/Red
 
         // Output blocks
-        // case BlockType.Print:
-        //   return '#40BF4A'; // Brighter green
+        case BlockType.Print:
+          return '#20B2AA'; // Teal
 
         // Default/other blocks
         case BlockType.Empty:

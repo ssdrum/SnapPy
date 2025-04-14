@@ -90,6 +90,7 @@ function processBlockChildren(
 ) {
   switch (block.type) {
     case BlockType.Variable:
+    case BlockType.Print:
       return {
         expression: operation(block.children.expression, ...args),
       };
