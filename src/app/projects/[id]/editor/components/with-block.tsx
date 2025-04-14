@@ -54,42 +54,28 @@ export default function withBlock<T extends object>(
     const getBGColor = () => {
       switch (blockType) {
         case BlockType.ProgramStart:
-          return '#FFD000'; // Yellow
-
-        // Control flow blocks
+          return '#FFD54F'; // Yellow
         case BlockType.While:
         case BlockType.For:
         case BlockType.If:
         case BlockType.IfElse:
-          return '#FF8C1A'; // Orange
-
-        // Variable-related blocks
+          return '#4091E2'; // Blue
         case BlockType.Variable:
         case BlockType.VariableValue:
-          return '#9966FF'; // Violet
-
-        // Value blocks
+          return '#EC407A'; // Pink
         case BlockType.Number:
         case BlockType.Boolean:
-          return '#59C059'; // Green
-
-        // Math operations
+          return '#66BB6A'; // Green
         case BlockType.Math:
-          return '#4C97FF'; // Blue
-
-        // Logical operations
+          return '#F57C00'; // Orange
         case BlockType.Comparison:
         case BlockType.Logical:
-          return '#FF6680'; // Pink/Red
-
-        // Output blocks
+          return '#9C6AE2'; // Purple
         case BlockType.Print:
-          return '#20B2AA'; // Teal
-
-        // Default/other blocks
+          return '#26A69A'; // Teal
         case BlockType.Empty:
         default:
-          return '#4C97FF'; // Blue
+          return '#EC407A'; // Pink
       }
     };
 
