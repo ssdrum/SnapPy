@@ -1,5 +1,5 @@
 import { RefObject } from 'react';
-import { Block, BlockType } from '../blocks/types';
+import { Block, BlockType, LogicalOperator } from '../blocks/types';
 
 /**
  * Traverses the canvas recursively and returns the block with the provided id
@@ -324,4 +324,8 @@ export function resizeInput(
     // Set the input width (with minimum width)
     inputRef.current.style.width = `${Math.max(35, width + 10)}px`;
   }
+}
+
+export function isLogicalBinaryOperator(op: LogicalOperator) {
+  return op === LogicalOperator.And || op === LogicalOperator.Or;
 }
