@@ -65,7 +65,7 @@ export default function withBlock<T extends object>(
 
         // Variable-related blocks
         case BlockType.Variable:
-          // case BlockType.VariableValue:
+        case BlockType.VariableValue:
           return '#9966FF'; // Violet
 
         // Value blocks

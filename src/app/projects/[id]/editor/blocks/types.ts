@@ -3,6 +3,7 @@ import { Coordinates } from '@dnd-kit/utilities';
 export enum BlockType {
   ProgramStart = 'program start',
   Variable = 'variable',
+  VariableValue = 'variable value',
   While = 'while',
   Number = 'number',
   Math = 'math',
@@ -102,6 +103,12 @@ export interface VariableBlock extends BaseBlock {
   };
 }
 
+export interface VariableValueBlock extends BaseBlock {
+  type: BlockType.VariableValue;
+  selected: string;
+  children: null;
+}
+
 export interface WhileBlock extends BaseBlock {
   type: BlockType.While;
   children: {
@@ -192,6 +199,7 @@ export interface ForBlock extends BaseBlock {
 export type Block =
   | ProgramStartBlock
   | VariableBlock
+  | VariableValueBlock
   | WhileBlock
   | NumberBlock
   | MathBlock

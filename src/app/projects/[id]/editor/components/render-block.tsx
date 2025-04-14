@@ -15,6 +15,7 @@ import UnaryOp from '../blocks/unary-op';
 import If from '../blocks/if';
 import IfElse from '../blocks/if-else';
 import For from '../blocks/for';
+import VariableValue from '../blocks/variable-value';
 
 export default function renderBlock(block: Block, enableSequences: boolean) {
   const { id, prevId, isWorkbenchBlock, state, children } = block;
@@ -48,6 +49,21 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
         >
           {block.children}
         </Variable>
+      );
+    case BlockType.VariableValue:
+      return (
+        <VariableValue
+          key={id}
+          id={id}
+          hasPrev={prevId !== null}
+          isWorkbenchBlock={isWorkbenchBlock}
+          blockType={BlockType.VariableValue}
+          blockState={state}
+          selected={block.selected}
+          enableSequences={enableSequences}
+        >
+          {block.children}
+        </VariableValue>
       );
     case BlockType.While:
       return (

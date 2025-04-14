@@ -134,6 +134,7 @@ function processBlockChildren(
     case BlockType.ProgramStart:
     case BlockType.Number:
     case BlockType.Boolean:
+    case BlockType.VariableValue:
     case BlockType.Empty:
       return null;
   }

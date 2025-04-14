@@ -13,6 +13,7 @@ import {
   IfElseBlock,
   ForBlock,
   WhileBlock,
+  VariableValueBlock,
 } from '../blocks/types';
 import { isLogicalBinaryOperator } from '../utils/utils';
 
@@ -43,6 +44,8 @@ function visitBlock(ctx: Context, block: Block) {
   switch (block.type) {
     case BlockType.Variable:
       return visitVariable(ctx, block);
+    case BlockType.VariableValue:
+      return visitVariableValue(block);
     case BlockType.Number:
       return visitNumber(block);
     case BlockType.Math:
@@ -78,6 +81,10 @@ function visitVariable(ctx: Context, block: VariableBlock) {
   addLine(ctx, `${block.selected} = ${expressionCode}`);
 
   return '';
+}
+
+function visitVariableValue(block: VariableValueBlock) {
+  return block.selected;
 }
 
 function visitExpression(ctx: Context, blocks: Block[]) {
