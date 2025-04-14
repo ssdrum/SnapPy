@@ -2,6 +2,7 @@ import InnerDropZone from '../components/inner-drop-zone';
 import withBlock from '../components/with-block';
 import { Block, ComparisonOperator, MathOperator } from './types';
 import { OperatorIcon } from './operator-icon';
+import classes from './blocks.module.css';
 
 interface BinaryOpProps {
   id: string;
@@ -15,7 +16,7 @@ interface BinaryOpProps {
 
 function BinaryOp({ id, isWorkbenchBlock, operator, children }: BinaryOpProps) {
   return (
-    <>
+    <div className={classes.binaryOpContainer}>
       <InnerDropZone
         id={`left_${id}`}
         enabled={!isWorkbenchBlock}
@@ -23,16 +24,7 @@ function BinaryOp({ id, isWorkbenchBlock, operator, children }: BinaryOpProps) {
       >
         {children.left}
       </InnerDropZone>
-      <div
-        style={{
-          width: '50px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <OperatorIcon operator={operator} />
-      </div>
+      <OperatorIcon operator={operator} />
       <InnerDropZone
         id={`right_${id}`}
         enabled={!isWorkbenchBlock}
@@ -40,7 +32,7 @@ function BinaryOp({ id, isWorkbenchBlock, operator, children }: BinaryOpProps) {
       >
         {children.right}
       </InnerDropZone>
-    </>
+    </div>
   );
 }
 

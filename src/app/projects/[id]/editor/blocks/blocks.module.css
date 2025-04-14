@@ -48,17 +48,24 @@
   align-items: center;
 }
 
+.binaryOpContainer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 8px; /* Adds consistent spacing between elements */
+}
+
 .innerDropzone {
   background-color: rgba(255, 255, 255, 0.3);
-  min-width: 20px;
-  width: 100%;
+  min-width: 40px;
+  flex: 1; /* Changed from width: 100% to flex: 1 */
   min-height: 24px;
   border-radius: 2px;
   border: 2px dashed rgba(255, 255, 255, 0.7);
   position: relative;
   display: flex;
   align-items: center;
-  transition: 'all 0.2s ease-in-out';
+  transition: all 0.2s ease-in-out;
 }
 
 .outerDropzone {

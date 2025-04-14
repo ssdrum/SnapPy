@@ -18,7 +18,7 @@ interface OperatorIconProps {
 
 export function OperatorIcon({ operator }: OperatorIconProps) {
   // Larger icon size, but still fits in 40px container
-  const size = 30;
+  const size = 15;
   const color = 'white';
   const stroke = 2.5; // Increased stroke for better visibility
 

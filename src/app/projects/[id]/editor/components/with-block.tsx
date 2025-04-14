@@ -38,6 +38,18 @@ export default function withBlock<T extends object>(
 
     const { state, selectBlockAction, deselectBlockAction } = useBlocks();
 
+    const getPadding = () => {
+      switch (blockType) {
+        case BlockType.Math:
+        case BlockType.Comparison:
+        case BlockType.Number:
+        case BlockType.Boolean:
+          return '4px';
+        default:
+          return undefined;
+      }
+    };
+
     const getBGColor = () => {
       switch (blockType) {
         case BlockType.ProgramStart:
@@ -108,6 +120,7 @@ export default function withBlock<T extends object>(
           style={{
             backgroundColor: getBGColor(),
             boxShadow: getBoxShadow(),
+            padding: getPadding(),
           }}
           onClick={() => {
             deselectBlockAction();
