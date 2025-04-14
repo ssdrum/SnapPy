@@ -17,6 +17,7 @@ import IfElse from '../blocks/if-else';
 import For from '../blocks/for';
 import VariableValue from '../blocks/variable-value';
 import Print from '../blocks/print';
+import String from '../blocks/string';
 
 export default function renderBlock(block: Block, enableSequences: boolean) {
   const { id, prevId, isWorkbenchBlock, state, children } = block;
@@ -94,6 +95,21 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
         >
           {children}
         </Number>
+      );
+    case BlockType.String:
+      return (
+        <String
+          key={id}
+          id={id}
+          hasPrev={prevId !== null}
+          isWorkbenchBlock={isWorkbenchBlock}
+          blockType={BlockType.Number}
+          blockState={state}
+          enableSequences={enableSequences}
+          value={block.value}
+        >
+          {children}
+        </String>
       );
     case BlockType.Math:
     case BlockType.Comparison:

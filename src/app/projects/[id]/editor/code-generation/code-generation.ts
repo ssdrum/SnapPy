@@ -15,6 +15,7 @@ import {
   WhileBlock,
   VariableValueBlock,
   PrintBlock,
+  StringBlock,
 } from '../blocks/types';
 import { isLogicalBinaryOperator } from '../utils/utils';
 
@@ -49,6 +50,8 @@ function visitBlock(ctx: Context, block: Block) {
       return visitVariableValue(block);
     case BlockType.Number:
       return visitNumber(block);
+    case BlockType.String:
+      return visitString(block);
     case BlockType.Math:
       return visitMath(ctx, block);
     case BlockType.Boolean:
@@ -96,6 +99,10 @@ function visitExpression(ctx: Context, blocks: Block[]) {
 
 function visitNumber(block: NumberBlock) {
   return block.value;
+}
+
+function visitString(block: StringBlock) {
+  return `"${block.value}"`;
 }
 
 function visitMath(ctx: Context, block: MathBlock) {

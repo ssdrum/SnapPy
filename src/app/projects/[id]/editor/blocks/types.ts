@@ -6,6 +6,7 @@ export enum BlockType {
   VariableValue = 'variable value',
   While = 'while',
   Number = 'number',
+  String = 'string',
   Math = 'math',
   Boolean = 'boolean',
   Comparison = 'comparison',
@@ -124,6 +125,12 @@ export interface NumberBlock extends BaseBlock {
   children: null;
 }
 
+export interface StringBlock extends BaseBlock {
+  type: BlockType.String;
+  value: string;
+  children: null;
+}
+
 export interface MathBlock extends BaseBlock {
   type: BlockType.Math;
   operator: MathOperator;
@@ -210,6 +217,7 @@ export type Block =
   | VariableValueBlock
   | WhileBlock
   | NumberBlock
+  | StringBlock
   | MathBlock
   | EmptyBlock
   | BooleanBlock
