@@ -6,7 +6,11 @@ import {
   MathBlock,
   BooleanBlock,
   ComparisonBlock,
+  LogicalBlock,
+  LogicalBlockUnary,
+  LogicalBlockBinary,
 } from '../blocks/types';
+import { isLogicalBinaryOperator } from '../utils/utils';
 
 interface Context {
   indent: number;
@@ -43,6 +47,8 @@ function visitBlock(ctx: Context, block: Block) {
       return visitBoolean(block);
     case BlockType.Comparison:
       return visitComparison(ctx, block);
+    case BlockType.Logical:
+      return visitLogical(ctx, block);
     default:
       return '';
   }
@@ -100,4 +106,34 @@ function visitComparison(ctx: Context, block: ComparisonBlock) {
   }
 
   return `(${leftCode} ${block.operator} ${rightCode})`;
+}
+
+function visitLogical(ctx: Context, block: LogicalBlock) {
+  // Binary operators (and, or)
+  if (isLogicalBinaryOperator(block.operator)) {
+    const binaryOpBlock = block as LogicalBlockBinary;
+
+    let leftCode = '';
+    let rightCode = '';
+
+    if (binaryOpBlock.children.left.length > 0) {
+      leftCode = visitExpression(ctx, binaryOpBlock.children.left);
+    }
+    if (binaryOpBlock.children.right.length > 0) {
+      rightCode = visitExpression(ctx, binaryOpBlock.children.right);
+    }
+
+    return `(${leftCode} ${block.operator} ${rightCode})`;
+  }
+
+  // Unary operators (not)
+  const unaryOpBlock = block as LogicalBlockUnary;
+
+  let operandCode = '';
+
+  if (unaryOpBlock.children.operand.length > 0) {
+    operandCode = visitExpression(ctx, unaryOpBlock.children.operand);
+  }
+
+  return `(${unaryOpBlock.operator} ${operandCode})`;
 }

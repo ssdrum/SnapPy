@@ -1,5 +1,5 @@
 import { RefObject } from 'react';
-import { Block, BlockType } from '../blocks/types';
+import { Block, BlockType, LogicalOperator } from '../blocks/types';
 
 /**
  * Traverses the canvas recursively and returns the block with the provided id
@@ -104,6 +104,21 @@ function processBlockChildren(
         left: operation(block.children.left, ...args),
         right: operation(block.children.right, ...args),
       };
+    case BlockType.Logical:
+      // Check if it's a binary or unary logical operator
+      if ('left' in block.children && 'right' in block.children) {
+        // Binary operator (AND, OR)
+        return {
+          left: operation(block.children.left, ...args),
+          right: operation(block.children.right, ...args),
+        };
+      } else if ('operand' in block.children) {
+        // Unary operator (NOT)
+        return {
+          operand: operation(block.children.operand, ...args),
+        };
+      }
+      return null;
     case BlockType.ProgramStart:
     case BlockType.Number:
     case BlockType.Boolean:
@@ -309,4 +324,8 @@ export function resizeInput(
     // Set the input width (with minimum width)
     inputRef.current.style.width = `${Math.max(35, width + 10)}px`;
   }
+}
+
+export function isLogicalBinaryOperator(op: LogicalOperator) {
+  return op === LogicalOperator.And || op === LogicalOperator.Or;
 }

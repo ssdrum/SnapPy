@@ -40,10 +40,11 @@ export default function withBlock<T extends object>(
 
     const getPadding = () => {
       switch (blockType) {
-        case BlockType.Math:
-        case BlockType.Comparison:
         case BlockType.Number:
         case BlockType.Boolean:
+        case BlockType.Math:
+        case BlockType.Comparison:
+        case BlockType.Logical:
           return '4px';
         default:
           return undefined;
@@ -78,6 +79,7 @@ export default function withBlock<T extends object>(
 
         // Logical operations
         case BlockType.Comparison:
+        case BlockType.Logical:
           return '#FF6680'; // Pink/Red
 
         // Output blocks
