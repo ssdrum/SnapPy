@@ -85,7 +85,8 @@ export default function DragEventsHandler({
       prefix === 'condition' ||
       prefix === 'body' ||
       prefix === 'left' ||
-      prefix === 'right'
+      prefix === 'right' ||
+      prefix === 'operand'
     ) {
       // Prevent dropping onto itself
       if (activeId === targetBlockId) {
@@ -125,7 +126,8 @@ export default function DragEventsHandler({
       prefix === 'condition' ||
       prefix === 'body' ||
       prefix === 'left' ||
-      prefix === 'right'
+      prefix === 'right' ||
+      prefix === 'operand'
     ) {
       highlightDropzoneAction(id);
     }

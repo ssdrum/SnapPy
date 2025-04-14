@@ -1,4 +1,9 @@
-import { Block, BlockType, LogicalOperator } from '../blocks/types';
+import {
+  Block,
+  BlockType,
+  LogicalBlockUnary,
+  LogicalOperator,
+} from '../blocks/types';
 import Variable from '../blocks/variable';
 import Empty from '../blocks/empty';
 import While from '../blocks/while';
@@ -6,6 +11,7 @@ import Number from '../blocks/number';
 import ProgramStart from '../blocks/program-start';
 import Boolean from '../blocks/boolean';
 import BinaryOp from '../blocks/binary-op';
+import UnaryOp from '../blocks/unary-op';
 
 export default function renderBlock(block: Block, enableSequences: boolean) {
   const { id, prevId, isWorkbenchBlock, state, children } = block;
@@ -119,8 +125,22 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
             {block.children}
           </BinaryOp>
         );
+      } else {
+        return (
+          <UnaryOp
+            key={id}
+            id={id}
+            hasPrev={prevId !== null}
+            isWorkbenchBlock={isWorkbenchBlock}
+            blockType={block.type}
+            blockState={state}
+            enableSequences={enableSequences}
+            operator={LogicalOperator.Not}
+          >
+            {(block as LogicalBlockUnary).children}
+          </UnaryOp>
+        );
       }
-      break;
     default:
       return (
         <Empty

@@ -243,6 +243,20 @@ const workbenchBlocks: Block[] = [
       right: [],
     },
   },
+  {
+    id: uuidv4(),
+    type: BlockType.Logical,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    operator: LogicalOperator.Not,
+    children: {
+      operand: [],
+    },
+  },
 ];
 
 export default workbenchBlocks;
