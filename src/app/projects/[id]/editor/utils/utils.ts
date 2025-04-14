@@ -94,6 +94,7 @@ function processBlockChildren(
         expression: operation(block.children.expression, ...args),
       };
     case BlockType.While:
+    case BlockType.If:
       return {
         condition: operation(block.children.condition, ...args),
         body: operation(block.children.body, ...args),
