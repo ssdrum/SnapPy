@@ -126,6 +126,11 @@ function processBlockChildren(
         ifBody: operation(block.children.ifBody, ...args),
         elseBody: operation(block.children.elseBody, ...args),
       };
+    case BlockType.For:
+      return {
+        expression: operation(block.children.expression, ...args),
+        body: operation(block.children.body, ...args),
+      };
     case BlockType.ProgramStart:
     case BlockType.Number:
     case BlockType.Boolean:

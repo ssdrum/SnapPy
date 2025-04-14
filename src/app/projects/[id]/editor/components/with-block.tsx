@@ -58,7 +58,7 @@ export default function withBlock<T extends object>(
 
         // Control flow blocks
         case BlockType.While:
-        // case BlockType.For:
+        case BlockType.For:
         case BlockType.If:
         case BlockType.IfElse:
           return '#FF8C1A'; // Orange
