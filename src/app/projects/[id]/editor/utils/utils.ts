@@ -104,6 +104,21 @@ function processBlockChildren(
         left: operation(block.children.left, ...args),
         right: operation(block.children.right, ...args),
       };
+    case BlockType.Logical:
+      // Check if it's a binary or unary logical operator
+      if ('left' in block.children && 'right' in block.children) {
+        // Binary operator (AND, OR)
+        return {
+          left: operation(block.children.left, ...args),
+          right: operation(block.children.right, ...args),
+        };
+      } else if ('operand' in block.children) {
+        // Unary operator (NOT)
+        return {
+          operand: operation(block.children.operand, ...args),
+        };
+      }
+      return null;
     case BlockType.ProgramStart:
     case BlockType.Number:
     case BlockType.Boolean:

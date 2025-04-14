@@ -8,6 +8,7 @@ export enum BlockType {
   Math = 'math',
   Boolean = 'boolean',
   Comparison = 'comparison',
+  Logical = 'logical',
   Empty = 'empty', // Only used for testing
 }
 
@@ -41,6 +42,12 @@ export enum ComparisonOperator {
   LessThan = '<',
   GreaterThanOrEqual = '>=',
   LessThanOrEqual = '<=',
+}
+
+export enum LogicalOperator {
+  And = 'and',
+  Or = 'or',
+  Not = 'not',
 }
 
 export enum BooleanValue {
@@ -129,6 +136,27 @@ export interface ComparisonBlock extends BaseBlock {
   };
 }
 
+export interface LogicalBlockBase extends BaseBlock {
+  type: BlockType.Logical;
+}
+
+export interface LogicalBlockBinary extends LogicalBlockBase {
+  operator: LogicalOperator.And | LogicalOperator.Or;
+  children: {
+    left: Block[];
+    right: Block[];
+  };
+}
+
+export interface LogicalBlockUnary extends LogicalBlockBase {
+  operator: LogicalOperator.Not;
+  children: {
+    operand: Block[];
+  };
+}
+
+export type LogicalBlock = LogicalBlockBinary | LogicalBlockUnary;
+
 /**
  * Union of all blocks
  */
@@ -140,4 +168,5 @@ export type Block =
   | MathBlock
   | EmptyBlock
   | BooleanBlock
-  | ComparisonBlock;
+  | ComparisonBlock
+  | LogicalBlock;
