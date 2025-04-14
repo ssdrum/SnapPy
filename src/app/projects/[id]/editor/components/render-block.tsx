@@ -3,8 +3,9 @@ import Variable from '../blocks/variable';
 import Empty from '../blocks/empty';
 import While from '../blocks/while';
 import Number from '../blocks/number';
-import Math from '../blocks/math';
 import ProgramStart from '../blocks/program-start';
+import Boolean from '../blocks/boolean';
+import BinaryOp from '../blocks/binary-op';
 
 export default function renderBlock(block: Block, enableSequences: boolean) {
   const { id, prevId, isWorkbenchBlock, state, children } = block;
@@ -69,19 +70,35 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
         </Number>
       );
     case BlockType.Math:
+    case BlockType.Comparison:
       return (
-        <Math
+        <BinaryOp
           key={id}
           id={id}
           hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
-          blockType={BlockType.Math}
+          blockType={block.type}
           blockState={state}
           enableSequences={enableSequences}
           operator={block.operator}
         >
           {block.children}
-        </Math>
+        </BinaryOp>
+      );
+    case BlockType.Boolean:
+      return (
+        <Boolean
+          key={id}
+          id={id}
+          hasPrev={prevId !== null}
+          isWorkbenchBlock={isWorkbenchBlock}
+          blockType={BlockType.Boolean}
+          blockState={state}
+          enableSequences={enableSequences}
+          value={block.value}
+        >
+          {children}
+        </Boolean>
       );
     default:
       return (

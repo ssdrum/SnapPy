@@ -38,17 +38,54 @@ export default function withBlock<T extends object>(
 
     const { state, selectBlockAction, deselectBlockAction } = useBlocks();
 
+    const getPadding = () => {
+      switch (blockType) {
+        case BlockType.Math:
+        case BlockType.Comparison:
+        case BlockType.Number:
+        case BlockType.Boolean:
+          return '4px';
+        default:
+          return undefined;
+      }
+    };
+
     const getBGColor = () => {
       switch (blockType) {
         case BlockType.ProgramStart:
           return '#FFD000'; // Yellow
-        case BlockType.Variable:
-          return '#9966FF'; // Violet
+
+        // Control flow blocks
         case BlockType.While:
+          // case BlockType.For:
+          // case BlockType.If:
+          // case BlockType.IfElse:
           return '#FF8C1A'; // Orange
+
+        // Variable-related blocks
+        case BlockType.Variable:
+          // case BlockType.VariableValue:
+          return '#9966FF'; // Violet
+
+        // Value blocks
         case BlockType.Number:
-        case BlockType.Math:
+        case BlockType.Boolean:
           return '#59C059'; // Green
+
+        // Math operations
+        case BlockType.Math:
+          return '#4C97FF'; // Blue
+
+        // Logical operations
+        case BlockType.Comparison:
+          return '#FF6680'; // Pink/Red
+
+        // Output blocks
+        // case BlockType.Print:
+        //   return '#40BF4A'; // Brighter green
+
+        // Default/other blocks
+        case BlockType.Empty:
         default:
           return '#4C97FF'; // Blue
       }
@@ -83,6 +120,7 @@ export default function withBlock<T extends object>(
           style={{
             backgroundColor: getBGColor(),
             boxShadow: getBoxShadow(),
+            padding: getPadding(),
           }}
           onClick={() => {
             deselectBlockAction();

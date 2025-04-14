@@ -20,6 +20,7 @@
   background-color: var(--mantine-color-gray-0);
   border-right: 1px solid var(--mantine-color-gray-3);
   padding: 16px;
+  overflow-y: scroll;
 }
 
 .canvas {

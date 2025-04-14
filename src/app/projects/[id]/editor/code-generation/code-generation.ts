@@ -4,6 +4,8 @@ import {
   VariableBlock,
   NumberBlock,
   MathBlock,
+  BooleanBlock,
+  ComparisonBlock,
 } from '../blocks/types';
 
 interface Context {
@@ -37,6 +39,10 @@ function visitBlock(ctx: Context, block: Block) {
       return visitNumber(block);
     case BlockType.Math:
       return visitMath(ctx, block);
+    case BlockType.Boolean:
+      return visitBoolean(block);
+    case BlockType.Comparison:
+      return visitComparison(ctx, block);
     default:
       return '';
   }
@@ -65,6 +71,24 @@ function visitNumber(block: NumberBlock) {
 }
 
 function visitMath(ctx: Context, block: MathBlock) {
+  let leftCode = '';
+  let rightCode = '';
+
+  if (block.children.left.length > 0) {
+    leftCode = visitExpression(ctx, block.children.left);
+  }
+  if (block.children.right.length > 0) {
+    rightCode = visitExpression(ctx, block.children.right);
+  }
+
+  return `(${leftCode} ${block.operator} ${rightCode})`;
+}
+
+function visitBoolean(block: BooleanBlock) {
+  return block.value;
+}
+
+function visitComparison(ctx: Context, block: ComparisonBlock) {
   let leftCode = '';
   let rightCode = '';
 

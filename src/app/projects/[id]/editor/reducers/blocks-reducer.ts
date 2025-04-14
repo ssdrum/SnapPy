@@ -3,6 +3,7 @@ import {
   BlockChildren,
   BlockState,
   BlockType,
+  BooleanBlock,
   CanvasState,
   NumberBlock,
   OuterDropzonePosition,
@@ -430,6 +431,36 @@ export default function BlocksReducer(
       };
 
       // Update the appropriate blocks array based on whether it's a workbench block
+      if (isWorkbenchBlock) {
+        return {
+          ...state,
+          workbench: updateBlockById(state.workbench, id, newBlock),
+        };
+      } else {
+        return {
+          ...state,
+          canvas: updateBlockById(state.canvas, id, newBlock),
+        };
+      }
+    }
+
+    case CanvasEvent.CHANGE_BOOLEAN_VALUE: {
+      const { id, value, isWorkbenchBlock } = action.payload;
+
+      const blocksArray = isWorkbenchBlock ? state.workbench : state.canvas;
+
+      const block = validateBlockExists(
+        blocksArray,
+        id,
+        CanvasEvent.CHANGE_BOOLEAN_VALUE
+      );
+      if (!block) return state;
+
+      const newBlock: BooleanBlock = {
+        ...(block as BooleanBlock),
+        value: value,
+      };
+
       if (isWorkbenchBlock) {
         return {
           ...state,

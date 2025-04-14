@@ -99,12 +99,14 @@ function processBlockChildren(
         body: operation(block.children.body, ...args),
       };
     case BlockType.Math:
+    case BlockType.Comparison:
       return {
         left: operation(block.children.left, ...args),
         right: operation(block.children.right, ...args),
       };
     case BlockType.ProgramStart:
     case BlockType.Number:
+    case BlockType.Boolean:
     case BlockType.Empty:
       return null;
   }
