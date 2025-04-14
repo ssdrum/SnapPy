@@ -14,7 +14,7 @@ interface PrintProps {
 function Print({ id, isWorkbenchBlock, children }: PrintProps) {
   return (
     <div className={classes.binaryOpContainer}>
-      <span>Print</span>
+      <span>print</span>
       <InnerDropZone
         id={`expression_${id}`}
         enabled={!isWorkbenchBlock}

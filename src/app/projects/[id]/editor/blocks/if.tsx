@@ -22,7 +22,7 @@ function If({ id, isWorkbenchBlock, children }: IfProps) {
           alignItems: 'center',
         }}
       >
-        <span>If</span>
+        <span>if</span>
         {
           <InnerDropZone
             id={`condition_${id}`}

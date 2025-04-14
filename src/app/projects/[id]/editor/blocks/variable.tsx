@@ -32,7 +32,7 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
 
   return (
     <>
-      <span>Set</span>
+      <span>set</span>
       <select
         ref={selectRef}
         value={selected}

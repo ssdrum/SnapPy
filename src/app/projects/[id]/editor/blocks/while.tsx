@@ -22,7 +22,7 @@ function While({ id, isWorkbenchBlock, children }: WhileProps) {
           alignItems: 'center',
         }}
       >
-        <span>While</span>
+        <span>while</span>
         {
           <InnerDropZone
             id={`condition_${id}`}
