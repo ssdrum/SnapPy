@@ -252,6 +252,72 @@ function traverseSequence(
 }
 
 /**
+ * Helper function to remove multiple blocks from canvas
+ */
+export function removeBlocks(blocksToRemove: Block[], canvas: Block[]) {
+  let newCanvas = [...canvas];
+
+  for (const block of blocksToRemove) {
+    newCanvas = removeBlockById(newCanvas, block.id);
+  }
+
+  return newCanvas;
+}
+
+/**
+ * Returns the sequence of blocks that starts from startBlock
+ */
+export function getBlocksSequence(startBlock: Block, canvas: Block[]) {
+  const sequence: Block[] = [{ ...startBlock }];
+
+  let nextId = startBlock.nextId;
+  while (nextId) {
+    let curr = findBlockById(nextId, canvas);
+    if (!curr) break;
+
+    sequence.push({ ...curr });
+    nextId = curr.nextId;
+  }
+
+  return sequence;
+}
+
+/**
+ * Sorts a sequence of blocks. Finds the block with no prevId, then builds the
+ * sequence starting from it.
+ */
+export function sortBlocks(blocks: Block[]) {
+  const startBlock = blocks.find((block) => block.prevId === null);
+  if (!startBlock) {
+    console.error(
+      `Error in sortBlocks. Start block not found in blocks = ${blocks}`
+    );
+    return [];
+  }
+
+  return getBlocksSequence(startBlock, blocks);
+}
+
+/**
+ * Resizes the input to match the text width
+ */
+export function resizeInput(
+  inputRef: RefObject<HTMLInputElement | null>,
+  hiddenRef: RefObject<HTMLSpanElement | null>
+) {
+  if (inputRef.current && hiddenRef.current) {
+    // Update the hidden span's text to match the input
+    hiddenRef.current.textContent = inputRef.current.value || '0';
+
+    // Get the width of the hidden span (plus some padding)
+    const width = hiddenRef.current.offsetWidth;
+
+    // Set the input width (with minimum width)
+    inputRef.current.style.width = `${Math.max(35, width + 10)}px`;
+  }
+}
+
+/**
  * Resizes a select element to match the width of its selected option
  * @param selectRef React ref to the select element
  * source: https://stackoverflow.com/questions/28308103/adjust-width-of-select-element-according-to-selected-options-width
@@ -289,56 +355,6 @@ export function resizeSelect(
 
   // Clean up
   tempSelect.remove();
-}
-
-/**
- * Helper function to remove multiple blocks from canvas
- */
-export function removeBlocks(blocksToRemove: Block[], canvas: Block[]) {
-  let newCanvas = [...canvas];
-
-  for (const block of blocksToRemove) {
-    newCanvas = removeBlockById(newCanvas, block.id);
-  }
-
-  return newCanvas;
-}
-
-/**
- * Returns the sequence of blocks that starts from startBlock
- */
-export function getBlocksSequence(startBlock: Block, canvas: Block[]) {
-  const sequence: Block[] = [{ ...startBlock }];
-
-  let nextId = startBlock.nextId;
-  while (nextId) {
-    let curr = findBlockById(nextId, canvas);
-    if (!curr) break;
-
-    sequence.push({ ...curr });
-    nextId = curr.nextId;
-  }
-
-  return sequence;
-}
-
-/**
- * Resizes the input to match the text width
- */
-export function resizeInput(
-  inputRef: RefObject<HTMLInputElement | null>,
-  hiddenRef: RefObject<HTMLSpanElement | null>
-) {
-  if (inputRef.current && hiddenRef.current) {
-    // Update the hidden span's text to match the input
-    hiddenRef.current.textContent = inputRef.current.value || '0';
-
-    // Get the width of the hidden span (plus some padding)
-    const width = hiddenRef.current.offsetWidth;
-
-    // Set the input width (with minimum width)
-    inputRef.current.style.width = `${Math.max(35, width + 10)}px`;
-  }
 }
 
 export function isLogicalBinaryOperator(op: LogicalOperator) {
