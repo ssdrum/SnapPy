@@ -15,6 +15,9 @@ import UnaryOp from '../blocks/unary-op';
 import If from '../blocks/if';
 import IfElse from '../blocks/if-else';
 import For from '../blocks/for';
+import VariableValue from '../blocks/variable-value';
+import Print from '../blocks/print';
+import String from '../blocks/string';
 
 export default function renderBlock(block: Block, enableSequences: boolean) {
   const { id, prevId, isWorkbenchBlock, state, children } = block;
@@ -49,6 +52,21 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           {block.children}
         </Variable>
       );
+    case BlockType.VariableValue:
+      return (
+        <VariableValue
+          key={id}
+          id={id}
+          hasPrev={prevId !== null}
+          isWorkbenchBlock={isWorkbenchBlock}
+          blockType={BlockType.VariableValue}
+          blockState={state}
+          selected={block.selected}
+          enableSequences={enableSequences}
+        >
+          {block.children}
+        </VariableValue>
+      );
     case BlockType.While:
       return (
         <While
@@ -77,6 +95,21 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
         >
           {children}
         </Number>
+      );
+    case BlockType.String:
+      return (
+        <String
+          key={id}
+          id={id}
+          hasPrev={prevId !== null}
+          isWorkbenchBlock={isWorkbenchBlock}
+          blockType={BlockType.Number}
+          blockState={state}
+          enableSequences={enableSequences}
+          value={block.value}
+        >
+          {children}
+        </String>
       );
     case BlockType.Math:
     case BlockType.Comparison:
@@ -187,6 +220,21 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
         >
           {block.children}
         </For>
+      );
+    }
+    case BlockType.Print: {
+      return (
+        <Print
+          key={id}
+          id={id}
+          hasPrev={prevId !== null}
+          isWorkbenchBlock={isWorkbenchBlock}
+          blockType={BlockType.Print}
+          blockState={state}
+          enableSequences={enableSequences}
+        >
+          {block.children}
+        </Print>
       );
     }
     default:

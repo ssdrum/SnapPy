@@ -3,8 +3,10 @@ import { Coordinates } from '@dnd-kit/utilities';
 export enum BlockType {
   ProgramStart = 'program start',
   Variable = 'variable',
+  VariableValue = 'variable value',
   While = 'while',
   Number = 'number',
+  String = 'string',
   Math = 'math',
   Boolean = 'boolean',
   Comparison = 'comparison',
@@ -12,6 +14,7 @@ export enum BlockType {
   If = 'if',
   IfElse = 'if else',
   For = 'for',
+  Print = 'print',
   Empty = 'empty', // Only used for testing
 }
 
@@ -102,6 +105,12 @@ export interface VariableBlock extends BaseBlock {
   };
 }
 
+export interface VariableValueBlock extends BaseBlock {
+  type: BlockType.VariableValue;
+  selected: string;
+  children: null;
+}
+
 export interface WhileBlock extends BaseBlock {
   type: BlockType.While;
   children: {
@@ -112,6 +121,12 @@ export interface WhileBlock extends BaseBlock {
 
 export interface NumberBlock extends BaseBlock {
   type: BlockType.Number;
+  value: string;
+  children: null;
+}
+
+export interface StringBlock extends BaseBlock {
+  type: BlockType.String;
   value: string;
   children: null;
 }
@@ -186,14 +201,23 @@ export interface ForBlock extends BaseBlock {
   };
 }
 
+export interface PrintBlock extends BaseBlock {
+  type: BlockType.Print;
+  children: {
+    expression: Block[];
+  };
+}
+
 /**
  * Union of all blocks
  */
 export type Block =
   | ProgramStartBlock
   | VariableBlock
+  | VariableValueBlock
   | WhileBlock
   | NumberBlock
+  | StringBlock
   | MathBlock
   | EmptyBlock
   | BooleanBlock
@@ -201,4 +225,5 @@ export type Block =
   | LogicalBlock
   | IfBlock
   | IfElseBlock
-  | ForBlock;
+  | ForBlock
+  | PrintBlock;

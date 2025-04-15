@@ -9,7 +9,7 @@ function ProgramStart() {
         stroke={2.5}
         style={{ color: '#25A244' }} // Green play icon
       />
-      <span>Start</span>
+      <span>start</span>
     </div>
   );
 }

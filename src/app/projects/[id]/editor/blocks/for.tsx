@@ -22,7 +22,7 @@ function For({ id, isWorkbenchBlock, children }: ForProps) {
           alignItems: 'center',
         }}
       >
-        <span>Repeat</span>
+        <span>repeat</span>
         {
           <InnerDropZone
             id={`expression_${id}`}

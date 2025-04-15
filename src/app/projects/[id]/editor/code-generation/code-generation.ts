@@ -13,6 +13,9 @@ import {
   IfElseBlock,
   ForBlock,
   WhileBlock,
+  VariableValueBlock,
+  PrintBlock,
+  StringBlock,
 } from '../blocks/types';
 import { isLogicalBinaryOperator } from '../utils/utils';
 
@@ -43,8 +46,12 @@ function visitBlock(ctx: Context, block: Block) {
   switch (block.type) {
     case BlockType.Variable:
       return visitVariable(ctx, block);
+    case BlockType.VariableValue:
+      return visitVariableValue(block);
     case BlockType.Number:
       return visitNumber(block);
+    case BlockType.String:
+      return visitString(block);
     case BlockType.Math:
       return visitMath(ctx, block);
     case BlockType.Boolean:
@@ -61,6 +68,8 @@ function visitBlock(ctx: Context, block: Block) {
       return visitWhile(ctx, block);
     case BlockType.For:
       return visitFor(ctx, block);
+    case BlockType.Print:
+      return visitPrint(ctx, block);
     default:
       return '';
   }
@@ -80,12 +89,20 @@ function visitVariable(ctx: Context, block: VariableBlock) {
   return '';
 }
 
+function visitVariableValue(block: VariableValueBlock) {
+  return block.selected;
+}
+
 function visitExpression(ctx: Context, blocks: Block[]) {
   return visitBlock(ctx, blocks[0]);
 }
 
 function visitNumber(block: NumberBlock) {
   return block.value;
+}
+
+function visitString(block: StringBlock) {
+  return `"${block.value}"`;
 }
 
 function visitMath(ctx: Context, block: MathBlock) {
@@ -266,6 +283,20 @@ function visitFor(ctx: Context, block: ForBlock) {
   }
 
   ctx.indent--;
+
+  return '';
+}
+
+function visitPrint(ctx: Context, block: PrintBlock) {
+  let expressionCode = '';
+
+  if (block.children.expression.length > 0) {
+    expressionCode = visitExpression(ctx, block.children.expression);
+  } else {
+    expressionCode = 'None';
+  }
+
+  addLine(ctx, `print(${expressionCode})`);
 
   return '';
 }

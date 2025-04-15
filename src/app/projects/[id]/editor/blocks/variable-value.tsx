@@ -1,19 +1,16 @@
 import React, { useRef, useEffect } from 'react';
-import { Block } from './types';
 import { useBlocks } from '../contexts/blocks-context';
 import { resizeSelect } from '../utils/utils';
 import classes from './blocks.module.css';
-import InnerDropZone from '../components/inner-drop-zone';
 import withBlock from '../components/with-block';
 
-interface VariableProps {
+interface VariableValueProps {
   id: string;
   isWorkbenchBlock: boolean;
   selected: string;
-  children: { expression: Block[] };
 }
 
-function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
+function VariableValue({ id, isWorkbenchBlock, selected }: VariableValueProps) {
   const { changeVariableSelectedOptionAction, state } = useBlocks();
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -31,34 +28,20 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
   }, [selected, state.variables]);
 
   return (
-    <>
-      <span>set</span>
-      <select
-        ref={selectRef}
-        value={selected}
-        onChange={handleChange}
-        className={classes.select}
-      >
-        {/* Display options */}
-        {state.variables.map((variable) => (
-          <option key={variable} value={variable}>
-            {variable}
-          </option>
-        ))}
-      </select>
-      <span>to</span>
-
-      {
-        <InnerDropZone
-          id={`expression_${id}`}
-          enabled={!isWorkbenchBlock}
-          enableSequences={false}
-        >
-          {children.expression}
-        </InnerDropZone>
-      }
-    </>
+    <select
+      ref={selectRef}
+      value={selected}
+      onChange={handleChange}
+      className={classes.select}
+    >
+      {/* Display options */}
+      {state.variables.map((variable) => (
+        <option key={variable} value={variable}>
+          {variable}
+        </option>
+      ))}
+    </select>
   );
 }
 
-export default withBlock(Variable);
+export default withBlock(VariableValue);
