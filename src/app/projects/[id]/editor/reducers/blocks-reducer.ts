@@ -216,10 +216,16 @@ export default function BlocksReducer(
         id,
         CanvasEvent.ADD_CHILD_BLOCK
       );
-      if (!targetBlock || !blockToNest) return state;
+      if (
+        !targetBlock ||
+        !blockToNest ||
+        blockToNest.type === BlockType.ProgramStart
+      )
+        return { ...state, draggedBlockId: null, highlightedDropZoneId: null };
 
       // Avoid nesting into itself
-      if (state.draggedGroupBlockIds?.has(targetId)) return state;
+      if (state.draggedGroupBlockIds?.has(targetId))
+        return { ...state, draggedBlockId: null, highlightedDropZoneId: null };
 
       let newCanvas = [...state.canvas];
 
@@ -257,6 +263,7 @@ export default function BlocksReducer(
     }
 
     case CanvasEvent.REMOVE_CHILD_BLOCK: {
+      console.log(1);
       const { id, parentId } = action.payload;
       const parent = validateBlockExists(
         state.canvas,
@@ -269,7 +276,10 @@ export default function BlocksReducer(
         id,
         CanvasEvent.REMOVE_CHILD_BLOCK
       );
-      if (!child) return state;
+      if (!child) {
+        console.log(2);
+        return { ...state, draggedBlockId: null, highlightedDropZoneId: null };
+      }
 
       let newCanvas = [...state.canvas];
 
@@ -281,20 +291,26 @@ export default function BlocksReducer(
         block.state = BlockState.Idle;
         block.parentId = null;
       }
+      console.log(3);
 
       // Remove blocks in sequence from canvas
       newCanvas = removeBlocks(sequenceToUnnest, newCanvas);
 
       const newParent = findBlockById(parentId, newCanvas);
-      if (!newParent) return state;
+      if (!newParent) {
+        console.log(4);
+        return { ...state, draggedBlockId: null, highlightedDropZoneId: null };
+      }
 
       // Add sequence back to the top level of the canvas
       newCanvas = [...newCanvas, ...sequenceToUnnest];
 
+      console.log(5);
       return {
         ...state,
         canvas: newCanvas,
         draggedBlockId: id,
+        highlightedDropZoneId: null,
       };
     }
 
@@ -404,7 +420,10 @@ export default function BlocksReducer(
 
     case CanvasEvent.HIGHLIGHT_DROPZONE: {
       const { id } = action.payload;
-      if (state.draggedGroupBlockIds?.has(id)) return state;
+      if (state.draggedGroupBlockIds?.has(id)) {
+        return { ...state, highlightedDropZoneId: null };
+      }
+
       return { ...state, highlightedDropZoneId: id };
     }
 
