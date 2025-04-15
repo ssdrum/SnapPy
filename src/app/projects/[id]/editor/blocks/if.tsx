@@ -35,7 +35,7 @@ function If({ id, isWorkbenchBlock, children }: IfProps) {
       </div>
 
       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-        <span>do</span>
+        <span>then</span>
         {
           <InnerDropZone
             id={`body_${id}`}

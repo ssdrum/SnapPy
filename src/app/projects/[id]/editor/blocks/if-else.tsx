@@ -43,7 +43,7 @@ function IfElse({ id, isWorkbenchBlock, children }: IfElseProps) {
           alignItems: 'center',
         }}
       >
-        <span>do</span>
+        <span>then</span>
         {
           <InnerDropZone
             id={`ifBody_${id}`}
