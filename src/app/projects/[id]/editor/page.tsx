@@ -15,6 +15,7 @@ import OutputBox from './components/output-box';
 import { useCustomSensors } from './utils/sensors';
 import DragEventsHandler from './components/drag-events-handler';
 import { useBlocks } from './contexts/blocks-context';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 
 export default function EditorPage() {
   const { name, id } = useContext(ProjectContext)!;
@@ -58,21 +59,42 @@ export default function EditorPage() {
 
       {/* Canvas */}
       <Paper className={classes.editorWrapper} withBorder>
-        <DndContext
-          id='dnd-context'
-          sensors={sensors}
-          collisionDetection={pointerWithin}
-        >
-          <DragEventsHandler>
-            <Workbench />
-            <Canvas />
-          </DragEventsHandler>
-        </DndContext>
+        <PanelGroup direction='horizontal'>
+          <DndContext
+            id='dnd-context'
+            sensors={sensors}
+            collisionDetection={pointerWithin}
+          >
+            <DragEventsHandler>
+              <Workbench />
 
-        <Box className={classes.codeEditorWrapper}>
-          <CodeEditor code={code} handleCodeChange={handleCodeChange} />
-          <OutputBox output={output} />
-        </Box>
+              <Panel defaultSize={70}>
+                <Canvas />
+              </Panel>
+            </DragEventsHandler>
+
+            <PanelResizeHandle />
+
+            <Panel defaultSize={30} minSize={15} maxSize={45}>
+              <Box className={classes.codeEditorWrapper}>
+                <PanelGroup direction='vertical'>
+                  <Panel defaultSize={60}>
+                    <CodeEditor
+                      code={code}
+                      handleCodeChange={handleCodeChange}
+                    />
+                  </Panel>
+
+                  <PanelResizeHandle />
+
+                  <Panel defaultSize={40} minSize={10} maxSize={80}>
+                    <OutputBox output={output} />
+                  </Panel>
+                </PanelGroup>
+              </Box>
+            </Panel>
+          </DndContext>
+        </PanelGroup>
       </Paper>
     </AppShellMain>
   );

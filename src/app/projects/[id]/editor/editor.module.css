@@ -31,8 +31,6 @@
 }
 
 .codeEditorWrapper {
-  width: 450px;
-  min-width: 350px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -43,16 +41,18 @@
 }
 
 .codeEditor {
-  flex: 1;
+  height: 100%;
   overflow: auto;
   background-color: white;
   border: 1px solid var(--mantine-color-gray-2);
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  margin-bottom: 100px;
 }
 
 .codeOutput {
-  height: 350px;
+  margin-top: var(--mantine-spacing-xs);
+  height: 100%;
   overflow: auto;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
