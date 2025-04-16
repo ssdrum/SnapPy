@@ -263,7 +263,6 @@ export default function BlocksReducer(
     }
 
     case CanvasEvent.REMOVE_CHILD_BLOCK: {
-      console.log(1);
       const { id, parentId } = action.payload;
       const parent = validateBlockExists(
         state.canvas,
@@ -277,7 +276,6 @@ export default function BlocksReducer(
         CanvasEvent.REMOVE_CHILD_BLOCK
       );
       if (!child) {
-        console.log(2);
         return { ...state, draggedBlockId: null, highlightedDropZoneId: null };
       }
 
@@ -291,21 +289,18 @@ export default function BlocksReducer(
         block.state = BlockState.Idle;
         block.parentId = null;
       }
-      console.log(3);
 
       // Remove blocks in sequence from canvas
       newCanvas = removeBlocks(sequenceToUnnest, newCanvas);
 
       const newParent = findBlockById(parentId, newCanvas);
       if (!newParent) {
-        console.log(4);
         return { ...state, draggedBlockId: null, highlightedDropZoneId: null };
       }
 
       // Add sequence back to the top level of the canvas
       newCanvas = [...newCanvas, ...sequenceToUnnest];
 
-      console.log(5);
       return {
         ...state,
         canvas: newCanvas,

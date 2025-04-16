@@ -7,7 +7,7 @@
   align-items: center;
   color: white;
   font-weight: bold;
-  padding: 5px 12px;
+  padding: 4px 10px;
   border-radius: 3px;
   transition: box-shadow 0.15s ease;
   -webkit-user-select: none;
@@ -16,6 +16,7 @@
   background-color: salmon;
   border: 1px solid rgba(0, 0, 0, 0.2);
   margin-bottom: -1px; /* Negative margin to overlap borders */
+  font-size: 14px;
 }
 
 /* Top border only on first element */

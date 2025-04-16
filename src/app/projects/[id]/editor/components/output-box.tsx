@@ -13,7 +13,7 @@ export default function OutputBox({ output }: OutputBoxProps) {
         Output
       </Title>
       <Divider mb='xs' />
-      <ScrollArea h={230} scrollbarSize={6} offsetScrollbars type='auto'>
+      <ScrollArea scrollbarSize={6} offsetScrollbars type='auto'>
         {output.length > 0 ? (
           output.map((line, i) => (
             <Text key={i} size='sm' ff='monospace' my={4}>

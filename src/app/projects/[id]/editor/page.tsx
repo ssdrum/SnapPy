@@ -3,7 +3,17 @@
 import { useContext, useEffect } from 'react';
 import { ProjectContext } from './contexts/project-context';
 import { DndContext, pointerWithin } from '@dnd-kit/core';
-import { Title, Group, Button, AppShellMain, Box } from '@mantine/core';
+import {
+  Title,
+  Group,
+  Button,
+  AppShellMain,
+  Box,
+  Loader,
+  Center,
+  Stack,
+  Text,
+} from '@mantine/core';
 import classes from './editor.module.css';
 import Canvas from './components/canvas';
 import Workbench from './components/workbench';
@@ -20,10 +30,8 @@ import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 export default function EditorPage() {
   const { name, id } = useContext(ProjectContext)!;
   const { state } = useBlocks();
-  const { code, handleCodeChange, error, output } = useCodeEditor(
-    state.canvas,
-    state.entrypointBlockId
-  );
+  const { code, handleCodeChange, error, output, isPyodideLoading, runPython } =
+    useCodeEditor(state.canvas, state.entrypointBlockId);
 
   // Show a window alert when an error occurs
   // TODO: handle this more gracefully
@@ -40,6 +48,21 @@ export default function EditorPage() {
     },
   });
 
+  if (isPyodideLoading) {
+    return (
+      <AppShellMain className={classes.editorPageWrapper}>
+        <Center style={{ height: '100%' }}>
+          <Stack align='center'>
+            <Loader color='blue' size='xl' />
+            <Text size='lg' fw={500}>
+              Loading environment...
+            </Text>
+          </Stack>
+        </Center>
+      </AppShellMain>
+    );
+  }
+
   return (
     <AppShellMain className={classes.editorPageWrapper}>
       <Group m='md' justify='space-between'>
@@ -48,12 +71,18 @@ export default function EditorPage() {
         {/* Buttons on the right-handsight*/}
         <Group>
           <SaveButton projectId={id} />
-          <Button bg='green' leftSection={<IconPlayerPlay />} disabled>
+          <Button
+            bg='green'
+            leftSection={<IconPlayerPlay />}
+            onClick={runPython}
+          >
             Run
           </Button>
-          <Button bg='red' leftSection={<IconBug />} disabled>
-            Debug
-          </Button>
+          {
+            <Button bg='red' leftSection={<IconBug />} disabled>
+              Debug
+            </Button>
+          }
         </Group>
       </Group>
 
