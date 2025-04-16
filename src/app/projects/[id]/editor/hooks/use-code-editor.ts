@@ -64,7 +64,7 @@ export default function useCodeEditor(
       }
     }
 
-    //loadPyodide();
+    loadPyodide();
     loadPyodide.toString(); // Avoids no unused variables error
   }, []);
 
@@ -94,7 +94,6 @@ export default function useCodeEditor(
       return result;
     } catch (err) {
       setError(`Execution Error: ${err}`);
-
       return;
     }
   };

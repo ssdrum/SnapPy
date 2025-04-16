@@ -17,7 +17,7 @@ import {
   PrintBlock,
   StringBlock,
 } from '../blocks/types';
-import { isLogicalBinaryOperator } from '../utils/utils';
+import { isLogicalBinaryOperator, sortBlocks } from '../utils/utils';
 
 interface Context {
   indent: number;
@@ -183,7 +183,7 @@ function visitIf(ctx: Context, block: IfBlock) {
   if (block.children.body.length === 0) {
     addLine(ctx, 'pass');
   } else {
-    for (const bodyBlock of block.children.body) {
+    for (const bodyBlock of sortBlocks(block.children.body)) {
       visitBlock(ctx, bodyBlock);
     }
   }
@@ -210,7 +210,7 @@ function visitWhile(ctx: Context, block: WhileBlock) {
   if (block.children.body.length === 0) {
     addLine(ctx, 'pass');
   } else {
-    for (const bodyBlock of block.children.body) {
+    for (const bodyBlock of sortBlocks(block.children.body)) {
       visitBlock(ctx, bodyBlock);
     }
   }
@@ -237,7 +237,7 @@ function visitIfElse(ctx: Context, block: IfElseBlock) {
     addLine(ctx, 'pass');
   } else {
     // Process each block in the if body
-    for (const bodyBlock of block.children.ifBody) {
+    for (const bodyBlock of sortBlocks(block.children.ifBody)) {
       visitBlock(ctx, bodyBlock);
     }
   }
@@ -251,7 +251,7 @@ function visitIfElse(ctx: Context, block: IfElseBlock) {
     addLine(ctx, 'pass');
   } else {
     // Process each block in the else body
-    for (const bodyBlock of block.children.elseBody) {
+    for (const bodyBlock of sortBlocks(block.children.elseBody)) {
       visitBlock(ctx, bodyBlock);
     }
   }
@@ -277,7 +277,7 @@ function visitFor(ctx: Context, block: ForBlock) {
   if (block.children.body.length === 0) {
     addLine(ctx, 'pass');
   } else {
-    for (const bodyBlock of block.children.body) {
+    for (const bodyBlock of sortBlocks(block.children.body)) {
       visitBlock(ctx, bodyBlock);
     }
   }
