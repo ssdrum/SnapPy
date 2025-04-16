@@ -3,7 +3,7 @@ import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs';
 import 'prismjs/themes/prism-coy.css';
 import 'prismjs/components/prism-python';
-import { Paper, rem } from '@mantine/core';
+import { Box, rem } from '@mantine/core';
 import classes from '../editor.module.css';
 
 interface CodeEditorProps {
@@ -16,7 +16,7 @@ export default function CodeEditor({
   handleCodeChange,
 }: CodeEditorProps) {
   return (
-    <Paper className={classes.codeEditor}>
+    <Box className={classes.codeEditor}>
       <Editor
         value={code}
         onValueChange={(newCode) => handleCodeChange(newCode)}
@@ -30,6 +30,6 @@ export default function CodeEditor({
           overflowY: 'auto',
         }}
       />
-    </Paper>
+    </Box>
   );
 }

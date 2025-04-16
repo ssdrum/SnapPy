@@ -2,25 +2,27 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--mantine-color-gray-1);
 }
 
 .editorWrapper {
   display: flex;
   width: 100%;
   height: 100%;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .workbench {
   width: 280px;
   min-width: 280px;
   height: 100%;
-  background-color: var(--mantine-color-gray-0);
-  border-right: 1px solid var(--mantine-color-gray-3);
+  background-color: white;
   padding: 16px;
   overflow-y: scroll;
+  margin-right: 12px;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
 .canvas {
@@ -28,31 +30,78 @@
   overflow: auto;
   height: 100%;
   background-color: white;
+  border-radius: 12px;
 }
 
 .codeEditorWrapper {
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--mantine-spacing-xs);
-  border-left: 1px solid var(--mantine-color-gray-3);
-  background-color: var(--mantine-color-gray-0);
-  padding: var(--mantine-spacing-xs);
 }
 
 .codeEditor {
   height: 100%;
   overflow: auto;
   background-color: white;
-  border: 1px solid var(--mantine-color-gray-2);
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-  margin-bottom: 100px;
+  border-top-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  border-bottom-left-radius: 12px;
+  padding: var(--mantine-spacing-xs);
 }
 
 .codeOutput {
-  margin-top: var(--mantine-spacing-xs);
   height: 100%;
   overflow: auto;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  padding: var(--mantine-spacing-xs);
+  background-color: white;
+  border-bottom-left-radius: 12px;
+  border-top-right-radius: 12px;
+  border-top-left-radius: 12px;
+}
+
+.resizeHandleVertical {
+  width: 12px;
+  background-color: var(--mantine-color-gray-1);
+  position: relative;
+}
+
+.resizeHandleVertical::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 30px;
+  background-color: var(--mantine-color-gray-4);
+  border-radius: 1px;
+}
+
+.resizeHandleHorizontal {
+  height: 12px;
+  background-color: var(--mantine-color-gray-1);
+  position: relative;
+}
+
+.resizeHandleHorizontal::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 2px;
+  background-color: var(--mantine-color-gray-4);
+  border-radius: 1px;
+}
+
+/* Hover states for better affordance */
+.resizeHandleVertical:hover,
+.resizeHandleHorizontal:hover {
+  background-color: var(--mantine-color-gray-2);
+}
+
+.resizeHandleVertical:hover::after,
+.resizeHandleHorizontal:hover::after {
+  background-color: var(--mantine-color-gray-6);
 }

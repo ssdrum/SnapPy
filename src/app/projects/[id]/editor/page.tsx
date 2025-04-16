@@ -3,7 +3,7 @@
 import { useContext, useEffect } from 'react';
 import { ProjectContext } from './contexts/project-context';
 import { DndContext, pointerWithin } from '@dnd-kit/core';
-import { Title, Paper, Group, Button, AppShellMain, Box } from '@mantine/core';
+import { Title, Group, Button, AppShellMain, Box } from '@mantine/core';
 import classes from './editor.module.css';
 import Canvas from './components/canvas';
 import Workbench from './components/workbench';
@@ -58,7 +58,7 @@ export default function EditorPage() {
       </Group>
 
       {/* Canvas */}
-      <Paper className={classes.editorWrapper} withBorder>
+      <Box className={classes.editorWrapper}>
         <PanelGroup direction='horizontal'>
           <DndContext
             id='dnd-context'
@@ -73,9 +73,9 @@ export default function EditorPage() {
               </Panel>
             </DragEventsHandler>
 
-            <PanelResizeHandle />
+            <PanelResizeHandle className={classes.resizeHandleVertical} />
 
-            <Panel defaultSize={30} minSize={15} maxSize={45}>
+            <Panel defaultSize={30}>
               <Box className={classes.codeEditorWrapper}>
                 <PanelGroup direction='vertical'>
                   <Panel defaultSize={60}>
@@ -85,9 +85,11 @@ export default function EditorPage() {
                     />
                   </Panel>
 
-                  <PanelResizeHandle />
+                  <PanelResizeHandle
+                    className={classes.resizeHandleHorizontal}
+                  />
 
-                  <Panel defaultSize={40} minSize={10} maxSize={80}>
+                  <Panel defaultSize={40}>
                     <OutputBox output={output} />
                   </Panel>
                 </PanelGroup>
@@ -95,7 +97,7 @@ export default function EditorPage() {
             </Panel>
           </DndContext>
         </PanelGroup>
-      </Paper>
+      </Box>
     </AppShellMain>
   );
 }
