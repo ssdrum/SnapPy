@@ -90,11 +90,11 @@ describe('Code generation', () => {
       },
     ];
 
-    expect(generateCode(blocks)).toBe('x = (1 + 2)');
+    expect(generateCode(blocks)).toBe('x = 1 + 2');
   });
 
   test('Generates variable with nested complex numeric expression correctly', () => {
-    // expected: x = ((1 + 2) + (3 + 4))
+    // expected: x = 1 + 2 + 3 + 4
     const leftAddition: MathBlock = {
       ...additionBlock,
       children: {
@@ -127,6 +127,6 @@ describe('Code generation', () => {
         },
       },
     ];
-    expect(generateCode(blocks)).toBe('x = ((1 + 2) + (3 + 4))');
+    expect(generateCode(blocks)).toBe('x = 1 + 2 + 3 + 4');
   });
 });
