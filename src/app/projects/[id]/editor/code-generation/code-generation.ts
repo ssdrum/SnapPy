@@ -116,7 +116,7 @@ function visitMath(ctx: Context, block: MathBlock) {
     rightCode = visitExpression(ctx, block.children.right);
   }
 
-  return `(${leftCode} ${block.operator} ${rightCode})`;
+  return `${leftCode} ${block.operator} ${rightCode}`;
 }
 
 function visitBoolean(block: BooleanBlock) {
@@ -134,7 +134,7 @@ function visitComparison(ctx: Context, block: ComparisonBlock) {
     rightCode = visitExpression(ctx, block.children.right);
   }
 
-  return `(${leftCode} ${block.operator} ${rightCode})`;
+  return `${leftCode} ${block.operator} ${rightCode}`;
 }
 
 function visitLogical(ctx: Context, block: LogicalBlock) {
@@ -152,7 +152,7 @@ function visitLogical(ctx: Context, block: LogicalBlock) {
       rightCode = visitExpression(ctx, binaryOpBlock.children.right);
     }
 
-    return `(${leftCode} ${block.operator} ${rightCode})`;
+    return `${leftCode} ${block.operator} ${rightCode}`;
   }
 
   // Unary operators (not)
@@ -164,7 +164,7 @@ function visitLogical(ctx: Context, block: LogicalBlock) {
     operandCode = visitExpression(ctx, unaryOpBlock.children.operand);
   }
 
-  return `(${unaryOpBlock.operator} ${operandCode})`;
+  return `${unaryOpBlock.operator} ${operandCode}`;
 }
 
 function visitIf(ctx: Context, block: IfBlock) {

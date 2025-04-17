@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { ProjectContext } from './contexts/project-context';
 import { DndContext, pointerWithin } from '@dnd-kit/core';
 import {
@@ -30,16 +30,14 @@ import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 export default function EditorPage() {
   const { name, id } = useContext(ProjectContext)!;
   const { state } = useBlocks();
-  const { code, handleCodeChange, error, output, isPyodideLoading, runPython } =
-    useCodeEditor(state.canvas, state.entrypointBlockId);
-
-  // Show a window alert when an error occurs
-  // TODO: handle this more gracefully
-  useEffect(() => {
-    if (error) {
-      alert(error);
-    }
-  }, [error]);
+  const {
+    code,
+    handleCodeChange,
+    output,
+    isPyodideLoading,
+    runPython,
+    isRunning,
+  } = useCodeEditor(state.canvas, state.entrypointBlockId);
 
   // Use custom sensors with select-aware behavior
   const sensors = useCustomSensors({
@@ -119,7 +117,7 @@ export default function EditorPage() {
                   />
 
                   <Panel defaultSize={40}>
-                    <OutputBox output={output} />
+                    <OutputBox output={output} isRunning={isRunning} />
                   </Panel>
                 </PanelGroup>
               </Box>

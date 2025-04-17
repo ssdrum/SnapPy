@@ -62,6 +62,7 @@ export default function CreateVariableModal({
       centered
     >
       <TextInput
+        data-autofocus
         placeholder='Enter variable name'
         mb={'md'}
         value={name}
