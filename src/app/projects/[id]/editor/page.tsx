@@ -8,7 +8,7 @@ import classes from './editor.module.css';
 import Canvas from './components/canvas';
 import Workbench from './components/workbench';
 import SaveButton from './components/save-button';
-import { IconPlayerPlay, IconShare } from '@tabler/icons-react';
+import { IconPlayerPlay } from '@tabler/icons-react';
 import useCodeEditor from './hooks/use-code-editor';
 import CodeEditor from './components/code-editor';
 import OutputBox from './components/output-box';
@@ -17,6 +17,7 @@ import DragEventsHandler from './components/drag-events-handler';
 import { useBlocks } from './contexts/blocks-context';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import LoadingScreen from './components/loading-screen';
+import CollaborateButton from './components/collaborate-button';
 
 export default function EditorPage() {
   const { name, id } = useContext(ProjectContext)!;
@@ -56,9 +57,7 @@ export default function EditorPage() {
           >
             Run
           </Button>
-          <Button bg='violet' leftSection={<IconShare />}>
-            Collaborate
-          </Button>
+          <CollaborateButton projectId={id} />
         </Group>
       </Group>
 

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Button } from '@mantine/core';
 import { useBlocks } from '../contexts/blocks-context';
-import { saveProject } from '../blocks/actions';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import { Notifications, notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
+import { saveProject } from '../utils/actions';
 
 // TODO: save variables
 interface SaveButtonProps {

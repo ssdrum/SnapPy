@@ -27,6 +27,7 @@ export const fetchProjectById = async (id: number): Promise<Project | null> => {
       id: id,
     },
   });
+
   return project;
 };
 

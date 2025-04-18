@@ -16,6 +16,7 @@
     "pipeline": "bun run lint && bun run test",
     "start-db": "docker run -d -e POSTGRES_DB=mydb -e POSTGRES_PASSWORD=testpass123 -e POSTGRES_USER=postgres -p '5432:5432' postgres -c log_statement=all",
     "prisma-push": "bunx prisma db push",
+    "generate-prisma-types": "bunx prisma generate",
     "start-prisma-studio": "bunx prisma studio"
   },
   "dependencies": {
