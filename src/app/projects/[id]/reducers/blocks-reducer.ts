@@ -7,6 +7,7 @@ import {
   CanvasState,
   NumberBlock,
   OuterDropzonePosition,
+  VariableValueBlock,
 } from '../blocks/types';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -191,6 +192,35 @@ export default function BlocksReducer(
       };
 
       // Update the appropriate blocks array based on whether it's a workbench block
+      if (isWorkbenchBlock) {
+        return {
+          ...state,
+          workbench: updateBlockById(state.workbench, id, newBlock),
+        };
+      } else {
+        return {
+          ...state,
+          canvas: updateBlockById(state.canvas, id, newBlock),
+        };
+      }
+    }
+
+    case CanvasEvent.CHANGE_VARIABLE_VALUE_SELECTED_OPTION: {
+      const { id, selected, isWorkbenchBlock } = action.payload;
+      const blocksArray = isWorkbenchBlock ? state.workbench : state.canvas;
+
+      const block = validateBlockExists(
+        blocksArray,
+        id,
+        CanvasEvent.CHANGE_BOOLEAN_VALUE
+      );
+      if (!block) return state;
+
+      const newBlock: VariableValueBlock = {
+        ...(block as VariableValueBlock),
+        selected: selected,
+      };
+
       if (isWorkbenchBlock) {
         return {
           ...state,

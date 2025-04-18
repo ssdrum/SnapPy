@@ -11,14 +11,14 @@ interface VariableValueProps {
 }
 
 function VariableValue({ id, isWorkbenchBlock, selected }: VariableValueProps) {
-  const { changeVariableSelectedOptionAction, state } = useBlocks();
+  const { changeVariableValueSelectedOptionAction, state } = useBlocks();
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (isWorkbenchBlock) {
-      changeVariableSelectedOptionAction(e.target.value);
-    } else {
-      changeVariableSelectedOptionAction(e.target.value, id);
-    }
+    changeVariableValueSelectedOptionAction(
+      id,
+      e.target.value,
+      isWorkbenchBlock
+    );
   };
 
   // Resize select when component mounts or selected option changes

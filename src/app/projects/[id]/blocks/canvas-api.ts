@@ -11,6 +11,7 @@ export enum CanvasEvent {
   DELETE_BLOCK = 'delete block',
   CREATE_VARIABLE = 'create variable',
   CHANGE_VARIABLE_SELECTED_OPTION = 'change variable selected option',
+  CHANGE_VARIABLE_VALUE_SELECTED_OPTION = 'change variable value selected option',
   ADD_CHILD_BLOCK = 'add child block',
   REMOVE_CHILD_BLOCK = 'remove child block',
   SNAP_BLOCK = 'snap block',
@@ -51,6 +52,10 @@ interface CreateVariable {
 }
 interface ChangeVariableSelectedOption {
   type: CanvasEvent.CHANGE_VARIABLE_SELECTED_OPTION;
+  payload: { id: string; isWorkbenchBlock: boolean; selected: string };
+}
+interface ChangeVariableValueSelectedOption {
+  type: CanvasEvent.CHANGE_VARIABLE_VALUE_SELECTED_OPTION;
   payload: { id: string; isWorkbenchBlock: boolean; selected: string };
 }
 interface AddChildBlock {
@@ -105,6 +110,7 @@ export type CanvasAction =
   | DeleteBlock
   | CreateVariable
   | ChangeVariableSelectedOption
+  | ChangeVariableValueSelectedOption
   | AddChildBlock
   | RemoveChildBlock
   | SnapBlock
