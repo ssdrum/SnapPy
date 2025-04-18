@@ -22,4 +22,5 @@ model Project {
   userId     Int
   canvas     Json
   variables  Json
+  shareId    String?  @unique
 }

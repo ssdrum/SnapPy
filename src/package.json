@@ -13,7 +13,10 @@
     "format:fix": "prettier --write --ignore-path .gitignore .",
     "test": "jest",
     "test:watch": "jest --watch",
-    "pipeline": "bun run lint && bun run test"
+    "pipeline": "bun run lint && bun run test",
+    "start-db": "docker run -d -e POSTGRES_DB=mydb -e POSTGRES_PASSWORD=testpass123 -e POSTGRES_USER=postgres -p '5432:5432' postgres -c log_statement=all",
+    "prisma-push": "bunx prisma db push",
+    "start-prisma-studio": "bunx prisma studio"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
