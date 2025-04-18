@@ -18,7 +18,7 @@ import classes from './editor.module.css';
 import Canvas from './components/canvas';
 import Workbench from './components/workbench';
 import SaveButton from './components/save-button';
-import { IconBug, IconPlayerPlay } from '@tabler/icons-react';
+import { IconBug, IconPlayerPlay, IconShare } from '@tabler/icons-react';
 import useCodeEditor from './hooks/use-code-editor';
 import CodeEditor from './components/code-editor';
 import OutputBox from './components/output-box';
@@ -76,11 +76,9 @@ export default function EditorPage() {
           >
             Run
           </Button>
-          {
-            <Button bg='red' leftSection={<IconBug />} disabled>
-              Debug
-            </Button>
-          }
+          <Button bg='violet' leftSection={<IconShare />}>
+            Collaborate
+          </Button>
         </Group>
       </Group>
 
