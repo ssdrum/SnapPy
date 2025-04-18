@@ -3,7 +3,7 @@ import { Button } from '@mantine/core';
 import { generateShareLink } from '../utils/actions';
 
 interface CollaborateButtonProps {
-  projectId: number;
+  projectId: string;
 }
 
 export default function CollaborateButton({

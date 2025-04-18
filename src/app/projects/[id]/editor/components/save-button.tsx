@@ -8,7 +8,7 @@ import { saveProject } from '../utils/actions';
 
 // TODO: save variables
 interface SaveButtonProps {
-  projectId: number;
+  projectId: string;
 }
 
 export default function SaveButton({ projectId }: SaveButtonProps) {

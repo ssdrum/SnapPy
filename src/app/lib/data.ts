@@ -21,7 +21,7 @@ export const fetchProjectsByUser = async (
   return projects;
 };
 
-export const fetchProjectById = async (id: number): Promise<Project | null> => {
+export const fetchProjectById = async (id: string): Promise<Project | null> => {
   const project = await prisma.project.findUnique({
     where: {
       id: id,
@@ -64,7 +64,7 @@ export async function createProject(name: string): Promise<Project> {
  * Updates an existing project on the db
  */
 export async function updateProject(
-  projectId: number,
+  projectId: string,
   canvas: Block[],
   variables: string[]
 ): Promise<Project> {
