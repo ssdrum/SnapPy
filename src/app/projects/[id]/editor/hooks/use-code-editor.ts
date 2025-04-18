@@ -98,8 +98,12 @@ export default function useCodeEditor(
       // Clear previous outputs
       setOutput({ error: false, message: [] });
 
-      // Run the code
-      const result = await pyodide.runPythonAsync(code);
+      // Reset globals and run code
+      const dict = pyodide.globals.get('dict');
+      const globals = dict();
+      const result = await pyodide.runPythonAsync(code, { globals: globals });
+      globals.destroy();
+      dict.destroy();
 
       // Add output to output message
       if (result && String(result)) {
