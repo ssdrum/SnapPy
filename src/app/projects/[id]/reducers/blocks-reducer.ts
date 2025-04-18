@@ -353,6 +353,11 @@ export default function BlocksReducer(
       );
       if (!targetBlock || !blockToSnap) return state;
 
+      // Disallow snapping the staring block with nested blocks
+      if (blockToSnap.type === BlockType.ProgramStart && targetBlock.parentId) {
+        return state;
+      }
+
       let newCanvas: Block[] = [];
 
       if (position === OuterDropzonePosition.Top) {
