@@ -11,7 +11,7 @@ export async function saveProject(
 ) {
   try {
     await updateProject(projectId, canvasBlocks, variables);
-    revalidatePath(`/projects/${projectId}/editor`); // Update UI with the latest data
+    revalidatePath(`/projects/${projectId}`); // Update UI with the latest data
     return { success: true, message: 'Project saved successfully!' };
   } catch (error) {
     return {

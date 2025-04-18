@@ -2,11 +2,7 @@ import { getUserSession } from '@/app/lib/session';
 import { prisma } from './prisma';
 import { Project } from '@prisma/client';
 import { Prisma } from '@prisma/client';
-import {
-  Block,
-  BlockState,
-  BlockType,
-} from '@/app/projects/[id]/editor/blocks/types';
+import { Block, BlockState, BlockType } from '@/app/projects/[id]/blocks/types';
 import { JsonValue } from '@prisma/client/runtime/library';
 
 // Fetch projects by user

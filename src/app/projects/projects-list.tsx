@@ -14,7 +14,7 @@ export default function ProjectsList() {
         {/* Display list of projects */}
         {projects.projects.map((p, index) => (
           <li key={index}>
-            <Link href={`/projects/${p.id}/editor`}>
+            <Link href={`/projects/${p.id}`}>
               {p.id} {p.name}
             </Link>
           </li>
