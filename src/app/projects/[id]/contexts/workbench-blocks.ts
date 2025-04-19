@@ -9,8 +9,8 @@ import {
   MathOperator,
 } from '../blocks/types';
 
-// Add workbench blocks here
 const workbenchBlocks: Block[] = [
+  // Variables
   {
     id: uuidv4(),
     type: BlockType.Variable,
@@ -37,19 +37,8 @@ const workbenchBlocks: Block[] = [
     nextId: null,
     children: null,
   },
-  {
-    id: uuidv4(),
-    type: BlockType.Print,
-    coords: { x: 0, y: 0 },
-    isWorkbenchBlock: true,
-    state: BlockState.Idle,
-    parentId: null,
-    prevId: null,
-    nextId: null,
-    children: {
-      expression: [],
-    },
-  },
+
+  // Conditionals
   {
     id: uuidv4(),
     type: BlockType.If,
@@ -79,6 +68,8 @@ const workbenchBlocks: Block[] = [
       elseBody: [],
     },
   },
+
+  // Loops
   {
     id: uuidv4(),
     type: BlockType.For,
@@ -107,6 +98,8 @@ const workbenchBlocks: Block[] = [
       body: [],
     },
   },
+
+  // Values
   {
     id: uuidv4(),
     type: BlockType.Number,
@@ -143,6 +136,8 @@ const workbenchBlocks: Block[] = [
     value: BooleanValue.True,
     children: null,
   },
+
+  // Maths
   {
     id: uuidv4(),
     type: BlockType.Math,
@@ -218,6 +213,8 @@ const workbenchBlocks: Block[] = [
       right: [],
     },
   },
+
+  // Comparisons
   {
     id: uuidv4(),
     type: BlockType.Comparison,
@@ -308,6 +305,8 @@ const workbenchBlocks: Block[] = [
       right: [],
     },
   },
+
+  // Logic
   {
     id: uuidv4(),
     type: BlockType.Logical,
@@ -352,6 +351,34 @@ const workbenchBlocks: Block[] = [
       operand: [],
     },
   },
+
+  // Output
+  {
+    id: uuidv4(),
+    type: BlockType.Print,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    children: {
+      expression: [],
+    },
+  },
 ];
+
+// This is a simple way to have categories in the workbench. Make sure the indeces
+// are correct
+export const blockCategories = {
+  Variables: [0, 1],
+  Conditionals: [2, 3],
+  Loops: [4, 5],
+  Values: [6, 7, 8],
+  Maths: [9, 10, 11, 12, 13],
+  Comparisons: [14, 15, 16, 17, 18, 19],
+  Logic: [20, 21, 22],
+  Output: [23],
+};
 
 export default workbenchBlocks;
