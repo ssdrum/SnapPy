@@ -20,7 +20,7 @@ import Print from '../blocks/print';
 import String from '../blocks/string';
 
 export default function renderBlock(block: Block, enableSequences: boolean) {
-  const { id, prevId, isWorkbenchBlock, state, children } = block;
+  const { id, prevId, isWorkbenchBlock, state, shape, children } = block;
 
   switch (block.type) {
     case BlockType.ProgramStart:
@@ -31,6 +31,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.ProgramStart}
+          blockShape={shape}
           blockState={state}
           enableSequences={enableSequences}
         >
@@ -46,6 +47,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.Variable}
           blockState={state}
+          blockShape={shape}
           selected={block.selected}
           enableSequences={enableSequences}
         >
@@ -61,6 +63,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.VariableValue}
           blockState={state}
+          blockShape={shape}
           selected={block.selected}
           enableSequences={enableSequences}
         >
@@ -75,6 +78,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.While}
+          blockShape={shape}
           blockState={state}
           enableSequences={enableSequences}
         >
@@ -89,6 +93,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.Number}
+          blockShape={shape}
           blockState={state}
           enableSequences={enableSequences}
           value={block.value}
@@ -104,6 +109,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.Number}
+          blockShape={shape}
           blockState={state}
           enableSequences={enableSequences}
           value={block.value}
@@ -120,6 +126,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={block.type}
+          blockShape={shape}
           blockState={state}
           enableSequences={enableSequences}
           operator={block.operator}
@@ -135,6 +142,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.Boolean}
+          blockShape={shape}
           blockState={state}
           enableSequences={enableSequences}
           value={block.value}
@@ -154,6 +162,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
             hasPrev={prevId !== null}
             isWorkbenchBlock={isWorkbenchBlock}
             blockType={block.type}
+            blockShape={shape}
             blockState={state}
             enableSequences={enableSequences}
             operator={block.operator}
@@ -169,6 +178,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
             hasPrev={prevId !== null}
             isWorkbenchBlock={isWorkbenchBlock}
             blockType={block.type}
+            blockShape={shape}
             blockState={state}
             enableSequences={enableSequences}
             operator={LogicalOperator.Not}
@@ -185,6 +195,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.If}
+          blockShape={shape}
           blockState={state}
           enableSequences={enableSequences}
         >
@@ -200,6 +211,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.IfElse}
+          blockShape={shape}
           blockState={state}
           enableSequences={enableSequences}
         >
@@ -215,6 +227,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.For}
+          blockShape={shape}
           blockState={state}
           enableSequences={enableSequences}
         >
@@ -230,6 +243,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.Print}
+          blockShape={shape}
           blockState={state}
           enableSequences={enableSequences}
         >
@@ -245,6 +259,7 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
           hasPrev={prevId !== null}
           isWorkbenchBlock={isWorkbenchBlock}
           blockType={BlockType.Empty}
+          blockShape={shape}
           blockState={state}
           enableSequences={enableSequences}
         >

@@ -1,5 +1,6 @@
 import {
   Block,
+  BlockShape,
   BlockState,
   BlockType,
   EmptyBlock,
@@ -17,6 +18,7 @@ import {
 const block1: Block = {
   id: 'block1',
   type: BlockType.Empty,
+  shape: BlockShape.Square,
   state: BlockState.Idle,
   coords: { x: 0, y: 0 },
   isWorkbenchBlock: false,
@@ -31,6 +33,7 @@ const flatCanvas: Block[] = [
     id: 'block1',
     type: BlockType.Empty,
     state: BlockState.Idle,
+    shape: BlockShape.Square,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: false,
     parentId: null,
@@ -41,6 +44,7 @@ const flatCanvas: Block[] = [
   {
     id: 'block2',
     type: BlockType.Empty,
+    shape: BlockShape.Square,
     state: BlockState.Idle,
     coords: { x: 100, y: 0 },
     isWorkbenchBlock: true,
@@ -52,6 +56,7 @@ const flatCanvas: Block[] = [
   {
     id: 'block3',
     type: BlockType.Empty,
+    shape: BlockShape.Square,
     state: BlockState.Idle,
     coords: { x: 200, y: 0 },
     isWorkbenchBlock: false,
@@ -66,6 +71,7 @@ const nestedCanvas: Block[] = [
   {
     id: 'block1',
     type: BlockType.While,
+    shape: BlockShape.Square,
     state: BlockState.Idle,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: false,
@@ -77,6 +83,7 @@ const nestedCanvas: Block[] = [
         {
           id: 'condition-block',
           type: BlockType.Variable,
+          shape: BlockShape.Square,
           state: BlockState.Idle,
           coords: { x: 10, y: 10 },
           isWorkbenchBlock: false,
@@ -89,6 +96,7 @@ const nestedCanvas: Block[] = [
               {
                 id: 'condition-expression',
                 type: BlockType.Empty,
+                shape: BlockShape.Square,
                 state: BlockState.Idle,
                 coords: { x: 15, y: 15 },
                 isWorkbenchBlock: false,
@@ -105,6 +113,7 @@ const nestedCanvas: Block[] = [
         {
           id: 'body-while',
           type: BlockType.While,
+          shape: BlockShape.Square,
           state: BlockState.Idle,
           coords: { x: 20, y: 20 },
           isWorkbenchBlock: false,
@@ -117,6 +126,7 @@ const nestedCanvas: Block[] = [
               {
                 id: 'inner-variable',
                 type: BlockType.Variable,
+                shape: BlockShape.Square,
                 state: BlockState.Idle,
                 coords: { x: 30, y: 30 },
                 isWorkbenchBlock: false,
@@ -129,6 +139,7 @@ const nestedCanvas: Block[] = [
                     {
                       id: 'target-block-deep',
                       type: BlockType.Empty,
+                      shape: BlockShape.Square,
                       state: BlockState.Idle,
                       coords: { x: 35, y: 35 },
                       isWorkbenchBlock: false,
@@ -149,6 +160,7 @@ const nestedCanvas: Block[] = [
   {
     id: 'block2',
     type: BlockType.Variable,
+    shape: BlockShape.Square,
     state: BlockState.Idle,
     coords: { x: 100, y: 0 },
     isWorkbenchBlock: true,
@@ -161,6 +173,7 @@ const nestedCanvas: Block[] = [
         {
           id: 'target-block1',
           type: BlockType.Empty,
+          shape: BlockShape.Square,
           state: BlockState.Idle,
           coords: { x: 120, y: 20 },
           isWorkbenchBlock: false,
