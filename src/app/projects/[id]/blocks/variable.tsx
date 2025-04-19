@@ -3,7 +3,9 @@ import { Block } from './types';
 import { useBlocks } from '../contexts/blocks-context';
 import { resizeSelect } from '../utils/utils';
 import classes from './blocks.module.css';
-import InnerDropZone from '../components/inner-drop-zone';
+import InnerDropZone, {
+  InnderDropzoneShape,
+} from '../components/inner-drop-zone';
 import withBlock from '../components/with-block';
 
 interface VariableProps {
@@ -51,6 +53,7 @@ function Variable({ id, isWorkbenchBlock, selected, children }: VariableProps) {
       {
         <InnerDropZone
           id={`expression_${id}`}
+          shape={InnderDropzoneShape.Round}
           enabled={!isWorkbenchBlock}
           enableSequences={false}
         >

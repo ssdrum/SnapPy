@@ -14,7 +14,7 @@
   -ms-user-select: none;
   user-select: none;
   background-color: salmon;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(0, 0, 0, 0.2);
   margin-bottom: -1px; /* Negative margin to overlap borders */
   font-size: 14px;
 }

@@ -1,4 +1,6 @@
-import InnerDropZone from '../components/inner-drop-zone';
+import InnerDropZone, {
+  InnderDropzoneShape,
+} from '../components/inner-drop-zone';
 import withBlock from '../components/with-block';
 import { Block } from './types';
 import classes from './blocks.module.css';
@@ -17,6 +19,7 @@ function Print({ id, isWorkbenchBlock, children }: PrintProps) {
       <span>print</span>
       <InnerDropZone
         id={`expression_${id}`}
+        shape={InnderDropzoneShape.Round}
         enabled={!isWorkbenchBlock}
         enableSequences={false}
       >

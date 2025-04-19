@@ -109,7 +109,8 @@ export default function withBlock<T extends object>(
         {!isWorkbenchBlock &&
           !state.draggedGroupBlockIds?.has(id) &&
           !hasPrev &&
-          enableSequences && (
+          enableSequences &&
+          blockShape === BlockShape.Square && (
             <OuterDropZone blockId={id} position={OuterDropzonePosition.Top} />
           )}
 
@@ -139,7 +140,8 @@ export default function withBlock<T extends object>(
 
         {!isWorkbenchBlock &&
           !state.draggedGroupBlockIds?.has(id) &&
-          enableSequences && (
+          enableSequences &&
+          blockShape === BlockShape.Square && (
             <OuterDropZone
               blockId={id}
               position={OuterDropzonePosition.Bottom}
