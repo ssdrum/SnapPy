@@ -27,7 +27,7 @@ export default async function EditorLayout({
   // Take project id from url
   const { id } = await params;
   // Fetch project data
-  const project = await fetchProjectById(Number(id));
+  const project = await fetchProjectById(id);
   if (!project) {
     redirect('/projects/not-found'); // TODO: Implement not found page
   }

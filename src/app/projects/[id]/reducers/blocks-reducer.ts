@@ -7,6 +7,7 @@ import {
   CanvasState,
   NumberBlock,
   OuterDropzonePosition,
+  VariableValueBlock,
 } from '../blocks/types';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -204,6 +205,35 @@ export default function BlocksReducer(
       }
     }
 
+    case CanvasEvent.CHANGE_VARIABLE_VALUE_SELECTED_OPTION: {
+      const { id, selected, isWorkbenchBlock } = action.payload;
+      const blocksArray = isWorkbenchBlock ? state.workbench : state.canvas;
+
+      const block = validateBlockExists(
+        blocksArray,
+        id,
+        CanvasEvent.CHANGE_BOOLEAN_VALUE
+      );
+      if (!block) return state;
+
+      const newBlock: VariableValueBlock = {
+        ...(block as VariableValueBlock),
+        selected: selected,
+      };
+
+      if (isWorkbenchBlock) {
+        return {
+          ...state,
+          workbench: updateBlockById(state.workbench, id, newBlock),
+        };
+      } else {
+        return {
+          ...state,
+          canvas: updateBlockById(state.canvas, id, newBlock),
+        };
+      }
+    }
+
     case CanvasEvent.ADD_CHILD_BLOCK: {
       const { id, targetId, prefix } = action.payload;
       const targetBlock = validateBlockExists(
@@ -322,6 +352,11 @@ export default function BlocksReducer(
         CanvasEvent.SNAP_BLOCK
       );
       if (!targetBlock || !blockToSnap) return state;
+
+      // Disallow snapping the staring block with nested blocks
+      if (blockToSnap.type === BlockType.ProgramStart && targetBlock.parentId) {
+        return state;
+      }
 
       let newCanvas: Block[] = [];
 

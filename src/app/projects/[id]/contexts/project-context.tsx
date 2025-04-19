@@ -11,7 +11,7 @@ interface ProjectProviderProps {
 
 interface ContextType {
   name: string;
-  id: number;
+  id: string;
 }
 
 export const ProjectContext = createContext<ContextType | null>(null);

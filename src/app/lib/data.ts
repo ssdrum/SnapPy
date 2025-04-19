@@ -2,11 +2,7 @@ import { getUserSession } from '@/app/lib/session';
 import { prisma } from './prisma';
 import { Project } from '@prisma/client';
 import { Prisma } from '@prisma/client';
-import {
-  Block,
-  BlockState,
-  BlockType,
-} from '@/app/projects/[id]/editor/blocks/types';
+import { Block, BlockState, BlockType } from '@/app/projects/[id]/blocks/types';
 import { JsonValue } from '@prisma/client/runtime/library';
 
 // Fetch projects by user
@@ -21,12 +17,13 @@ export const fetchProjectsByUser = async (
   return projects;
 };
 
-export const fetchProjectById = async (id: number): Promise<Project | null> => {
+export const fetchProjectById = async (id: string): Promise<Project | null> => {
   const project = await prisma.project.findUnique({
     where: {
       id: id,
     },
   });
+
   return project;
 };
 
@@ -63,7 +60,7 @@ export async function createProject(name: string): Promise<Project> {
  * Updates an existing project on the db
  */
 export async function updateProject(
-  projectId: number,
+  projectId: string,
   canvas: Block[],
   variables: string[]
 ): Promise<Project> {

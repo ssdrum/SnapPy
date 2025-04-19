@@ -3,22 +3,12 @@
 import { useContext } from 'react';
 import { ProjectContext } from './contexts/project-context';
 import { DndContext, pointerWithin } from '@dnd-kit/core';
-import {
-  Title,
-  Group,
-  Button,
-  AppShellMain,
-  Box,
-  Loader,
-  Center,
-  Stack,
-  Text,
-} from '@mantine/core';
+import { Title, Group, Button, AppShellMain, Box } from '@mantine/core';
 import classes from './editor.module.css';
 import Canvas from './components/canvas';
 import Workbench from './components/workbench';
 import SaveButton from './components/save-button';
-import { IconBug, IconPlayerPlay } from '@tabler/icons-react';
+import { IconPlayerPlay } from '@tabler/icons-react';
 import useCodeEditor from './hooks/use-code-editor';
 import CodeEditor from './components/code-editor';
 import OutputBox from './components/output-box';
@@ -26,6 +16,8 @@ import { useCustomSensors } from './utils/sensors';
 import DragEventsHandler from './components/drag-events-handler';
 import { useBlocks } from './contexts/blocks-context';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import LoadingScreen from './components/loading-screen';
+import CollaborateButton from './components/collaborate-button';
 
 export default function EditorPage() {
   const { name, id } = useContext(ProjectContext)!;
@@ -47,18 +39,7 @@ export default function EditorPage() {
   });
 
   if (isPyodideLoading) {
-    return (
-      <AppShellMain className={classes.editorPageWrapper}>
-        <Center style={{ height: '100%' }}>
-          <Stack align='center'>
-            <Loader color='blue' size='xl' />
-            <Text size='lg' fw={500}>
-              Loading environment...
-            </Text>
-          </Stack>
-        </Center>
-      </AppShellMain>
-    );
+    return <LoadingScreen message='Loading environment...' />;
   }
 
   return (
@@ -76,17 +57,14 @@ export default function EditorPage() {
           >
             Run
           </Button>
-          {
-            <Button bg='red' leftSection={<IconBug />} disabled>
-              Debug
-            </Button>
-          }
+          <CollaborateButton projectId={id} />
         </Group>
       </Group>
 
-      {/* Canvas */}
+      {/* Editor */}
       <Box className={classes.editorWrapper}>
         <PanelGroup direction='horizontal'>
+          {/* Canvas */}
           <DndContext
             id='dnd-context'
             sensors={sensors}
@@ -102,6 +80,7 @@ export default function EditorPage() {
 
             <PanelResizeHandle className={classes.resizeHandleVertical} />
 
+            {/* Code editor */}
             <Panel defaultSize={30}>
               <Box className={classes.codeEditorWrapper}>
                 <PanelGroup direction='vertical'>

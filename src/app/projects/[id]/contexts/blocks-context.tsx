@@ -35,6 +35,11 @@ interface BlocksContextType {
   deleteBlockAction: (id: string) => void;
   createVariableAction: (name: string) => boolean;
   changeVariableSelectedOptionAction: (selected: string, id?: string) => void;
+  changeVariableValueSelectedOptionAction: (
+    id: string,
+    selected: string,
+    isWorkbenchBlock: boolean
+  ) => void;
   addChildBlockAction: (id: string, targetId: string, prefix: string) => void;
   removeChildBlockAction: (id: string, parentId: string) => void;
   snapBlockAction: (
@@ -185,6 +190,17 @@ export default function BlocksProvider({
     });
   };
 
+  const changeVariableValueSelectedOptionAction = (
+    id: string,
+    selected: string,
+    isWorkbenchBlock: boolean
+  ) => {
+    dispatch({
+      type: CanvasEvent.CHANGE_VARIABLE_VALUE_SELECTED_OPTION,
+      payload: { id, selected, isWorkbenchBlock },
+    });
+  };
+
   const addChildBlockAction = (
     id: string,
     targetId: string,
@@ -266,6 +282,7 @@ export default function BlocksProvider({
     deleteBlockAction,
     createVariableAction,
     changeVariableSelectedOptionAction,
+    changeVariableValueSelectedOptionAction,
     addChildBlockAction,
     removeChildBlockAction,
     snapBlockAction,

@@ -5,14 +5,14 @@ import {
   EmptyBlock,
   VariableBlock,
   WhileBlock,
-} from '@/app/projects/[id]/editor/blocks/types';
+} from '@/app/projects/[id]/blocks/types';
 import {
   findBlockById,
   findRoot,
   getConnectedBlockIds,
   removeBlockById,
   updateBlockById,
-} from '@/app/projects/[id]/editor/utils/utils';
+} from '@/app/projects/[id]/utils/utils';
 
 const block1: Block = {
   id: 'block1',

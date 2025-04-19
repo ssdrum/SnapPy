@@ -1,7 +1,7 @@
 import {
   CanvasAction,
   CanvasEvent,
-} from '@/app/projects/[id]/editor/blocks/canvas-api';
+} from '@/app/projects/[id]/blocks/canvas-api';
 import {
   BlockState,
   CanvasState,
@@ -11,9 +11,9 @@ import {
   EmptyBlock,
   WhileBlock,
   OuterDropzonePosition,
-} from '@/app/projects/[id]/editor/blocks/types';
-import BlocksReducer from '@/app/projects/[id]/editor/reducers/blocks-reducer';
-import { findBlockById } from '@/app/projects/[id]/editor/utils/utils';
+} from '@/app/projects/[id]/blocks/types';
+import BlocksReducer from '@/app/projects/[id]/reducers/blocks-reducer';
+import { findBlockById } from '@/app/projects/[id]/utils/utils';
 
 describe('BlocksReducer', () => {
   const block1: Block = {

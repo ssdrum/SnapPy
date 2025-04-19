@@ -6,8 +6,8 @@ import {
   MathOperator,
   NumberBlock,
   VariableBlock,
-} from '@/app/projects/[id]/editor/blocks/types';
-import { generateCode } from '@/app/projects/[id]/editor/code-generation/code-generation';
+} from '@/app/projects/[id]/blocks/types';
+import { generateCode } from '@/app/projects/[id]/code-generation/code-generation';
 
 describe('Code generation', () => {
   const varBlock: VariableBlock = {
