@@ -1,4 +1,6 @@
-import InnerDropZone from '../components/inner-drop-zone';
+import InnerDropZone, {
+  InnderDropzoneShape,
+} from '../components/inner-drop-zone';
 import { Block } from './types';
 import withBlock from '../components/with-block';
 
@@ -26,6 +28,7 @@ function If({ id, isWorkbenchBlock, children }: IfProps) {
         {
           <InnerDropZone
             id={`condition_${id}`}
+            shape={InnderDropzoneShape.Round}
             enabled={!isWorkbenchBlock}
             enableSequences={false}
           >
@@ -39,6 +42,7 @@ function If({ id, isWorkbenchBlock, children }: IfProps) {
         {
           <InnerDropZone
             id={`body_${id}`}
+            shape={InnderDropzoneShape.Square}
             enabled={!isWorkbenchBlock}
             enableSequences={true}
           >

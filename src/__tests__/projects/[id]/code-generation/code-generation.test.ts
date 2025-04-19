@@ -1,5 +1,6 @@
 import {
   Block,
+  BlockShape,
   BlockState,
   BlockType,
   MathBlock,
@@ -13,6 +14,7 @@ describe('Code generation', () => {
   const varBlock: VariableBlock = {
     id: 'var-x',
     type: BlockType.Variable,
+    shape: BlockShape.Square,
     state: BlockState.Idle,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: false,
@@ -27,6 +29,7 @@ describe('Code generation', () => {
   const numBlock: NumberBlock = {
     id: 'num-1',
     type: BlockType.Number,
+    shape: BlockShape.Round,
     state: BlockState.Idle,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: false,
@@ -39,6 +42,7 @@ describe('Code generation', () => {
   const additionBlock: MathBlock = {
     id: 'addition',
     type: BlockType.Math,
+    shape: BlockShape.Round,
     state: BlockState.Idle,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: false,

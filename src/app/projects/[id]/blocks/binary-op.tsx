@@ -1,4 +1,6 @@
-import InnerDropZone from '../components/inner-drop-zone';
+import InnerDropZone, {
+  InnderDropzoneShape,
+} from '../components/inner-drop-zone';
 import withBlock from '../components/with-block';
 import {
   Block,
@@ -32,6 +34,7 @@ function BinaryOp({ id, isWorkbenchBlock, operator, children }: BinaryOpProps) {
     <div className={classes.binaryOpContainer}>
       <InnerDropZone
         id={`left_${id}`}
+        shape={InnderDropzoneShape.Round}
         enabled={!isWorkbenchBlock}
         enableSequences={false}
       >
@@ -40,6 +43,7 @@ function BinaryOp({ id, isWorkbenchBlock, operator, children }: BinaryOpProps) {
       {isMathOrComparisonOp ? <OperatorIcon operator={operator} /> : operator}
       <InnerDropZone
         id={`right_${id}`}
+        shape={InnderDropzoneShape.Round}
         enabled={!isWorkbenchBlock}
         enableSequences={false}
       >

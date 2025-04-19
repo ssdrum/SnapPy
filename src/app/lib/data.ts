@@ -2,7 +2,12 @@ import { getUserSession } from '@/app/lib/session';
 import { prisma } from './prisma';
 import { Project } from '@prisma/client';
 import { Prisma } from '@prisma/client';
-import { Block, BlockState, BlockType } from '@/app/projects/[id]/blocks/types';
+import {
+  Block,
+  BlockShape,
+  BlockState,
+  BlockType,
+} from '@/app/projects/[id]/blocks/types';
 import { JsonValue } from '@prisma/client/runtime/library';
 
 // Fetch projects by user
@@ -40,6 +45,7 @@ export async function createProject(name: string): Promise<Project> {
         {
           id: 'start',
           type: BlockType.ProgramStart,
+          shape: BlockShape.Square,
           coords: { x: 400, y: 200 },
           isWorkbenchBlock: false,
           state: BlockState.Idle,

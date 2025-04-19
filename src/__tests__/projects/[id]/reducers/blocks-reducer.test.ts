@@ -11,6 +11,7 @@ import {
   EmptyBlock,
   WhileBlock,
   OuterDropzonePosition,
+  BlockShape,
 } from '@/app/projects/[id]/blocks/types';
 import BlocksReducer from '@/app/projects/[id]/reducers/blocks-reducer';
 import { findBlockById } from '@/app/projects/[id]/utils/utils';
@@ -19,6 +20,7 @@ describe('BlocksReducer', () => {
   const block1: Block = {
     id: 'block1',
     type: BlockType.Empty,
+    shape: BlockShape.Square,
     state: BlockState.Idle,
     coords: { x: 100, y: 100 },
     isWorkbenchBlock: false,
@@ -30,6 +32,7 @@ describe('BlocksReducer', () => {
   const block2: Block = {
     id: 'block2',
     type: BlockType.Empty,
+    shape: BlockShape.Square,
     state: BlockState.Idle,
     coords: { x: 200, y: 200 },
     isWorkbenchBlock: false,
@@ -41,6 +44,7 @@ describe('BlocksReducer', () => {
   const block3: Block = {
     id: 'block3',
     type: BlockType.Variable,
+    shape: BlockShape.Square,
     state: BlockState.Idle,
     coords: { x: 300, y: 300 },
     isWorkbenchBlock: false,
@@ -55,6 +59,7 @@ describe('BlocksReducer', () => {
   const block4: WhileBlock = {
     id: 'block4',
     type: BlockType.While,
+    shape: BlockShape.Square,
     state: BlockState.Idle,
     coords: { x: 400, y: 400 },
     isWorkbenchBlock: false,
@@ -69,6 +74,7 @@ describe('BlocksReducer', () => {
   const workbench1: Block = {
     id: 'workbench1',
     type: BlockType.Empty,
+    shape: BlockShape.Square,
     state: BlockState.Idle,
     coords: { x: 50, y: 50 },
     isWorkbenchBlock: true,
@@ -80,6 +86,7 @@ describe('BlocksReducer', () => {
   const workbenchVar: Block = {
     id: 'workbenchVar',
     type: BlockType.Variable,
+    shape: BlockShape.Square,
     state: BlockState.Idle,
     coords: { x: 150, y: 50 },
     isWorkbenchBlock: true,
@@ -760,6 +767,7 @@ describe('BlocksReducer', () => {
     const parent: WhileBlock = {
       id: 'parent',
       type: BlockType.While,
+      shape: BlockShape.Square,
       state: BlockState.Idle,
       coords: { x: 0, y: 0 },
       isWorkbenchBlock: false,
@@ -775,6 +783,7 @@ describe('BlocksReducer', () => {
     const blockA: EmptyBlock = {
       id: 'a',
       type: BlockType.Empty,
+      shape: BlockShape.Square,
       state: BlockState.Idle,
       coords: { x: 0, y: 0 },
       isWorkbenchBlock: false,
@@ -786,6 +795,7 @@ describe('BlocksReducer', () => {
     const blockB: EmptyBlock = {
       id: 'b',
       type: BlockType.Empty,
+      shape: BlockShape.Square,
       state: BlockState.Idle,
       coords: { x: 0, y: 0 },
       isWorkbenchBlock: false,
@@ -797,6 +807,7 @@ describe('BlocksReducer', () => {
     const blockC: EmptyBlock = {
       id: 'c',
       type: BlockType.Empty,
+      shape: BlockShape.Square,
       state: BlockState.Idle,
       coords: { x: 0, y: 0 },
       isWorkbenchBlock: false,
@@ -809,6 +820,7 @@ describe('BlocksReducer', () => {
     const blockD: EmptyBlock = {
       id: 'd',
       type: BlockType.Empty,
+      shape: BlockShape.Square,
       state: BlockState.Idle,
       coords: { x: 0, y: 0 },
       isWorkbenchBlock: false,
@@ -820,6 +832,7 @@ describe('BlocksReducer', () => {
     const blockE: EmptyBlock = {
       id: 'e',
       type: BlockType.Empty,
+      shape: BlockShape.Square,
       state: BlockState.Idle,
       coords: { x: 0, y: 0 },
       isWorkbenchBlock: false,
@@ -831,6 +844,7 @@ describe('BlocksReducer', () => {
     const blockF: EmptyBlock = {
       id: 'f',
       type: BlockType.Empty,
+      shape: BlockShape.Square,
       state: BlockState.Idle,
       coords: { x: 0, y: 0 },
       isWorkbenchBlock: false,
@@ -843,6 +857,7 @@ describe('BlocksReducer', () => {
     const singleBlock: EmptyBlock = {
       id: 'single',
       type: BlockType.Empty,
+      shape: BlockShape.Square,
       state: BlockState.Idle,
       coords: { x: 0, y: 0 },
       isWorkbenchBlock: false,

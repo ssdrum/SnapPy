@@ -1,4 +1,6 @@
-import InnerDropZone from '../components/inner-drop-zone';
+import InnerDropZone, {
+  InnderDropzoneShape,
+} from '../components/inner-drop-zone';
 import withBlock from '../components/with-block';
 import { Block, LogicalOperator } from './types';
 import classes from './blocks.module.css';
@@ -18,6 +20,7 @@ function UnaryOp({ id, isWorkbenchBlock, operator, children }: UnaryOpProps) {
       {operator}
       <InnerDropZone
         id={`operand_${id}`}
+        shape={InnderDropzoneShape.Round}
         enabled={!isWorkbenchBlock}
         enableSequences={false}
       >

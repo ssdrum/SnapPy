@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   BlockChildren,
+  BlockShape,
   BlockState,
   BlockType,
   OuterDropzonePosition,
@@ -15,6 +16,7 @@ export interface WithBlockProps {
   id: string;
   isWorkbenchBlock: boolean;
   hasPrev: boolean;
+  blockShape: BlockShape;
   blockType: BlockType;
   blockState: BlockState;
   enableSequences: boolean;
@@ -30,6 +32,7 @@ export default function withBlock<T extends object>(
       isWorkbenchBlock,
       hasPrev,
       blockType,
+      blockShape,
       blockState,
       enableSequences,
       children,
@@ -85,6 +88,13 @@ export default function withBlock<T extends object>(
       }
     };
 
+    const getBorderRadius = () => {
+      if (blockShape === BlockShape.Round) {
+        return '100px';
+      }
+      return '5px';
+    };
+
     const { attributes, listeners, setNodeRef } = useDraggable({
       id: id,
     });
@@ -99,7 +109,8 @@ export default function withBlock<T extends object>(
         {!isWorkbenchBlock &&
           !state.draggedGroupBlockIds?.has(id) &&
           !hasPrev &&
-          enableSequences && (
+          enableSequences &&
+          blockShape === BlockShape.Square && (
             <OuterDropZone blockId={id} position={OuterDropzonePosition.Top} />
           )}
 
@@ -109,6 +120,7 @@ export default function withBlock<T extends object>(
             backgroundColor: getBGColor(),
             boxShadow: getBoxShadow(),
             padding: getPadding(),
+            borderRadius: getBorderRadius(),
           }}
           onClick={() => {
             deselectBlockAction();
@@ -128,7 +140,8 @@ export default function withBlock<T extends object>(
 
         {!isWorkbenchBlock &&
           !state.draggedGroupBlockIds?.has(id) &&
-          enableSequences && (
+          enableSequences &&
+          blockShape === BlockShape.Square && (
             <OuterDropZone
               blockId={id}
               position={OuterDropzonePosition.Bottom}

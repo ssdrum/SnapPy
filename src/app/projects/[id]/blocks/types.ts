@@ -25,6 +25,11 @@ export enum BlockState {
   Nested = 'nested',
 }
 
+export enum BlockShape {
+  Round = 'round',
+  Square = 'square',
+}
+
 export interface BlockChildren {
   [key: string]: Block[];
 }
@@ -79,6 +84,7 @@ export interface CanvasState {
 interface BaseBlock {
   id: string;
   type: BlockType;
+  shape: BlockShape;
   state: BlockState;
   coords: Coordinates;
   isWorkbenchBlock: boolean;
@@ -89,16 +95,19 @@ interface BaseBlock {
 
 export interface ProgramStartBlock extends BaseBlock {
   type: BlockType.ProgramStart;
+  shape: BlockShape.Square;
   children: null;
 }
 
 export interface EmptyBlock extends BaseBlock {
   type: BlockType.Empty;
+  shape: BlockShape.Square;
   children: null;
 }
 
 export interface VariableBlock extends BaseBlock {
   type: BlockType.Variable;
+  shape: BlockShape.Square;
   selected: string;
   children: {
     expression: Block[];
@@ -107,12 +116,14 @@ export interface VariableBlock extends BaseBlock {
 
 export interface VariableValueBlock extends BaseBlock {
   type: BlockType.VariableValue;
+  shape: BlockShape.Round;
   selected: string;
   children: null;
 }
 
 export interface WhileBlock extends BaseBlock {
   type: BlockType.While;
+  shape: BlockShape.Square;
   children: {
     condition: Block[];
     body: Block[];
@@ -121,18 +132,21 @@ export interface WhileBlock extends BaseBlock {
 
 export interface NumberBlock extends BaseBlock {
   type: BlockType.Number;
+  shape: BlockShape.Round;
   value: string;
   children: null;
 }
 
 export interface StringBlock extends BaseBlock {
   type: BlockType.String;
+  shape: BlockShape.Round;
   value: string;
   children: null;
 }
 
 export interface MathBlock extends BaseBlock {
   type: BlockType.Math;
+  shape: BlockShape.Round;
   operator: MathOperator;
   children: {
     left: Block[];
@@ -142,12 +156,14 @@ export interface MathBlock extends BaseBlock {
 
 export interface BooleanBlock extends BaseBlock {
   type: BlockType.Boolean;
+  shape: BlockShape.Round;
   value: BooleanValue;
   children: null;
 }
 
 export interface ComparisonBlock extends BaseBlock {
   type: BlockType.Comparison;
+  shape: BlockShape.Round;
   operator: ComparisonOperator;
   children: {
     left: Block[];
@@ -157,6 +173,7 @@ export interface ComparisonBlock extends BaseBlock {
 
 export interface LogicalBlockBase extends BaseBlock {
   type: BlockType.Logical;
+  shape: BlockShape.Round;
 }
 
 export interface LogicalBlockBinary extends LogicalBlockBase {
@@ -178,6 +195,7 @@ export type LogicalBlock = LogicalBlockBinary | LogicalBlockUnary;
 
 export interface IfBlock extends BaseBlock {
   type: BlockType.If;
+  shape: BlockShape.Square;
   children: {
     condition: Block[];
     body: Block[];
@@ -186,6 +204,7 @@ export interface IfBlock extends BaseBlock {
 
 export interface IfElseBlock extends BaseBlock {
   type: BlockType.IfElse;
+  shape: BlockShape.Square;
   children: {
     condition: Block[];
     ifBody: Block[];
@@ -195,6 +214,7 @@ export interface IfElseBlock extends BaseBlock {
 
 export interface ForBlock extends BaseBlock {
   type: BlockType.For;
+  shape: BlockShape.Square;
   children: {
     expression: Block[];
     body: Block[];
@@ -203,6 +223,7 @@ export interface ForBlock extends BaseBlock {
 
 export interface PrintBlock extends BaseBlock {
   type: BlockType.Print;
+  shape: BlockShape.Square;
   children: {
     expression: Block[];
   };

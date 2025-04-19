@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import {
   Block,
+  BlockShape,
   BlockState,
   BlockType,
   BooleanValue,
@@ -9,11 +10,12 @@ import {
   MathOperator,
 } from '../blocks/types';
 
-// Add workbench blocks here
 const workbenchBlocks: Block[] = [
+  // Variables
   {
     id: uuidv4(),
     type: BlockType.Variable,
+    shape: BlockShape.Square,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -28,6 +30,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.VariableValue,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -37,22 +40,12 @@ const workbenchBlocks: Block[] = [
     nextId: null,
     children: null,
   },
-  {
-    id: uuidv4(),
-    type: BlockType.Print,
-    coords: { x: 0, y: 0 },
-    isWorkbenchBlock: true,
-    state: BlockState.Idle,
-    parentId: null,
-    prevId: null,
-    nextId: null,
-    children: {
-      expression: [],
-    },
-  },
+
+  // Conditionals
   {
     id: uuidv4(),
     type: BlockType.If,
+    shape: BlockShape.Square,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -67,6 +60,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.IfElse,
+    shape: BlockShape.Square,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -79,9 +73,12 @@ const workbenchBlocks: Block[] = [
       elseBody: [],
     },
   },
+
+  // Loops
   {
     id: uuidv4(),
     type: BlockType.For,
+    shape: BlockShape.Square,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -96,6 +93,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.While,
+    shape: BlockShape.Square,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -107,9 +105,12 @@ const workbenchBlocks: Block[] = [
       body: [],
     },
   },
+
+  // Values
   {
     id: uuidv4(),
     type: BlockType.Number,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -122,6 +123,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.String,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -134,6 +136,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.Boolean,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -143,9 +146,12 @@ const workbenchBlocks: Block[] = [
     value: BooleanValue.True,
     children: null,
   },
+
+  // Maths
   {
     id: uuidv4(),
     type: BlockType.Math,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -161,6 +167,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.Math,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -176,6 +183,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.Math,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -191,6 +199,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.Math,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -206,6 +215,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.Math,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -218,9 +228,12 @@ const workbenchBlocks: Block[] = [
       right: [],
     },
   },
+
+  // Comparisons
   {
     id: uuidv4(),
     type: BlockType.Comparison,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -236,6 +249,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.Comparison,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -251,6 +265,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.Comparison,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -266,6 +281,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.Comparison,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -281,6 +297,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.Comparison,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -296,6 +313,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.Comparison,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -308,9 +326,12 @@ const workbenchBlocks: Block[] = [
       right: [],
     },
   },
+
+  // Logic
   {
     id: uuidv4(),
     type: BlockType.Logical,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -326,6 +347,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.Logical,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -341,6 +363,7 @@ const workbenchBlocks: Block[] = [
   {
     id: uuidv4(),
     type: BlockType.Logical,
+    shape: BlockShape.Round,
     coords: { x: 0, y: 0 },
     isWorkbenchBlock: true,
     state: BlockState.Idle,
@@ -352,6 +375,35 @@ const workbenchBlocks: Block[] = [
       operand: [],
     },
   },
+
+  // Output
+  {
+    id: uuidv4(),
+    type: BlockType.Print,
+    shape: BlockShape.Square,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    children: {
+      expression: [],
+    },
+  },
 ];
+
+// This is a simple way to have categories in the workbench. Make sure the indeces
+// are correct
+export const blockCategories = {
+  Variables: [0, 1],
+  Conditionals: [2, 3],
+  Loops: [4, 5],
+  Values: [6, 7, 8],
+  Maths: [9, 10, 11, 12, 13],
+  Comparisons: [14, 15, 16, 17, 18, 19],
+  Logic: [20, 21, 22],
+  Output: [23],
+};
 
 export default workbenchBlocks;
