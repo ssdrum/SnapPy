@@ -49,9 +49,9 @@ export default function withBlock<T extends object>(
         case BlockType.Comparison:
         case BlockType.Logical:
         case BlockType.VariableValue:
-          return '4px 10px ';
+          return '5px';
         case BlockType.ProgramStart:
-          return '15px';
+          return '8px 15px';
         default:
           return undefined;
       }
@@ -63,7 +63,7 @@ export default function withBlock<T extends object>(
           return '#fbbf24'; // Yellow
         case BlockType.While:
         case BlockType.For:
-          return '#6366f1';
+          return '#34d399'; //  Green
         case BlockType.If:
         case BlockType.IfElse:
           return '#c084fc'; // Purple
@@ -72,7 +72,7 @@ export default function withBlock<T extends object>(
           return '#60a5fa'; // Blue
         case BlockType.Number:
         case BlockType.Boolean:
-          return '#34d399'; //  Green
+          return '#a3e635'; // Lime
         case BlockType.Math:
           return '#f87171'; // Coral
         case BlockType.Comparison:

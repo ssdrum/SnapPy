@@ -17,6 +17,7 @@ import {
 import { signOut } from 'next-auth/react';
 import { IconChevronDown, IconLogout } from '@tabler/icons-react';
 import { Session } from '@/app/lib/session';
+import Image from 'next/image';
 
 import classes from './header.module.css';
 
@@ -31,7 +32,16 @@ export default function Header({ session }: HeaderProps) {
     <div className={classes.container}>
       <Group justify='space-between'>
         <Anchor href='/projects' underline='never'>
-          <Title>Snap-Py</Title>
+          <Group align='center'>
+            <Image
+              src='/block-svgrepo-com.svg'
+              width={50}
+              height={50}
+              alt='SnapPy'
+            ></Image>
+
+            <Title c='black'>SnapPy</Title>
+          </Group>
         </Anchor>
 
         <Menu width={220}>

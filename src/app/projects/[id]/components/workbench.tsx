@@ -14,11 +14,11 @@ export default function Workbench() {
   return (
     <div className={classes.workbench} ref={setNodeRef}>
       <CreateVariableModal opened={opened} close={close} />
+      <Button onClick={open} mb={'lg'}>
+        Create Variable
+      </Button>
 
       <Stack gap='md'>
-        <Button onClick={open} bg={'#EC407A'}>
-          Create Variable
-        </Button>
         <WorkbenchBlocksRenderer workbench={state.workbench} />
       </Stack>
     </div>

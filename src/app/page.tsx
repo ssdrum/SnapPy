@@ -3,7 +3,7 @@ import SignInButton from './sign-in-button';
 import { redirect } from 'next/navigation';
 import { Session } from '@/app/lib/session';
 import classes from './page.module.css';
-import { Container, Text, Title } from '@mantine/core';
+import { Container, Text, Title, Flex } from '@mantine/core';
 
 export default async function Home() {
   const session: Session = await getUserSession();
@@ -13,14 +13,17 @@ export default async function Home() {
 
   return (
     <div className={classes.wrapper}>
-      <Container size={1200} className={classes.inner}>
-        <Title mb={15} className={classes.title}>
-          Welcome to <span className={classes.logo}>Snap-Py</span>
-        </Title>
-        <Text className={classes.description} mb={30} c='dimmed'>
-          Sign in to get started
-        </Text>
-        <SignInButton />
+      <Container size={800} className={classes.inner}>
+        <Flex direction='column' align='center'>
+          <Title mb={15} ta='center' className={classes.title}>
+            Welcome to <span className={classes.logo}>SnapPy</span>
+          </Title>
+          <Text size='xl' mb={30} ta='center'>
+            Build Python programs visually using blocks. Learn coding without
+            worrying about syntax.
+          </Text>
+          <SignInButton />
+        </Flex>
       </Container>
     </div>
   );
