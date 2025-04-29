@@ -60,25 +60,27 @@ export default function withBlock<T extends object>(
     const getBGColor = () => {
       switch (blockType) {
         case BlockType.ProgramStart:
-          return '#FFD966'; // Yellow
+          return '#fbbf24'; // Yellow
         case BlockType.While:
         case BlockType.For:
+          return '#6366f1';
         case BlockType.If:
         case BlockType.IfElse:
-          return '#4697E5'; // Blue
+          return '#c084fc'; // Purple
         case BlockType.Variable:
         case BlockType.VariableValue:
-          return '#EE4D83'; //  Pink
+          return '#60a5fa'; // Blue
         case BlockType.Number:
         case BlockType.Boolean:
-          return '#6DC071'; //  Green
+          return '#34d399'; //  Green
         case BlockType.Math:
-          return '#FF8409'; //  Orange
+          return '#f87171'; // Coral
         case BlockType.Comparison:
+          return '#fb923c'; //  Orange
         case BlockType.Logical:
-          return '#A374E4'; // Purple
+          return '#f472b6'; //  Pink
         case BlockType.Print:
-          return '#2CAEA2'; // Teal
+          return '#22d3ee'; // Cyan
         case BlockType.Empty:
         default:
           return '#EE4D83'; // Pink
