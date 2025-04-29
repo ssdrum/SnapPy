@@ -50,6 +50,8 @@ export default function withBlock<T extends object>(
         case BlockType.Logical:
         case BlockType.VariableValue:
           return '4px 10px ';
+        case BlockType.ProgramStart:
+          return '15px';
         default:
           return undefined;
       }
@@ -92,6 +94,9 @@ export default function withBlock<T extends object>(
     const getBorderRadius = () => {
       if (blockShape === BlockShape.Round) {
         return '100px';
+      }
+      if (blockType === BlockType.ProgramStart) {
+        return '20px 20px 2px 2px ';
       }
       return '5px';
     };
