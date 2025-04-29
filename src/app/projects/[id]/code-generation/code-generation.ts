@@ -17,6 +17,7 @@ import {
   PrintBlock,
   StringBlock,
   ElifBlock,
+  ElseBlock,
 } from '../blocks/types';
 import { isLogicalBinaryOperator, sortBlocks } from '../utils/utils';
 
@@ -65,6 +66,8 @@ function visitBlock(ctx: Context, block: Block) {
       return visitIf(ctx, block);
     case BlockType.Elif:
       return visitElif(ctx, block);
+    case BlockType.Else:
+      return visitElse(ctx, block);
     case BlockType.IfElse:
       return visitIfElse(ctx, block);
     case BlockType.While:
@@ -206,6 +209,26 @@ function visitElif(ctx: Context, block: ElifBlock) {
   }
 
   addLine(ctx, `elif ${conditionCode}:`);
+
+  ctx.indent++;
+
+  // If no body blocks, add a pass statement
+  if (block.children.body.length === 0) {
+    addLine(ctx, 'pass');
+  } else {
+    for (const bodyBlock of sortBlocks(block.children.body)) {
+      visitBlock(ctx, bodyBlock);
+    }
+  }
+
+  // Restore the original indentation
+  ctx.indent--;
+
+  return '';
+}
+
+function visitElse(ctx: Context, block: ElseBlock) {
+  addLine(ctx, 'else:');
 
   ctx.indent++;
 

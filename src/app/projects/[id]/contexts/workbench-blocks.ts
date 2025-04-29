@@ -74,6 +74,20 @@ const workbenchBlocks: Block[] = [
   },
   {
     id: uuidv4(),
+    type: BlockType.Else,
+    shape: BlockShape.Square,
+    coords: { x: 0, y: 0 },
+    isWorkbenchBlock: true,
+    state: BlockState.Idle,
+    parentId: null,
+    prevId: null,
+    nextId: null,
+    children: {
+      body: [],
+    },
+  },
+  {
+    id: uuidv4(),
     type: BlockType.IfElse,
     shape: BlockShape.Square,
     coords: { x: 0, y: 0 },
@@ -412,13 +426,13 @@ const workbenchBlocks: Block[] = [
 // are correct
 export const blockCategories = {
   Variables: [0, 1],
-  Conditionals: [2, 3, 4],
-  Loops: [5, 6],
-  Values: [7, 8, 9],
-  Maths: [10, 11, 12, 13, 14],
-  Comparisons: [15, 16, 17, 18, 19, 20],
-  Logic: [21, 22, 23],
-  Output: [24],
+  Conditionals: [2, 3, 4, 5],
+  Loops: [6, 7],
+  Values: [8, 9, 10],
+  Maths: [11, 12, 13, 14, 15],
+  Comparisons: [16, 17, 18, 19, 20, 21],
+  Logic: [22, 23, 24],
+  Output: [25],
 };
 
 export default workbenchBlocks;

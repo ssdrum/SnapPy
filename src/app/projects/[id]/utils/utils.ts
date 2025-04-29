@@ -105,6 +105,10 @@ function processBlockChildren(
         condition: operation(block.children.condition, ...args),
         body: operation(block.children.body, ...args),
       };
+    case BlockType.Else:
+      return {
+        body: operation(block.children.body, ...args),
+      };
     case BlockType.Math:
     case BlockType.Comparison:
       return {
