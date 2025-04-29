@@ -3,7 +3,8 @@ import SignInButton from './sign-in-button';
 import { redirect } from 'next/navigation';
 import { Session } from '@/app/lib/session';
 import classes from './page.module.css';
-import { Container, Text, Title, Flex } from '@mantine/core';
+import { Container, Text, Title, Flex, Divider } from '@mantine/core';
+import Image from 'next/image';
 
 export default async function Home() {
   const session: Session = await getUserSession();
@@ -24,6 +25,26 @@ export default async function Home() {
           </Text>
           <SignInButton />
         </Flex>
+      </Container>
+      <Container size={1200}>
+        <Image
+          src='/cover.png'
+          alt='Cover image'
+          width={800}
+          height={0}
+          sizes='100%'
+          style={{ width: '100%', height: 'auto' }}
+          priority
+          className={classes.coverImage}
+        ></Image>
+      </Container>
+
+      {/* --- Footer --- */}
+      <Divider my='xl' />
+      <Container size={800} py='md' ta='center'>
+        <Text size='sm' c='dimmed'>
+          Created By: Luigi Di Paolo
+        </Text>
       </Container>
     </div>
   );
