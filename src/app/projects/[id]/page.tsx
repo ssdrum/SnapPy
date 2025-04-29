@@ -82,7 +82,7 @@ export default function EditorPage() {
 
             {/* Code editor */}
             <Panel defaultSize={30}>
-              <Box className={classes.codeEditorWrapper}>
+              <Box className={classes.rightPanelWrapper}>
                 <PanelGroup direction='vertical'>
                   <Panel defaultSize={60}>
                     <CodeEditor
