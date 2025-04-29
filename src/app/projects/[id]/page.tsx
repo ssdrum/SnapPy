@@ -17,7 +17,6 @@ import DragEventsHandler from './components/drag-events-handler';
 import { useBlocks } from './contexts/blocks-context';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import LoadingScreen from './components/loading-screen';
-import CollaborateButton from './components/collaborate-button';
 
 export default function EditorPage() {
   const { name, id } = useContext(ProjectContext)!;
@@ -57,7 +56,6 @@ export default function EditorPage() {
           >
             Run
           </Button>
-          <CollaborateButton projectId={id} />
         </Group>
       </Group>
 
