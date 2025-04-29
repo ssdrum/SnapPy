@@ -100,6 +100,11 @@ function processBlockChildren(
         condition: operation(block.children.condition, ...args),
         body: operation(block.children.body, ...args),
       };
+    case BlockType.Elif:
+      return {
+        condition: operation(block.children.condition, ...args),
+        body: operation(block.children.body, ...args),
+      };
     case BlockType.Math:
     case BlockType.Comparison:
       return {

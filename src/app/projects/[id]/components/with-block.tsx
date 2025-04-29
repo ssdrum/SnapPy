@@ -65,6 +65,7 @@ export default function withBlock<T extends object>(
         case BlockType.For:
           return '#34d399'; //  Green
         case BlockType.If:
+        case BlockType.Elif:
         case BlockType.IfElse:
           return '#c084fc'; // Purple
         case BlockType.Variable:

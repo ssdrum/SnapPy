@@ -18,6 +18,7 @@ import For from '../blocks/for';
 import VariableValue from '../blocks/variable-value';
 import Print from '../blocks/print';
 import String from '../blocks/string';
+import Elif from '../blocks/elif';
 
 export default function renderBlock(block: Block, enableSequences: boolean) {
   const { id, prevId, isWorkbenchBlock, state, shape, children } = block;
@@ -201,6 +202,22 @@ export default function renderBlock(block: Block, enableSequences: boolean) {
         >
           {block.children}
         </If>
+      );
+    }
+    case BlockType.Elif: {
+      return (
+        <Elif
+          key={id}
+          id={id}
+          hasPrev={prevId !== null}
+          isWorkbenchBlock={isWorkbenchBlock}
+          blockType={BlockType.If}
+          blockShape={shape}
+          blockState={state}
+          enableSequences={enableSequences}
+        >
+          {block.children}
+        </Elif>
       );
     }
     case BlockType.IfElse: {
