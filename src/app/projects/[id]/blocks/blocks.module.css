@@ -6,15 +6,15 @@
   gap: 8px;
   align-items: center;
   color: white;
-  font-weight: bold;
+  font-weight: 700;
   padding: 4px 10px;
-  border-radius: 3px;
+  border-radius: 2px;
   transition: box-shadow 0.15s ease;
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
   background-color: salmon;
-  border: 2px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   margin-bottom: -1px; /* Negative margin to overlap borders */
   font-size: 14px;
 }
@@ -25,16 +25,15 @@
 }
 
 .select {
-  color: white;
+  color: black;
   border: none;
-  border-radius: 2px;
-  padding: 2px 4px;
-  font-weight: bold;
+  border-radius: 100px;
+  border: 1px solid white;
+  padding: 2px 8px;
   cursor: pointer;
   font-size: 14px;
   outline: none;
-  background-color: rgba(0, 0, 0, 0.2);
-  font-size: 15px;
+  background-color: rgba(255, 255, 255, 0.7);
 }
 
 .snapTarget {
@@ -80,10 +79,8 @@
 .inputText {
   width: 35px;
   max-width: 150px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 10px;
-  color: white;
+  border: 1px solid white;
+  color: black;
   outline: none;
   text-align: center;
   transition:
@@ -91,13 +88,12 @@
     border-color 0.15s ease;
   box-sizing: border-box;
   font-size: 14px;
-}
-
-.inputText:focus {
-  background-color: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.6);
+  border-radius: 100px;
+  padding: 2px 8px;
+  background-color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
 }
 
 .inputText::placeholder {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(0, 0, 0, 0.2);
 }

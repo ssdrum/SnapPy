@@ -48,7 +48,8 @@ export default function withBlock<T extends object>(
         case BlockType.Math:
         case BlockType.Comparison:
         case BlockType.Logical:
-          return '4px';
+        case BlockType.VariableValue:
+          return '4px 10px ';
         default:
           return undefined;
       }
@@ -57,28 +58,28 @@ export default function withBlock<T extends object>(
     const getBGColor = () => {
       switch (blockType) {
         case BlockType.ProgramStart:
-          return '#FFD54F'; // Yellow
+          return '#FFD966'; // Yellow
         case BlockType.While:
         case BlockType.For:
         case BlockType.If:
         case BlockType.IfElse:
-          return '#4091E2'; // Blue
+          return '#4697E5'; // Blue
         case BlockType.Variable:
         case BlockType.VariableValue:
-          return '#EC407A'; // Pink
+          return '#EE4D83'; //  Pink
         case BlockType.Number:
         case BlockType.Boolean:
-          return '#66BB6A'; // Green
+          return '#6DC071'; //  Green
         case BlockType.Math:
-          return '#F57C00'; // Orange
+          return '#FF8409'; //  Orange
         case BlockType.Comparison:
         case BlockType.Logical:
-          return '#9C6AE2'; // Purple
+          return '#A374E4'; // Purple
         case BlockType.Print:
-          return '#26A69A'; // Teal
+          return '#2CAEA2'; // Teal
         case BlockType.Empty:
         default:
-          return '#EC407A'; // Pink
+          return '#EE4D83'; // Pink
       }
     };
 
