@@ -16,6 +16,8 @@ import {
   VariableValueBlock,
   PrintBlock,
   StringBlock,
+  ElifBlock,
+  ElseBlock,
 } from '../blocks/types';
 import { isLogicalBinaryOperator, sortBlocks } from '../utils/utils';
 
@@ -62,6 +64,10 @@ function visitBlock(ctx: Context, block: Block) {
       return visitLogical(ctx, block);
     case BlockType.If:
       return visitIf(ctx, block);
+    case BlockType.Elif:
+      return visitElif(ctx, block);
+    case BlockType.Else:
+      return visitElse(ctx, block);
     case BlockType.IfElse:
       return visitIfElse(ctx, block);
     case BlockType.While:
@@ -172,10 +178,57 @@ function visitIf(ctx: Context, block: IfBlock) {
   if (block.children.condition.length > 0) {
     conditionCode = visitExpression(ctx, block.children.condition);
   } else {
-    conditionCode = 'True'; // Default condition if none provided
+    conditionCode = 'None'; // Default condition if none provided
   }
 
   addLine(ctx, `if ${conditionCode}:`);
+
+  ctx.indent++;
+
+  // If no body blocks, add a pass statement
+  if (block.children.body.length === 0) {
+    addLine(ctx, 'pass');
+  } else {
+    for (const bodyBlock of sortBlocks(block.children.body)) {
+      visitBlock(ctx, bodyBlock);
+    }
+  }
+
+  // Restore the original indentation
+  ctx.indent--;
+
+  return '';
+}
+
+function visitElif(ctx: Context, block: ElifBlock) {
+  let conditionCode = '';
+  if (block.children.condition.length > 0) {
+    conditionCode = visitExpression(ctx, block.children.condition);
+  } else {
+    conditionCode = 'None'; // Default condition if none provided
+  }
+
+  addLine(ctx, `elif ${conditionCode}:`);
+
+  ctx.indent++;
+
+  // If no body blocks, add a pass statement
+  if (block.children.body.length === 0) {
+    addLine(ctx, 'pass');
+  } else {
+    for (const bodyBlock of sortBlocks(block.children.body)) {
+      visitBlock(ctx, bodyBlock);
+    }
+  }
+
+  // Restore the original indentation
+  ctx.indent--;
+
+  return '';
+}
+
+function visitElse(ctx: Context, block: ElseBlock) {
+  addLine(ctx, 'else:');
 
   ctx.indent++;
 
@@ -199,7 +252,7 @@ function visitWhile(ctx: Context, block: WhileBlock) {
   if (block.children.condition.length > 0) {
     conditionCode = visitExpression(ctx, block.children.condition);
   } else {
-    conditionCode = 'True'; // Default condition if none provided
+    conditionCode = 'None'; // Default condition if none provided
   }
 
   addLine(ctx, `while ${conditionCode}:`);
@@ -226,7 +279,7 @@ function visitIfElse(ctx: Context, block: IfElseBlock) {
   if (block.children.condition.length > 0) {
     conditionCode = visitExpression(ctx, block.children.condition);
   } else {
-    conditionCode = 'True'; // Default condition if none provided
+    conditionCode = 'None'; // Default condition if none provided
   }
 
   addLine(ctx, `if ${conditionCode}:`);

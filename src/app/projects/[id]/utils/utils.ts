@@ -100,6 +100,15 @@ function processBlockChildren(
         condition: operation(block.children.condition, ...args),
         body: operation(block.children.body, ...args),
       };
+    case BlockType.Elif:
+      return {
+        condition: operation(block.children.condition, ...args),
+        body: operation(block.children.body, ...args),
+      };
+    case BlockType.Else:
+      return {
+        body: operation(block.children.body, ...args),
+      };
     case BlockType.Math:
     case BlockType.Comparison:
       return {
@@ -313,7 +322,7 @@ export function resizeInput(
     const width = hiddenRef.current.offsetWidth;
 
     // Set the input width (with minimum width)
-    inputRef.current.style.width = `${Math.max(35, width + 10)}px`;
+    inputRef.current.style.width = `${Math.max(35, width + 25)}px`;
   }
 }
 

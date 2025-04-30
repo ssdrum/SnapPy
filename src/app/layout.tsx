@@ -6,9 +6,13 @@ import {
   MantineProvider,
   mantineHtmlProps,
 } from '@mantine/core';
+import '@fontsource/nunito/400.css';
+import '@fontsource/nunito/500.css';
+import '@fontsource/nunito/600.css';
+import '@fontsource/nunito/700.css';
 
 export const metadata: Metadata = {
-  title: 'Snap-py',
+  title: 'SnapPy',
   description: 'My App is a...',
 };
 
@@ -23,7 +27,20 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider>
+        <MantineProvider
+          theme={{
+            fontFamily: 'Nunito, sans-serif',
+            headings: { fontFamily: 'Nunito, sans-serif' },
+            primaryColor: 'indigo',
+            components: {
+              Button: {
+                defaultProps: {
+                  variant: 'filled',
+                },
+              },
+            },
+          }}
+        >
           <div id='root'>{children}</div>
         </MantineProvider>
       </body>

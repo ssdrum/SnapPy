@@ -33,13 +33,13 @@
   border-radius: 12px;
 }
 
-.codeEditorWrapper {
+.rightPanelWrapper {
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.codeEditor {
+.codeEditorWrapper {
   height: 100%;
   overflow: auto;
   background-color: white;
@@ -47,6 +47,22 @@
   border-bottom-right-radius: 12px;
   border-bottom-left-radius: 12px;
   padding: var(--mantine-spacing-xs);
+}
+
+.codeEditor {
+  font-family: 'Fira code', 'Fira mono', monospace;
+  font-size: 16px;
+}
+
+.codeEditor pre,
+.codeEditor textarea {
+  padding-left: 30px !important;
+}
+
+.editorLineNumber {
+  position: absolute;
+  left: 0px;
+  color: #cccccc;
 }
 
 .codeOutput {

@@ -48,7 +48,10 @@ export default function withBlock<T extends object>(
         case BlockType.Math:
         case BlockType.Comparison:
         case BlockType.Logical:
-          return '4px';
+        case BlockType.VariableValue:
+          return '5px';
+        case BlockType.ProgramStart:
+          return '8px 15px';
         default:
           return undefined;
       }
@@ -57,28 +60,32 @@ export default function withBlock<T extends object>(
     const getBGColor = () => {
       switch (blockType) {
         case BlockType.ProgramStart:
-          return '#FFD54F'; // Yellow
+          return '#fbbf24'; // Yellow
         case BlockType.While:
         case BlockType.For:
+          return '#34d399'; //  Green
         case BlockType.If:
+        case BlockType.Elif:
+        case BlockType.Else:
         case BlockType.IfElse:
-          return '#4091E2'; // Blue
+          return '#c084fc'; // Purple
         case BlockType.Variable:
         case BlockType.VariableValue:
-          return '#EC407A'; // Pink
+          return '#60a5fa'; // Blue
         case BlockType.Number:
         case BlockType.Boolean:
-          return '#66BB6A'; // Green
+          return '#a3e635'; // Lime
         case BlockType.Math:
-          return '#F57C00'; // Orange
+          return '#f87171'; // Coral
         case BlockType.Comparison:
+          return '#fb923c'; //  Orange
         case BlockType.Logical:
-          return '#9C6AE2'; // Purple
+          return '#f472b6'; //  Pink
         case BlockType.Print:
-          return '#26A69A'; // Teal
+          return '#22d3ee'; // Cyan
         case BlockType.Empty:
         default:
-          return '#EC407A'; // Pink
+          return '#EE4D83'; // Pink
       }
     };
 
@@ -91,6 +98,9 @@ export default function withBlock<T extends object>(
     const getBorderRadius = () => {
       if (blockShape === BlockShape.Round) {
         return '100px';
+      }
+      if (blockType === BlockType.ProgramStart) {
+        return '20px 20px 2px 2px ';
       }
       return '5px';
     };

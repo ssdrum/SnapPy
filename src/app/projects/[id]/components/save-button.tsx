@@ -52,6 +52,7 @@ export default function SaveButton({ projectId }: SaveButtonProps) {
       <form action={handleSave}>
         <Button
           type='submit'
+          bg='blue'
           leftSection={<IconDeviceFloppy />}
           loading={isSaving}
           disabled={isSaving}

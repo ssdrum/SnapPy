@@ -12,6 +12,8 @@ export enum BlockType {
   Comparison = 'comparison',
   Logical = 'logical',
   If = 'if',
+  Elif = 'elif',
+  Else = 'else',
   IfElse = 'if else',
   For = 'for',
   Print = 'print',
@@ -202,6 +204,23 @@ export interface IfBlock extends BaseBlock {
   };
 }
 
+export interface ElifBlock extends BaseBlock {
+  type: BlockType.Elif;
+  shape: BlockShape.Square;
+  children: {
+    condition: Block[];
+    body: Block[];
+  };
+}
+
+export interface ElseBlock extends BaseBlock {
+  type: BlockType.Else;
+  shape: BlockShape.Square;
+  children: {
+    body: Block[];
+  };
+}
+
 export interface IfElseBlock extends BaseBlock {
   type: BlockType.IfElse;
   shape: BlockShape.Square;
@@ -245,6 +264,8 @@ export type Block =
   | ComparisonBlock
   | LogicalBlock
   | IfBlock
+  | ElifBlock
+  | ElseBlock
   | IfElseBlock
   | ForBlock
   | PrintBlock;

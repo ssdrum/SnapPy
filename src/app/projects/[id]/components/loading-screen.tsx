@@ -10,7 +10,7 @@ export default function LoadingScreen({ message }: LoadingScreenProps) {
     <AppShellMain className={classes.editorPageWrapper}>
       <Center style={{ height: '100%' }}>
         <Stack align='center'>
-          <Loader color='blue' size='xl' />
+          <Loader size='xl' />
           <Text size='lg' fw={500}>
             {message}
           </Text>
