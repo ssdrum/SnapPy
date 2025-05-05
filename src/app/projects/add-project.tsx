@@ -1,20 +1,41 @@
-import { createProject } from '@/app/lib/data';
-import { revalidatePath } from 'next/cache';
+'use client';
 
-export default function AddProject() {
-  // Write to db using server actions
-  async function handleSubmit(formData: FormData) {
-    'use server';
+import { useState } from 'react';
+import { Modal, Button, TextInput } from '@mantine/core';
+import { addProject } from './[id]/utils/actions';
 
-    const name = formData.get('name') as string;
-    await createProject(name);
-    revalidatePath('/dashboard'); // Update UI with new data
-  }
+export default function AddProjectModal() {
+  const [opened, setOpened] = useState(false);
 
   return (
-    <form action={handleSubmit}>
-      <input type='text' name='name' placeholder='Enter name'></input>
-      <button type='submit'>Create Project</button>
-    </form>
+    <>
+      <Button onClick={() => setOpened(true)}>New Project</Button>
+
+      <Modal
+        opened={opened}
+        onClose={() => setOpened(false)}
+        title='Create New Project'
+        centered
+      >
+        <form
+          action={async (formData) => {
+            await addProject(formData);
+            setOpened(false);
+          }}
+        >
+          <TextInput
+            data-autofocus
+            name='name'
+            placeholder='Enter project name'
+            label='Project Name'
+            withAsterisk
+            required
+          />
+          <Button type='submit' mt='md' fullWidth>
+            Create
+          </Button>
+        </form>
+      </Modal>
+    </>
   );
 }

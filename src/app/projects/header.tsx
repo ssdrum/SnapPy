@@ -26,7 +26,7 @@ interface HeaderProps {
 }
 
 export default function Header({ session }: HeaderProps) {
-  const { name, email, image } = session;
+  const { name, email } = session;
 
   return (
     <div className={classes.container}>
@@ -48,7 +48,13 @@ export default function Header({ session }: HeaderProps) {
           <MenuTarget>
             <UnstyledButton className={classes.user}>
               <Group gap={7}>
-                <Avatar src={image} alt={name} size={30} />
+                <Avatar
+                  key={name}
+                  alt={name}
+                  name={name}
+                  color='initials'
+                  size={30}
+                />
                 <Text fw={500} size='sm' lh={1} mr={3}>
                   {name}
                 </Text>

@@ -48,17 +48,4 @@ describe('Header', () => {
       expect(avatarPlaceholder).toBeInTheDocument();
     });
   });
-
-  it('displays avatar image if user image is loaded', async () => {
-    render(<Header session={session} />);
-    const user = userEvent.setup();
-    await user.click(screen.getByRole('button'));
-
-    // Wait for menu to appear
-    await waitFor(() => {
-      const avatarImage = document.querySelector('.mantine-Avatar-image');
-
-      expect(avatarImage).toBeInTheDocument();
-    });
-  });
 });

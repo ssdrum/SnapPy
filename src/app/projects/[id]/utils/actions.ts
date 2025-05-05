@@ -1,8 +1,9 @@
 'use server';
 
-import { updateProject } from '@/app/lib/data';
+import { createProject, updateProject } from '@/app/lib/data';
 import { revalidatePath } from 'next/cache';
 import { Block } from '../blocks/types';
+import { prisma } from '@/app/lib/prisma';
 
 export async function saveProject(
   projectId: string,
@@ -29,4 +30,17 @@ export async function generateShareLink(projectId: string) {
   // Generate and return the full URL
   const shareUrl = `${process.env.APP_URL}/projects/${projectId}`;
   return { success: true, shareUrl };
+}
+
+// Server actions to create and delete projects
+export async function addProject(formData: FormData) {
+  const name = formData.get('name') as string;
+  await createProject(name);
+  revalidatePath('/dashboard');
+}
+
+export async function deleteProject(formData: FormData) {
+  const id = formData.get('id') as string;
+  await prisma.project.delete({ where: { id } });
+  revalidatePath('/dashboard');
 }
