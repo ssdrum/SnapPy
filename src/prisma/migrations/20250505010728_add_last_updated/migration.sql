@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Project" ADD COLUMN     "last_updated" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
